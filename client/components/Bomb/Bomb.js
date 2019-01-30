@@ -47,9 +47,11 @@ class Bomb extends Component {
       minute: 0,
       tenSecond: 0,
       singleSecond: 0,
+      spotLight: {},
       box: {},
       clock: {},
       module1: {},
+      module2: {},
       targetList: []
     }
   }
