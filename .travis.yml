@@ -14,7 +14,7 @@ notifications:
 install:
   - npm ci # faster, goes only from package-lock
   before_script:
-  - psql -c 'create database "tick-toc-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
+  - psql -c 'create database "tick-toc2-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
 before_deploy:
   - npm run build-client # make the bundle
   - rm -rf node_modules # omit from the tarball, since we skip cleanup
@@ -23,4 +23,4 @@ deploy:
   provider: heroku
   app: tick-toc2
   api_key:
-    secure: "DNoNGKlzMb9T8b/eTkw8rnR2pKYCYtbUnoUfMmeBBd8onRa1HgluV0PCxb+OfxmIA18JEZxmbZvU1p461o1+bvdNmNt7B6y2E/8Q4pgOXT+WzSo4Qegy+nrxuguHRk5570gWWv4JPS2myWjGnihWNedHuXAybaubQyHMiNF6y809sxnh3oWuQF0VYBJfJS/ngbnpIefI266STCgfXXi57IUxfFQ6JO3OEcyCTU30dvryQKRdR9vc8SqD2xr+9lPYoVi5PY9+5M5xxSdlHv4NOAn+nBCKurN7eKtbj6CEgc+DhFLkuOnb67Ag1oQqUrXb6SlL0rNX69/UzqOFAydUn1cVro6W8BFtFCEj5+RTBtYAp5rX+0VrxmzWHSYKRqKmBTG9I/ymO9DEIoBixuXEf65yQFg11AigcqT4ntTwlBkB/Q0xC63of9gkDRo5+iri5C+tGdaWoBhjEEaMEBFQ1C79oV+1MreBiGchCSPBcGeDkkg8hV03dgnbKBfRzfy9y91N5V8C+gPx0X0KlNjF8+WnOuXYP9mQh70DiJt+Uh+FapbxnCm47XFYbaP0euO8s1oXLagXs2VxfsJ964RDuAfy8NTZzRQnMzIuakaDw1kmuWZoM/KKZYN+VdXEN+gL7kYDnz5nilP1hyZ2NSnVoOlAvkzRGBh7dJmjNRJ1Y0g="
+    secure: "http://nlf1x/eRdEtN4trz9++/mOlCV0Seb8jwsn9ljgK5ZIR/vdMl1TltW3L+CZFF6nqP1hyQpRZSZut2s9zB23s+1gDfI1iGmwdoXbSklJxNwmbO1hQjvtrPznLKtsGjpNN/vjG10m8iyA0k5OFKU9iRlNafQPCW+oSgJsRyiHEag7GkGYNM3s8fNu+1wCUfG/YvzZ7Zpce6Rmc7nCoIMSZkuNueuFqEZ9GXqCnQfPRkPIOefaWrd4pIlRYeKTw2v+8gcj4ZNPIbWTU7crm9vwrxwc5U/uudCp5/WCurAkDwootaXHmTQJmvcgjbIrUW8AeXf7hZemwg+oi6gKOLjqwzAsZOdBnOuMxaECr2262Sw/IfOVl4Rvk9HcG1pWus8RYixtJhijctZKBVZ/pgQ2siZd3zT7TG1Ppi7+tTJuXcu2szZr+1rhL1cjdnBjTQUzsXcU5ShBSe7+5Qr/kHrSa82mhCTQ+Mf4u/wa3Kut8jaCYBNYhvmsZM1Np+FgdbVbDaCcZsWCwKMueSkHUZpGBOtgyQx2nWPW7fuBMQbVc9eSvsnTZ8C6HM8ELGSeUAO0wSHU4FZgaK72Zdp21UCJrwQGWnfiHRPclUzMiHYRq8KkVQBg+T0bwKGZLvvW8SITAxzKum/hhcRLgRm4tG4q5relOMOLBj8gz1QfAeC4NkwxE="
