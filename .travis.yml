@@ -19,6 +19,6 @@ install:
 deploy:
   skip_cleanup: true
   provider: heroku
-  app: tick-toc
+  app: tick-toc2
   api_key:
     secure: "DNoNGKlzMb9T8b/eTkw8rnR2pKYCYtbUnoUfMmeBBd8onRa1HgluV0PCxb+OfxmIA18JEZxmbZvU1p461o1+bvdNmNt7B6y2E/8Q4pgOXT+WzSo4Qegy+nrxuguHRk5570gWWv4JPS2myWjGnihWNedHuXAybaubQyHMiNF6y809sxnh3oWuQF0VYBJfJS/ngbnpIefI266STCgfXXi57IUxfFQ6JO3OEcyCTU30dvryQKRdR9vc8SqD2xr+9lPYoVi5PY9+5M5xxSdlHv4NOAn+nBCKurN7eKtbj6CEgc+DhFLkuOnb67Ag1oQqUrXb6SlL0rNX69/UzqOFAydUn1cVro6W8BFtFCEj5+RTBtYAp5rX+0VrxmzWHSYKRqKmBTG9I/ymO9DEIoBixuXEf65yQFg11AigcqT4ntTwlBkB/Q0xC63of9gkDRo5+iri5C+tGdaWoBhjEEaMEBFQ1C79oV+1MreBiGchCSPBcGeDkkg8hV03dgnbKBfRzfy9y91N5V8C+gPx0X0KlNjF8+WnOuXYP9mQh70DiJt+Uh+FapbxnCm47XFYbaP0euO8s1oXLagXs2VxfsJ964RDuAfy8NTZzRQnMzIuakaDw1kmuWZoM/KKZYN+VdXEN+gL7kYDnz5nilP1hyZ2NSnVoOlAvkzRGBh7dJmjNRJ1Y0g="
