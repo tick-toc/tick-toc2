@@ -1,27 +1,15 @@
 language: node_js
 node_js:
   - node # uses most recent stable node version
-services:
-  - postgresql # starts up postgres
-addons:
-  postgresql: '9.6' # highest available postgres version on Travis
-dist: trusty # uses trusty environment
-sudo: false # when on trusty, uses Docker containers for speed
 notifications:
   email:
     on_success: change # default: change (only when going from broken to fixed)
     on_failure: always # default: always (which is annoying, as it should be)
 install:
   - npm ci # faster, goes only from package-lock
-before_script:
-  - psql -c 'create database "boilermaker-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
-
-# before_deploy:
-#   - npm run build-client # make the bundle
-#   - rm -rf node_modules # omit from the tarball, since we skip cleanup
-# deploy:
-#   skip_cleanup: true # prevents travis from deleting the build
-#   provider: heroku
-#   app: YOUR-HEROKU-APP-NAME-HERE # see README
-#   api_key:
-#     secure: YOUR-***ENCRYPTED***-API-KEY-HERE # see README
+deploy:
+  skip_cleanup: true
+  provider: heroku
+  app: tick-toc
+  api_key:
+    secure: "DNoNGKlzMb9T8b/eTkw8rnR2pKYCYtbUnoUfMmeBBd8onRa1HgluV0PCxb+OfxmIA18JEZxmbZvU1p461o1+bvdNmNt7B6y2E/8Q4pgOXT+WzSo4Qegy+nrxuguHRk5570gWWv4JPS2myWjGnihWNedHuXAybaubQyHMiNF6y809sxnh3oWuQF0VYBJfJS/ngbnpIefI266STCgfXXi57IUxfFQ6JO3OEcyCTU30dvryQKRdR9vc8SqD2xr+9lPYoVi5PY9+5M5xxSdlHv4NOAn+nBCKurN7eKtbj6CEgc+DhFLkuOnb67Ag1oQqUrXb6SlL0rNX69/UzqOFAydUn1cVro6W8BFtFCEj5+RTBtYAp5rX+0VrxmzWHSYKRqKmBTG9I/ymO9DEIoBixuXEf65yQFg11AigcqT4ntTwlBkB/Q0xC63of9gkDRo5+iri5C+tGdaWoBhjEEaMEBFQ1C79oV+1MreBiGchCSPBcGeDkkg8hV03dgnbKBfRzfy9y91N5V8C+gPx0X0KlNjF8+WnOuXYP9mQh70DiJt+Uh+FapbxnCm47XFYbaP0euO8s1oXLagXs2VxfsJ964RDuAfy8NTZzRQnMzIuakaDw1kmuWZoM/KKZYN+VdXEN+gL7kYDnz5nilP1hyZ2NSnVoOlAvkzRGBh7dJmjNRJ1Y0g="
