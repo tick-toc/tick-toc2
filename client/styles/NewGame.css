@@ -1,0 +1,18 @@
+.new-game-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ng-action {
+  cursor: pointer;
+}
+
+.ng-action.strike {
+  color: red;
+}
+
+/* .ng-icon {
+  font-size: 1.25rem;
+} */
