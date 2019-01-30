@@ -8,3 +8,7 @@ router.use((req, res, next) => {
   error.status = 404
   next(error)
 })
+
+//new game
+//old games
+//leader board
