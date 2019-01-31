@@ -47,9 +47,14 @@ class Bomb extends Component {
       minute: 0,
       tenSecond: 0,
       singleSecond: 0,
+      spotLight: {},
       box: {},
       clock: {},
       module1: {},
+      module2: {},
+      module3: {},
+      module4: {},
+      module5: {},
       targetList: []
     }
   }
@@ -62,7 +67,7 @@ class Bomb extends Component {
   }
 
   componentDidMount() {
-    var camera, scene, renderer, box, clock, digital, module1, module2
+    var camera, scene, renderer, box, clock, digital, module1, module2, module3
     var projector,
       mouse = {x: 0, y: 0}
 
@@ -95,6 +100,7 @@ class Bomb extends Component {
       spotLight.shadow.mapSize.width = 1024
       spotLight.shadow.mapSize.height = 1024
       scene.add(spotLight)
+      THIS.setState({spotLight})
 
       let dirLight = new THREE.DirectionalLight(0x55505a, 1)
       dirLight.position.set(0, 3, 0)
@@ -119,14 +125,6 @@ class Bomb extends Component {
         gltf.scene.position.y = 1.7 //Position (y = up+, down-)
         gltf.scene.position.z = 0 //Position (z = front +, back-)
         gltf.scene.rotation.x = Math.PI / 2
-        let material = new THREE.MeshPhongMaterial({
-          color: 0xa9acb5,
-          shininess: 100
-        })
-        let material2 = new THREE.MeshPhongMaterial({
-          color: 0x222222,
-          shininess: 10
-        })
         box.traverse(o => {
           if (o.isMesh) {
             if (o.name === 'Cube001') {
@@ -134,7 +132,37 @@ class Bomb extends Component {
             } else o.material = SOW.defaultMaterial
           }
         })
-
+        let battery1
+        let batteryLoader = new GLTFLoader()
+        batteryLoader.load('models/batterry.glb', function(gltf) {
+          battery1 = gltf.scene
+          gltf.scene.scale.set(0.09, 0.11, 0.11)
+          gltf.scene.position.x = -0.3 //Position (x = right+ left-)
+          gltf.scene.position.y = -0.51 //Position (y = up+, down-)
+          gltf.scene.position.z = -0.91 //Position (z = front +, back-)
+          gltf.scene.rotation.y = -Math.PI / 2
+          gltf.scene.rotation.z = Math.PI / 2
+          battery1.traverse(o => {
+            if (o.isMesh) {
+              if (o.name === 'Dock') {
+                o.material = SOW.cubeMaterial
+              } else if (o.name === 'Battery') {
+                o.material = SOW.black
+              } else if (o.name === 'Battery002') {
+                o.material = SOW.copper
+              } else o.material = SOW.defaultMaterial
+            }
+          })
+          battery1.castShadow = true
+          battery1.receiveShadow = true
+          box.add(battery1)
+          let battery2 = battery1.clone()
+          box.add(battery2)
+          battery2.position.x = 1.3
+          battery2.position.y = -0.54
+          battery2.position.z = 0.91
+          battery2.rotation.x = Math.PI / 2
+        })
         box.castShadow = true
         box.receiveShadow = true
         THIS.setState({box})
@@ -145,7 +173,7 @@ class Bomb extends Component {
       clockLoader.load('models/clock.glb', function(glft) {
         clock = glft.scene
         glft.scene.scale.set(0.44, 0.44, 0.44)
-        glft.scene.position.x = 0.49 //Position (x = right+ left-)
+        glft.scene.position.x = 0.488 //Position (x = right+ left-)
         glft.scene.position.y = -0.31 //Position (y = up+, down-)
         glft.scene.position.z = -0.47 //Position (z = front +, back-)
         glft.scene.rotation.z = Math.PI / 2
@@ -179,7 +207,7 @@ class Bomb extends Component {
         digital = glft.scene
         glft.scene.scale.set(0.9, 0.9, 0.9)
         glft.scene.position.x = 0 //Position (x = right+ left-)
-        glft.scene.position.y = 0 //Position (y = up+, down-)
+        glft.scene.position.y = -0.03 //Position (y = up+, down-)
         glft.scene.position.z = 0 //Position (z = front +, back-)
         var material = new THREE.MeshPhongMaterial({
           color: 0xee0000,
@@ -276,16 +304,17 @@ class Bomb extends Component {
       module2Loader.load('models/mo2.glb', function(glft) {
         module2 = glft.scene
         glft.scene.scale.set(0.42, 0.42, 0.42)
-        glft.scene.position.x = 1.49 //Position (x = right+ left-)
+        glft.scene.position.x = 1.45 //Position (x = right+ left-)
         glft.scene.position.y = -0.31 //Position (y = up+, down-)
         glft.scene.position.z = -0.47 //Position (z = front +, back-)
         glft.scene.rotation.z = Math.PI / 2
         glft.scene.rotation.y = -Math.PI / 2
 
+        var texture = new THREE.TextureLoader().load('/models/Button1.png')
+        texture.wrapS = THREE.RepeatWrapping
+        texture.repeat.x = -1
+
         module2.traverse(o => {
-          var img = new THREE.MeshBasicMaterial({
-            map: THREE.ImageUtils.loadTexture('/models/Button1.png')
-          })
           if (o.isMesh) {
             if (
               o.name === 'Cube' ||
@@ -295,39 +324,150 @@ class Bomb extends Component {
             )
               o.material = SOW.defaultMaterial
             else if (o.name === 'Cube001') o.material = SOW.cubeMaterial
-            else if (o.name === 'Circle') o.material = img
-            else if (o.name === 'LED') {
+            else if (o.name === 'Circle002' || o.name === 'Circle') {
+              o.material = new THREE.MeshPhongMaterial({map: texture})
+              o.rotation.x = -2.85
+              THIS.setState(prevState => ({
+                targetList: [...prevState.targetList, o]
+              }))
+            } else if (o.name === 'LED') {
               let em = new THREE.Color(0x000000)
               let LEDmo2 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
               LEDmo2.name = 'LEDlight'
               module2.add(LEDmo2)
               LEDmo2.position.copy(o.position)
-              LEDmo2.visible = true
+              LEDmo2.visible = false
               o.material = new THREE.MeshPhongMaterial({
                 transparent: true,
                 opacity: 0.9,
                 emissive: em,
-                color: LEDmo2.color,
+                color: em,
                 shininess: 100
               })
             } else if (o.name === 'Cube002') {
               let em = new THREE.Color(0x000000)
-              let SEDmo2 = new THREE.PointLight(0x777700, 10, 0.8, 2)
-              SEDmo2.name = 'LEDstripe'
-              module2.add(SEDmo2)
-              SEDmo2.position.copy(o.position)
-              SEDmo2.visible = false
+              let SED1 = new THREE.PointLight(0x777700, 4, 13, 200)
+              SED1.name = 'LEDstripe1'
+              module2.add(SED1)
+              SED1.position.copy(o.position)
+              SED1.position.z -= 0.9
+              SED1.position.x -= 0.8
+              SED1.position.y += 0.1
+              let SED2 = SED1.clone()
+              SED2.name = 'LEDstripe2'
+              SED2.position.y -= 0.25
+              module2.add(SED2)
+              let SED3 = SED1.clone()
+              SED3.name = 'LEDstripe3'
+              SED3.position.y -= 0.5
+              module2.add(SED3)
+              let SED4 = SED1.clone()
+              SED4.name = 'LEDstripe4'
+              SED4.position.y -= 0.75
+              module2.add(SED4)
               o.material = new THREE.MeshPhongMaterial({
                 transparent: true,
                 opacity: 0.9,
                 emissive: em,
-                color: SEDmo2.color,
-                shininess: 100
+                color: SED1.color,
+                shininess: 500
               })
             }
           }
+          module2.castShadow = true
+          module2.receiveShadow = true
+          THIS.setState({module2})
           box.add(module2)
         })
+      })
+
+      let module3Loader = new GLTFLoader()
+      module3Loader.load('models/mo3.glb', function(gltf) {
+        module3 = gltf.scene
+        gltf.scene.scale.set(0.42, 0.42, 0.42)
+        gltf.scene.position.x = -0.49 //Position (x = right+ left-)
+        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
+        gltf.scene.position.z = 0.47 //Position (z = front +, back-)
+        gltf.scene.rotation.z = Math.PI / 2
+        gltf.scene.rotation.y = -Math.PI / 2
+        module3.traverse(o => {
+          var texture1 = new THREE.TextureLoader().load(
+            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+          )
+          texture1.wrapT = THREE.RepeatWrapping
+          texture1.repeat.y = -1
+          var texture2 = new THREE.TextureLoader().load(
+            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+          )
+          texture2.wrapT = THREE.RepeatWrapping
+          texture2.repeat.y = -1
+          var texture3 = new THREE.TextureLoader().load(
+            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+          )
+          texture3.wrapT = THREE.RepeatWrapping
+          texture3.repeat.y = -1
+          var texture4 = new THREE.TextureLoader().load(
+            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+          )
+          texture4.wrapT = THREE.RepeatWrapping
+          texture4.repeat.y = -1
+
+          if (o.isMesh) {
+            if (o.name === 'Cube000') o.material = SOW.cubeMaterial
+            else if (o.name === 'LED') {
+              let em = new THREE.Color(0x000000)
+              let LEDmo3 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+              LEDmo3.name = 'LED3'
+              module3.add(LEDmo3)
+              LEDmo3.position.copy(o.position)
+              LEDmo3.visible = false
+              o.material = new THREE.MeshPhongMaterial({
+                transparent: true,
+                opacity: 0.9,
+                emissive: em,
+                color: em,
+                shininess: 100
+              })
+            } else if (o.name.includes('Bface1')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture1})
+              THIS.setState(prevState => ({
+                targetList: [...prevState.targetList, o]
+              }))
+            } else if (o.name.includes('Bface2')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture2})
+              THIS.setState(prevState => ({
+                targetList: [...prevState.targetList, o]
+              }))
+            } else if (o.name.includes('Bface3')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture3})
+              THIS.setState(prevState => ({
+                targetList: [...prevState.targetList, o]
+              }))
+            } else if (o.name.includes('Bface4')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture4})
+              THIS.setState(prevState => ({
+                targetList: [...prevState.targetList, o]
+              }))
+            } else if (o.name.includes('Button')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture1})
+              THIS.setState(prevState => ({
+                targetList: [...prevState.targetList, o]
+              }))
+            } else if (o.name.includes('BG')) {
+              o.material = new THREE.MeshPhongMaterial({
+                color: new THREE.Color(0x000000),
+                shininess: 100
+              })
+            } else {
+              o.material = SOW.defaultMaterial
+            }
+          }
+        })
+
+        module3.castShadow = true
+        module3.receiveShadow = true
+        THIS.setState({module3})
+        box.add(module3)
       })
 
       // Renderer
@@ -385,6 +525,13 @@ class Bomb extends Component {
 
       document.addEventListener('mouseup', e => {
         isDragging = false
+        if (
+          module2.children.filter(a => a.name.startsWith('Circle'))[0].position
+            .x < 0.4
+        )
+          module2.children
+            .filter(a => a.name.startsWith('Circle'))
+            .map(b => (b.position.x += 0.18))
       })
 
       projector = new THREE.Projector()
@@ -420,13 +567,33 @@ class Bomb extends Component {
       // create an array containing all objects in the scene with which the ray intersects
       var intersects = ray.intersectObjects(THIS.state.targetList)
       // if there is one (or more) intersections
-      console.log(intersects, '<<INTERSECTS')
       if (intersects.length > 0) {
-        if (THIS.state.targetList.includes(intersects[0].object)) {
-          console.log('YOOOO')
-        }
         THIS.handleSOW(intersects[0].object.userData)
         module1.remove(intersects[0].object)
+        if (
+          intersects[0].object.name === 'Circle' ||
+          intersects[0].object.name === 'Circle002'
+        ) {
+          module2.children
+            .filter(a => a.name.startsWith('Circle'))
+            .map(b => (b.position.x -= 0.18))
+        }
+        if (
+          intersects[0].object.name.includes('Button') ||
+          intersects[0].object.name.includes('Bface')
+        ) {
+          module3.children
+            .filter(a =>
+              a.name.includes('' + intersects[0].object.name.slice(-1))
+            )
+            .map(b => {
+              if (b.position.x > 1.26) b.position.x -= 0.07
+              if (b.position.x < 0.5 && b.position.x > 0.35) {
+                b.position.x -= 0.07
+                b.material.color.setRGB(0, 1, 0)
+              }
+            })
+        }
       }
     }
 
@@ -459,6 +626,7 @@ class Bomb extends Component {
         console.log('GAME OVER')
       else {
         const count = this.state.strikeCount
+        console.log(count)
         const Strike = this.state.clock.children.find(
           child => child.name === `Strike${count}`
         )
@@ -497,6 +665,16 @@ class Bomb extends Component {
       if (prevState.minute !== minute) {
         this.setState({minute})
         setClock('1', minute)
+        if (minute === 0) {
+          let spotLight = this.state.spotLight
+          spotLight.color.g = 0
+          spotLight.color.b = 0
+          spotLight.intensity = 0.7
+          setInterval(function() {
+            spotLight.visible = !spotLight.visible
+          }, 1000)
+          this.setState({spotLight})
+        }
       }
       if (prevState.tenSecond !== tenSecond) {
         this.setState({tenSecond})
