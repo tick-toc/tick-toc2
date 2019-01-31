@@ -9,6 +9,7 @@ import * as util from './ModuleLogic/util'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
+import {setStrike, passModule} from '../../store/game'
 
 class RefacBomb extends Component {
   state = {
@@ -168,9 +169,9 @@ class RefacBomb extends Component {
         wire.material = wireCase.colors[index]
         cutWires[index].material = wireCase.colors[index]
         if (wireCase.correct === index) {
-          wire.userData = {correct: true, parent: 'SOW'}
+          wire.userData = {correct: true}
         } else {
-          wire.userData = {correct: false, parent: 'SOW'}
+          wire.userData = {correct: false}
         }
         this.targetList.push(wire)
       })
@@ -186,6 +187,7 @@ class RefacBomb extends Component {
             LEDmo1.position.copy(o.position)
             LEDmo1.visible = false
             o.material = util.LEDMaterial
+            o.visible = false
           } else if (!o.name.includes('Wire')) o.material = util.defaultMaterial
         }
       })
@@ -321,6 +323,23 @@ class RefacBomb extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // check game status;on success or failure, display banner & redirect w/ transition to recap
+    if (
+      this.props.strikeCount === this.props.strikeTotal ||
+      this.state.count === 0
+    ) {
+      // dispatch action to end game & update game status to failed
+    }
+    // check if modulesPassed === moduleTotal
+    // stop clock & dispatch action to set count in store
+    // dispatch action to end game & update game status to diffused
+    if (prevProps.strikeCount !== this.props.strikeCount) {
+      const count = this.props.strikeCount
+      const Strike = this.clock.children.find(
+        child => child.name === `Strike${count}`
+      )
+      Strike.visible = true
+    }
     if (prevState.count !== this.state.count) {
       this.calcClock(prevState)
     }
@@ -436,13 +455,12 @@ class RefacBomb extends Component {
   }
 
   handleSOW = wire => {
-    console.log(wire)
     if (wire.userData.correct === true) {
-      // dispatch action to set SOW to passing
-      console.log('CORRECT')
-    } else {
-      // dispatch ation to set a strike
-      console.log('WRONG')
+      this.props.passModule('SubjectOfWires')
+      // turn LED on here
+    } else if (this.props.strikesAllowed) {
+      this.props.setStrike()
+      // create helper function for handling incorrect moves
     }
     this.module1.remove(wire)
     this.removeTarget(wire)
@@ -452,13 +470,8 @@ class RefacBomb extends Component {
     this.targetList = this.targetList.filter(item => item !== target)
   }
 
-  removeAllTargetsWhere = target => {
-    this.targetList = this.targetList.filter(
-      item => !item.userData.parent.includes(target.userData.parent)
-    )
-  }
-
   render() {
+    // if (!this.props.gameStarted) return <Redirect to="/new-game" />
     return (
       <div
         className="refac-bomb"
@@ -472,4 +485,9 @@ class RefacBomb extends Component {
 
 const mapState = ({game}) => ({...game})
 
-export default connect(mapState, null)(RefacBomb)
+const mapProps = dispatch => ({
+  setStrike: () => dispatch(setStrike()),
+  passModule: moduleName => dispatch(passModule(moduleName))
+})
+
+export default connect(mapState, mapProps)(RefacBomb)
