@@ -42,6 +42,11 @@ export const socketMaterial = new MeshPhongMaterial({
   shininess: 10
 })
 
+export const buttonMaterial = new MeshPhongMaterial({
+  color: 0xccbbaa,
+  shininess: 100
+})
+
 /*******************
 LOGIC
 *******************/
