@@ -1,18 +1,68 @@
 'use strict'
 
 const db = require('../server/db')
-const {User} = require('../server/db/models')
+const {User, Game} = require('../server/db/models')
+
+const gameData = [
+  {
+    modules: 5,
+    modulesFailed: 2,
+    startTime: 300,
+    endTime: 120,
+    strikesAllowed: 3,
+    strikes: 2,
+    status: 'passed'
+  },
+  {
+    modules: 5,
+    modulesFailed: 2,
+    startTime: 300,
+    endTime: 0,
+    strikesAllowed: 3,
+    strikes: 2,
+    status: 'failed'
+  },
+  {
+    modules: 5,
+    modulesFailed: 3,
+    startTime: 300,
+    endTime: 57,
+    strikesAllowed: 3,
+    strikes: 2,
+    status: 'failed'
+  }
+]
+
+const userData = [
+  {
+    userName: 'dummyUser',
+    email: 'dummyUser@dummyemail.com',
+    password: 'dummypassword'
+  },
+  {
+    userName: 'smartUser',
+    email: 'smartUser@smartemail.com',
+    password: 'smartpassword'
+  }
+]
 
 async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
-  const users = await Promise.all([
-    User.create({email: 'cody@email.com', password: '123'}),
-    User.create({email: 'murphy@email.com', password: '123'})
+  const [game, user] = await Promise.all([
+    Game.bulkCreate(gameData, {returning: true}),
+    User.bulkCreate(userData, {individualHooks: true, returning: true})
   ])
 
-  console.log(`seeded ${users.length} users`)
+  const [game1, game2, game3] = game
+  const [user1, user2] = user
+
+  await game1.setUser(user2)
+  await game2.setUser(user1)
+  await game3.setUser(user1)
+
+  console.log(`seeded ${user.length} users`)
   console.log(`seeded successfully`)
 }
 

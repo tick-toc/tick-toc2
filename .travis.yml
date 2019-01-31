@@ -14,14 +14,14 @@ notifications:
 install:
   - npm ci # faster, goes only from package-lock
 before_script:
-  - psql -c 'create database "boilermaker-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
+  - psql -c 'create database "tick-toc2-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
 
-# before_deploy:
-#   - npm run build-client # make the bundle
-#   - rm -rf node_modules # omit from the tarball, since we skip cleanup
-# deploy:
-#   skip_cleanup: true # prevents travis from deleting the build
-#   provider: heroku
-#   app: YOUR-HEROKU-APP-NAME-HERE # see README
-#   api_key:
-#     secure: YOUR-***ENCRYPTED***-API-KEY-HERE # see README
+before_deploy:
+  - npm run build-client # make the bundle
+  - rm -rf node_modules # omit from the tarball, since we skip cleanup
+deploy:
+  skip_cleanup: true # prevents travis from deleting the build
+  provider: heroku
+  app: tick-toc2 # see README
+  api_key:
+    secure: "jpWpWkTcEI2XEjUjvVaCv2h9JnmXsHRACLTAzeQTLAohGAmCRvTeCHedBTYmFrtzJkYJ6OX4sl2bgjE+FyumNw4LP+9Rx42F34Qp/OEteUOyVxXK/+MLv+MX2vMazt/C7T/4yOTW9NE3D3IqQMVzkP9Rf2HizuaByJjQ6GYwRTWi7WLIo1LNg+LvHqE4+TLkcED4lRtDCiCVWjQ7ey4A4lYTbbWKNrVWM6sBUa8llMssI+eEc/UuJm1kofqY79GnBvWL+FkFMNlaQNbJqSTYHWwcYSh/39LRZYCahBMAAHfsxxPUuei7y6vnG5i0Z++nX5y39h9dMvKkBT+9aPmmmG2wekPeJqjeiBiScatKll+bK3TLGOVmkMxUwBLEC5ItOxoqcbpsPUGyv16Is3YtTmVm24cJImsvPGaR/9TH12o3MM0fp7i7eM9URaXqsO+jyqR364/nvPGte2ITZhGvX/2BalZ7Qw+YAmI/vyTBcljGJfBs32nQ6WnzVrpfw2PA3m2zSYthUfAFhgqb7tITSCyL37XzdDkR9kStfQODZI2VfWq/k/rXF9vUuVmz7u6NgLhNHWF5DYRWLEWDMsCE1lex/ZAfmsr8BaM+FXAEgghIcEWttlouOhnid8iG4H2bgoJIwM9QPryEMHWiCD+YOkP4UEE+g6vDl8bIaQuLeaY="

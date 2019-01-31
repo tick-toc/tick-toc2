@@ -472,14 +472,12 @@ class Bomb extends Component {
 
       // Renderer
 
-      let container = document.getElementById('bomb-box')
-      // let container = this.canvasRef
       renderer = new THREE.WebGLRenderer()
       renderer.shadowMap.enabled = true
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setSize(window.innerWidth, window.innerHeight)
       window.addEventListener('resize', onWindowResize, false)
-      container.appendChild(renderer.domElement)
+      THIS.mount.appendChild(renderer.domElement)
 
       // Dragger
 
@@ -614,6 +612,10 @@ class Bomb extends Component {
     this.handleStart()
   }
 
+  componentWillUnmount() {
+    this.mount.removeChild(this.renderer.domElement)
+  }
+
   componentDidUpdate(prevProps, prevState) {
     // if (this.state.count === 0) {
     //   // dispatch action to
@@ -702,13 +704,18 @@ class Bomb extends Component {
 
   render() {
     const {gameStatus} = this.props
-    if (!this.props.gameStarted) this.props.history.push('/new-game')
+    if (!this.props.gameStarted) return <Redirect to="/new-game" />
     return (
       <Fragment>
         {gameStatus !== 'pending' && (
           <div className={`banner ${gameStatus}--banner`}>{gameStatus}</div>
         )}
-        <div id="bomb-box" ref={this.canvasRef.current} />
+        <div
+          id="bomb-box"
+          ref={mount => {
+            this.mount = mount
+          }}
+        />
       </Fragment>
     )
   }
