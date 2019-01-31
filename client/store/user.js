@@ -6,6 +6,7 @@ import history from '../history'
  */
 const GET_USER = 'GET_USER'
 const REMOVE_USER = 'REMOVE_USER'
+//add remove user for logging out
 
 /**
  * INITIAL STATE
@@ -30,19 +31,40 @@ export const me = () => async dispatch => {
   }
 }
 
-export const auth = (username, email, password) => async dispatch => {
+//method
+export const authLogin = (email, password) => async dispatch => {
   let res
+  console.log('do we hit this?')
+
   try {
-    res = await axios.post('/api/auth/signup', {username, email, password})
+    res = await axios.post(`/auth/login`, {email, password})
   } catch (authError) {
     return dispatch(getUser({error: authError}))
   }
 
   try {
     dispatch(getUser(res.data))
-    history.push('/home')
-  } catch (dispatchOrHistoryErr) {
-    console.error(dispatchOrHistoryErr)
+    history.push('/')
+  } catch (loginError) {
+    console.error(loginError)
+  }
+}
+
+export const authSignup = (email, password, userName) => async dispatch => {
+  let res
+  console.log('do we hit this?')
+
+  try {
+    res = await axios.post(`/auth/signup`, {email, password, userName})
+  } catch (authError) {
+    return dispatch(getUser({error: authError}))
+  }
+
+  try {
+    dispatch(getUser(res.data))
+    history.push('/')
+  } catch (loginError) {
+    console.error(loginError)
   }
 }
 
