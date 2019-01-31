@@ -14,8 +14,13 @@ const white = new MeshPhongMaterial({
   shininess: 100
 })
 
-const black = new MeshPhongMaterial({
+export const black = new MeshPhongMaterial({
   color: 0x000000,
+  shininess: 100
+})
+
+export const copper = new MeshPhongMaterial({
+  color: 0xaa7755,
   shininess: 100
 })
 
@@ -40,6 +45,11 @@ export const cubeMaterial = new MeshPhongMaterial({
 export const socketMaterial = new MeshPhongMaterial({
   color: 0x4c4e5b,
   shininess: 10
+})
+
+export const buttonMaterial = new MeshPhongMaterial({
+  color: 0xccbbaa,
+  shininess: 100
 })
 
 /*******************
