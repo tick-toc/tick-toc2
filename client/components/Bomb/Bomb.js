@@ -1,5 +1,3 @@
-/* eslint-disable max-statements */
-/* eslint-disable react/no-unused-state */
 import React, {Component, Fragment} from 'react'
 import * as THREE from 'three'
 import '../../styles/Bomb.css'
@@ -119,14 +117,6 @@ class Bomb extends Component {
         gltf.scene.position.y = 1.7 //Position (y = up+, down-)
         gltf.scene.position.z = 0 //Position (z = front +, back-)
         gltf.scene.rotation.x = Math.PI / 2
-        let material = new THREE.MeshPhongMaterial({
-          color: 0xa9acb5,
-          shininess: 100
-        })
-        let material2 = new THREE.MeshPhongMaterial({
-          color: 0x222222,
-          shininess: 10
-        })
         box.traverse(o => {
           if (o.isMesh) {
             if (o.name === 'Cube001') {
@@ -336,8 +326,8 @@ class Bomb extends Component {
       renderer.shadowMap.enabled = true
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setSize(window.innerWidth, window.innerHeight)
-      window.addEventListener('resize', onWindowResize, false)
       THIS.mount.appendChild(renderer.domElement)
+      window.addEventListener('resize', onWindowResize, false)
 
       // Dragger
 
