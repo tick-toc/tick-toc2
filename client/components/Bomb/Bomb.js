@@ -132,7 +132,37 @@ class Bomb extends Component {
             } else o.material = SOW.defaultMaterial
           }
         })
-
+        let battery1
+        let batteryLoader = new GLTFLoader()
+        batteryLoader.load('models/batterry.glb', function(gltf) {
+          battery1 = gltf.scene
+          gltf.scene.scale.set(0.09, 0.11, 0.11)
+          gltf.scene.position.x = -0.3 //Position (x = right+ left-)
+          gltf.scene.position.y = -0.51 //Position (y = up+, down-)
+          gltf.scene.position.z = -0.91 //Position (z = front +, back-)
+          gltf.scene.rotation.y = -Math.PI / 2
+          gltf.scene.rotation.z = Math.PI / 2
+          battery1.traverse(o => {
+            if (o.isMesh) {
+              if (o.name === 'Dock') {
+                o.material = SOW.cubeMaterial
+              } else if (o.name === 'Battery') {
+                o.material = SOW.black
+              } else if (o.name === 'Battery002') {
+                o.material = SOW.copper
+              } else o.material = SOW.defaultMaterial
+            }
+          })
+          battery1.castShadow = true
+          battery1.receiveShadow = true
+          box.add(battery1)
+          let battery2 = battery1.clone()
+          box.add(battery2)
+          battery2.position.x = 1.3
+          battery2.position.y = -0.54
+          battery2.position.z = 0.91
+          battery2.rotation.x = Math.PI / 2
+        })
         box.castShadow = true
         box.receiveShadow = true
         THIS.setState({box})
