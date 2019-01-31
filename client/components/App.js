@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import Bomb from './Bomb/Bomb'
 import './../styles/App.css'
-import Login from './Login'
+// import Login from './Login'//<
+import {Login, Signup} from './auth-form'
 import Main from './Main'
 import NewGame from './NewGame'
 import {Switch, Route, withRouter} from 'react-router-dom'
@@ -22,6 +23,8 @@ class App extends Component {
           <Route exact path="/" component={Main} />
           {/* ^^ Will render main-menu or Login, if logged in or not */}
           <Route exact path="/new-game" component={NewGame} />
+          {/* <Route path="/login" component={Login} /> */}
+          <Route path="/signup" component={Signup} />
           {/* ^^^ Will render game menu / game options */}
           <Route exact path="/previous-games" component={Login} />
           {/* ^^^ Will render previous games */}
