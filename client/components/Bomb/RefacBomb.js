@@ -65,7 +65,7 @@ class RefacBomb extends Component {
 
     this.boxLoader = new GLTFLoader()
 
-    await this.boxLoader.load('models/box.glb', gltf => {
+    this.boxLoader.load('models/box.glb', gltf => {
       this.box = gltf.scene
       this.scene.add(this.box)
       this.box.scale.set(1, 1, 1)
@@ -86,7 +86,7 @@ class RefacBomb extends Component {
 
     this.clockLoader = new GLTFLoader()
 
-    await this.clockLoader.load('models/clock.glb', glft => {
+    this.clockLoader.load('models/clock.glb', glft => {
       this.clock = glft.scene
       this.box.add(this.clock)
       this.clock.scale.set(0.44, 0.44, 0.44)
@@ -135,7 +135,7 @@ class RefacBomb extends Component {
 
     this.module1Loader = new GLTFLoader()
 
-    await this.module1Loader.load('models/mo1.glb', gltf => {
+    this.module1Loader.load('models/mo1.glb', gltf => {
       this.module1 = gltf.scene
       this.box.add(this.module1)
       this.module1.scale.set(0.42, 0.42, 0.42)
@@ -181,13 +181,12 @@ class RefacBomb extends Component {
           if (o.name === 'Cube001') o.material = util.cubeMaterial
           else if (o.name === 'Socket') o.material = util.socketMaterial
           else if (o.name === 'LED') {
-            let LEDmo1 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
-            LEDmo1.name = 'LED'
-            this.module1.add(LEDmo1)
-            LEDmo1.position.copy(o.position)
-            LEDmo1.visible = false
-            o.material = util.LEDMaterial
-            o.visible = false
+            let glow = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+            glow.name = 'glow'
+            this.module1.add(glow)
+            glow.position.copy(o.position)
+            glow.visible = false
+            o.material = util.LEDMaterialOFF
           } else if (!o.name.includes('Wire')) o.material = util.defaultMaterial
         }
       })
@@ -197,48 +196,110 @@ class RefacBomb extends Component {
 
     this.module2Loader = new GLTFLoader()
 
-    await this.module2Loader.load('models/mo2.glb', glft => {
+    this.module2Loader.load('models/mo2.glb', glft => {
       this.module2 = glft.scene
       this.box.add(this.module2)
       this.module2.scale.set(0.42, 0.42, 0.42)
-      this.module2.position.x = 1.49 //Position (x = right+ left-)
+      this.module2.position.x = 1.45 //Position (x = right+ left-)
       this.module2.position.y = -0.31 //Position (y = up+, down-)
       this.module2.position.z = -0.47 //Position (z = front +, back-)
       this.module2.rotation.z = Math.PI / 2
       this.module2.rotation.y = -Math.PI / 2
 
+      let texture = new THREE.TextureLoader().load('/models/Button1.png')
+      texture.wrapS = THREE.RepeatWrapping
+      texture.repeat.x = -1
+
       this.module2.traverse(o => {
         if (o.isMesh) {
           if (o.name === 'Cube001') o.material = util.cubeMaterial
-          else if (o.name === 'Circle') o.material = util.buttonHold
-          else if (o.name === 'LED') {
-            let LEDmo2 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
-            LEDmo2.name = 'LED'
-            this.module2.add(LEDmo2)
-            LEDmo2.position.copy(o.position)
-            LEDmo2.visible = true
-            o.material = util.LEDMaterial
+          else if (o.name === 'Circle002' || o.name === 'Circle') {
+            o.material = new THREE.MeshPhongMaterial({map: texture})
+            o.rotation.x = -2.85
+            this.targetList.push(o)
+          } else if (o.name === 'LED') {
+            let LED = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+            LED.name = 'glow'
+            this.module2.add(LED)
+            LED.position.copy(o.position)
+            LED.visible = false
+            o.material = util.LEDMaterialOFF
           } else if (o.name === 'Cube002') {
-            // LED Stripe
             let em = new THREE.Color(0x000000)
-            let SEDmo2 = new THREE.PointLight(0x777700, 10, 0.8, 2)
-            SEDmo2.name = 'LEDstripe'
-            this.module2.add(SEDmo2)
-            SEDmo2.position.copy(o.position)
-            SEDmo2.visible = false
+            let SED1 = new THREE.PointLight(0x777700, 4, 13, 200)
+            SED1.name = 'LEDstripe1'
+            this.module2.add(SED1)
+            SED1.position.copy(o.position)
+            SED1.position.z -= 0.9
+            SED1.position.x -= 0.8
+            SED1.position.y += 0.1
+            let SED2 = SED1.clone()
+            SED2.name = 'LEDstripe2'
+            SED2.position.y -= 0.25
+            this.module2.add(SED2)
+            let SED3 = SED1.clone()
+            SED3.name = 'LEDstripe3'
+            SED3.position.y -= 0.5
+            this.module2.add(SED3)
+            let SED4 = SED1.clone()
+            SED4.name = 'LEDstripe4'
+            SED4.position.y -= 0.75
+            this.module2.add(SED4)
             o.material = new THREE.MeshPhongMaterial({
               transparent: true,
               opacity: 0.9,
               emissive: em,
-              color: SEDmo2.color,
-              shininess: 100
+              color: SED1.color,
+              shininess: 500
             })
           } else {
             o.material = util.defaultMaterial
           }
         }
+        this.module2.castShadow = true
+        this.module2.receiveShadow = true
       })
     })
+
+    // this.module3Loader = new GLTFLoader()
+
+    // await this.module3Loader.load('models/mo3.glb', (gltf) => {
+    //   this.module3 = gltf.scene
+    //   this.box.add(this.module3)
+    //   this.module3.scale.set(0.42, 0.42, 0.42)
+    //   this.module3.position.x = -0.49 //Position (x = right+ left-)
+    //   this.module3.position.y = -0.31 //Position (y = up+, down-)
+    //   this.module3.position.z = 0.47 //Position (z = front +, back-)
+    //   this.module3.rotation.z = Math.PI / 2
+    //   this.module3.rotation.y = -Math.PI / 2
+    //   this.module3.traverse(o => {
+    //     console.log(o)
+    //     if (o.isMesh) {
+    //       if (o.name === 'Cube000') o.material = util.cubeMaterial
+    //       else if (o.name === 'LED') {
+    //         let LEDmo3 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+    //         LEDmo3.name = 'LED'
+    //         this.module3.add(LEDmo3)
+    //         LEDmo3.position.copy(o.position)
+    //         LEDmo3.visible = false
+    //         o.material = util.LEDMaterial
+    //       } else if (o.name.includes('Bface')) {
+    //         // foreach over the four items setting texture to texture in texture array in symbols
+    //         this.targetList.push(o)
+    //       }
+    //        else if (o.name.includes('Button')) {
+    //         // o.material = new THREE.MeshPhongMaterial({ map: texture1 })
+    //         this.targetList.push(o)
+    //       } else if (o.name.includes('BG')) {
+    //         o.material = util.black
+    //       } else {
+    //         o.material = util.defaultMaterial
+    //       }
+    //     }
+    //   })
+    //   this.module3.castShadow = true
+    //   this.module3.receiveShadow = true
+    // })
 
     this.renderer = new THREE.WebGLRenderer({antialias: true})
     this.renderer.shadowMap.enabled = true
@@ -328,11 +389,11 @@ class RefacBomb extends Component {
       this.props.strikeCount === this.props.strikeTotal ||
       this.state.count === 0
     ) {
-      // dispatch action to end game & update game status to failed
+      // dispatch action to update game status to failed
     }
     // check if modulesPassed === moduleTotal
-    // stop clock & dispatch action to set count in store
-    // dispatch action to end game & update game status to diffused
+    // stop clock & dispatch action to store time in store
+    // dispatch action to update game status to diffused
     if (prevProps.strikeCount !== this.props.strikeCount) {
       const count = this.props.strikeCount
       const Strike = this.clock.children.find(
@@ -457,13 +518,25 @@ class RefacBomb extends Component {
   handleSOW = wire => {
     if (wire.userData.correct === true) {
       this.props.passModule('SubjectOfWires')
-      // turn LED on here
-    } else if (this.props.strikesAllowed) {
+      this.handlePass('module1')
+    } else {
       this.props.setStrike()
-      // create helper function for handling incorrect moves
     }
     this.module1.remove(wire)
     this.removeTarget(wire)
+  }
+
+  // handleFail = () => {
+  //   if (this.props.stikesAllowed) {
+  //     this.props.setStrike()
+  //   }
+  // }
+
+  handlePass = moduleName => {
+    const glow = this[moduleName].children.find(child => child.name === 'glow')
+    const LED = this[moduleName].children.find(child => child.name === 'LED')
+    glow.visible = true
+    LED.material = util.LEDMaterialON
   }
 
   removeTarget = target => {

@@ -36,6 +36,16 @@ export const yellow = new MeshPhongMaterial({
   shininess: 100
 })
 
+export const copper = new MeshPhongMaterial({
+  color: 0xaa7755,
+  shininess: 100
+})
+
+export const buttonMaterial = new MeshPhongMaterial({
+  color: 0xccbbaa,
+  shininess: 100
+})
+
 export const defaultMaterial = new MeshPhongMaterial({
   color: 0xaaaab4,
   shininess: 100
@@ -60,7 +70,15 @@ export const clockBackground = new MeshPhongMaterial({
 
 const LEDEmissive = new Color(0x000000)
 
-export const LEDMaterial = new MeshPhongMaterial({
+export const LEDMaterialOFF = new MeshPhongMaterial({
+  transparent: true,
+  opacity: 0.9,
+  emissive: LEDEmissive,
+  color: LEDEmissive,
+  shininess: 100
+})
+
+export const LEDMaterialON = new MeshPhongMaterial({
   transparent: true,
   opacity: 0.9,
   emissive: LEDEmissive,

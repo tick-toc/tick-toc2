@@ -6,6 +6,7 @@ import Login from './Login'
 import Main from './Main'
 import NewGame from './NewGame'
 import {Switch, Route, withRouter} from 'react-router-dom'
+import {connect} from 'react-redux'
 
 class App extends Component {
   componentDidMount() {
@@ -13,6 +14,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.props.user, '<<<USER?')
     return (
       <div className="App">
         {this.props.location.pathname !== '/diffusing' ||
@@ -38,10 +40,9 @@ class App extends Component {
     )
   }
 }
-{
-  /*
-  Conditional Checking if isLogged or not
-*/
-}
 
-export default withRouter(App)
+const mapState = ({user}) => ({
+  user
+})
+
+export default withRouter(connect(mapState, null)(App))

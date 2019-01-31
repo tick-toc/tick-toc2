@@ -28,12 +28,13 @@ const initialGame = {
 const START_GAME = 'START_GAME'
 const SET_STRIKE = 'SET_STRIKE'
 const PASS_MODULE = 'PASS_MODULE'
+const DIFFUSED = 'DIFFUSED'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
 export const setStrike = () => ({type: SET_STRIKE})
 export const passModule = moduleName => ({type: PASS_MODULE, moduleName})
-
+export const diffused = () => ({type: DIFFUSED})
 // THUNK CREATORS
 
 // here will go the saveGame thunk for storing it to the db
