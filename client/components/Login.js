@@ -1,18 +1,22 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {authSignup, authLogin} from '../store'
+import {Link} from 'react-router-dom'
 import '../styles/Login.css'
 
 class Login extends Component {
   state = {
-    login: true,
+    login: true, //login view
     email: '',
     username: '',
     password: ''
   }
 
   handleSubmit = event => {
+    const {email, username, password} = this.state
     event.preventDefault()
-    if (this.state.login) console.log('LOGGING IN ACTION')
-    else console.log('SIGNING UP ACTION')
+    if (this.state.login) this.props.authLogin(email, password)
+    else this.props.authSignup(email, password, username)
   }
 
   handleChange = event => {
@@ -56,7 +60,7 @@ class Login extends Component {
             {this.state.login ? 'Log in' : 'Sign up'}
           </button>
         </form>
-        <button onClick={this.handleClick}>
+        <button type="submit" onClick={this.handleClick}>
           {this.state.login
             ? "Don't have an account? Sign up"
             : 'Already have an account? Log in'}
@@ -66,6 +70,13 @@ class Login extends Component {
   }
 }
 
-// map state and props
+const mapProps = dispatch => {
+  return {
+    // state,
+    authLogin: (email, password) => dispatch(authLogin(email, password)),
+    authSignup: (email, password, userName) =>
+      dispatch(authSignup(email, password, userName))
+  }
+}
 
-export default Login // connect to store
+export default connect(null, mapProps)(Login)

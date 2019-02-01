@@ -357,7 +357,26 @@ class RefacBomb extends Component {
     })
 
     document.addEventListener('mouseup', () => {
+      const {minute, tenSecond, singleSecond} = this.state
       this.isDragging = false
+      if (
+        this.module2.children.filter(a => a.name.startsWith('Circle'))[0]
+          .position.x < 0.4
+      ) {
+        this.module2.children
+          .filter(a => a.name.startsWith('Circle'))
+          .map(b => {
+            b.position.x += 0.18
+          })
+      }
+      if (this.intersects[0].object.name.startsWith('Circle')) {
+        if (minute === 4 || tenSecond === 4 || singleSecond === 4) {
+          this.handlePass('module2')
+          console.log('HAAA')
+        } else {
+          console.log('NAHHHHH')
+        }
+      }
     })
 
     document.addEventListener(
@@ -412,8 +431,6 @@ class RefacBomb extends Component {
   }
 
   onDocumentMouseDown = e => {
-    const {minute, tenSecond, singleSecond} = this.state
-    const times = [minute, tenSecond, singleSecond]
     // the following line would stop any other event handler from firing
     // (such as the mouse's TrackballControls)
     // event.preventDefault();
@@ -432,16 +449,20 @@ class RefacBomb extends Component {
       vector.sub(this.camera.position).normalize()
     )
     // create an array containing all objects in the scene with which the ray intersects
-    let intersects = ray.intersectObjects(this.targetList)
+    this.intersects = ray.intersectObjects(this.targetList)
     // if there is one (or more) intersections
-    if (intersects.length > 0) {
-      let itemClicked = intersects[0].object
+    if (this.intersects.length > 0) {
+      let itemClicked = this.intersects[0].object
       if (this.targetList.includes(itemClicked)) {
         let {name} = itemClicked
         if (name.startsWith('Wire')) {
           this.handleSOW(itemClicked)
-        } else {
-          console.log(itemClicked)
+        } else if (name.startsWith('Circle')) {
+          this.module2.children
+            .filter(child => child.name.startsWith('Circle'))
+            .forEach(child => {
+              child.position.x -= 0.18
+            })
         }
       }
     }

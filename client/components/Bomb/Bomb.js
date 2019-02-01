@@ -702,7 +702,7 @@ class Bomb extends Component {
 
   render() {
     const {gameStatus} = this.props
-    if (!this.props.gameStarted) return <Redirect to="/new-game" />
+    // if (!this.props.gameStarted) return <Redirect to="/new-game" />
     return (
       <Fragment>
         {gameStatus !== 'pending' && (
