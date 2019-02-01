@@ -4,7 +4,7 @@ import {MeshPhongMaterial} from 'three'
 COLORS
 *******************/
 
-const red = new MeshPhongMaterial({
+export const red = new MeshPhongMaterial({
   color: 0xff0000,
   shininess: 100
 })
@@ -29,7 +29,7 @@ const blue = new MeshPhongMaterial({
   shininess: 100
 })
 
-const yellow = new MeshPhongMaterial({
+export const yellow = new MeshPhongMaterial({
   color: 0xffff00,
   shininess: 100
 })
