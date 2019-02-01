@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {authSignup, authLogin} from '../store'
-import {Link} from 'react-router-dom'
 import '../styles/Login.css'
 
 class Login extends Component {
@@ -70,7 +69,7 @@ class Login extends Component {
   }
 }
 
-const mapProps = dispatch => {
+const mapDispatch = dispatch => {
   return {
     authLogin: (email, password) => dispatch(authLogin(email, password)),
     authSignup: (email, password, userName) =>
@@ -78,4 +77,4 @@ const mapProps = dispatch => {
   }
 }
 
-export default connect(null, mapProps)(Login)
+export default connect(null, mapDispatch)(Login)

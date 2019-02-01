@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import Bomb from './Bomb/Bomb'
 import RefacBomb from './Bomb/RefacBomb'
 import './../styles/App.css'
@@ -24,7 +24,7 @@ class App extends Component {
           ))}
         <Switch>
           {isLoggedIn && (
-            <React.Fragment>
+            <Fragment>
               <Route exact path="/" component={Main} />
               <Route exact path="/new-game" component={NewGame} />
               {/* ^^^ Will render game menu / game options */}
@@ -32,11 +32,11 @@ class App extends Component {
               {/* ^^^ Will render previous games */}
               <Route exact path="/leaderboard" component={Login} />
               {/* ^^^ Will render leaderboard*/}
-              <Route exact path="/diffusing" component={R} />
+              <Route exact path="/diffusing" component={Bomb} />
               <Route exact path="/recap" component={RefacBomb} />
               <Route component={Main} />
               {/* ^^^ Will render post game results */}
-            </React.Fragment>
+            </Fragment>
           )}
         </Switch>
         <Switch>

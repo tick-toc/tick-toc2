@@ -3,8 +3,8 @@ import * as THREE from 'three'
 import '../../styles/Bomb.css'
 
 import GLTFLoader from 'three-gltf-loader'
-import * as SOW from './ModuleLogic/SubjectOfWires'
-import {clockCases} from './ModuleLogic/Clock'
+import * as SOW from './modules/wires'
+import {clockCases} from './modules/clock'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
@@ -12,7 +12,6 @@ import {Redirect} from 'react-router-dom'
 class Bomb extends Component {
   constructor(props) {
     super(props)
-    this.canvasRef = React.createRef()
     this.state = {
       SubjectOfWires: {
         inactive: true,
