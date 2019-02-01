@@ -9,7 +9,7 @@ export const red = new MeshPhongMaterial({
   shininess: 100
 })
 
-const white = new MeshPhongMaterial({
+export const white = new MeshPhongMaterial({
   color: 0xffffff,
   shininess: 100
 })
@@ -24,7 +24,7 @@ export const copper = new MeshPhongMaterial({
   shininess: 100
 })
 
-const blue = new MeshPhongMaterial({
+export const blue = new MeshPhongMaterial({
   color: 0x0000ff,
   shininess: 100
 })
