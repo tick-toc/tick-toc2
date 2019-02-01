@@ -64,7 +64,7 @@ class RefacBomb extends Component {
 
     this.boxLoader = new GLTFLoader()
 
-    await this.boxLoader.load('models/box.glb', box => {
+    this.boxLoader.load('models/box.glb', box => {
       this.box = box.scene
       this.scene.add(this.box)
       this.box.scale.set(1, 1, 1)
@@ -161,7 +161,7 @@ class RefacBomb extends Component {
 
     this.clockLoader = new GLTFLoader()
 
-    await this.clockLoader.load('models/clock.glb', glft => {
+    this.clockLoader.load('models/clock.glb', glft => {
       this.clock = glft.scene
       this.box.add(this.clock)
       this.clock.scale.set(0.44, 0.44, 0.44)
@@ -190,7 +190,7 @@ class RefacBomb extends Component {
 
     this.digitalLoader = new GLTFLoader()
 
-    await this.digitalLoader.load('models/digital.glb', glft => {
+    this.digitalLoader.load('models/digital.glb', glft => {
       this.digital = glft.scene
       this.clock.add(this.digital)
       this.digital.scale.set(0.9, 0.9, 0.9)
@@ -210,7 +210,7 @@ class RefacBomb extends Component {
 
     this.module1Loader = new GLTFLoader()
 
-    await this.module1Loader.load('models/mo1.glb', gltf => {
+    this.module1Loader.load('models/mo1.glb', gltf => {
       this.module1 = gltf.scene
       this.box.add(this.module1)
       this.module1.scale.set(0.42, 0.42, 0.42)
@@ -271,7 +271,7 @@ class RefacBomb extends Component {
 
     this.module2Loader = new GLTFLoader()
 
-    await this.module2Loader.load('models/mo2.glb', glft => {
+    this.module2Loader.load('models/mo2.glb', glft => {
       this.module2 = glft.scene
       this.box.add(this.module2)
       this.module2.scale.set(0.42, 0.42, 0.42)
@@ -288,7 +288,7 @@ class RefacBomb extends Component {
       this.module2.traverse(o => {
         if (o.isMesh) {
           if (o.name === 'Cube001') o.material = util.cubeMaterial
-          else if (o.name === 'Circle002' || o.name === 'Circle') {
+          else if (o.name === 'Button002' || o.name === 'Button') {
             o.material = new THREE.MeshPhongMaterial({map: texture})
             o.rotation.x = -2.85
             this.targetList.push(o)
@@ -338,7 +338,7 @@ class RefacBomb extends Component {
 
     // this.module3Loader = new GLTFLoader()
 
-    // await this.module3Loader.load('models/mo3.glb', (gltf) => {
+    // this.module3Loader.load('models/mo3.glb', (gltf) => {
     //   this.module3 = gltf.scene
     //   this.box.add(this.module3)
     //   this.module3.scale.set(0.42, 0.42, 0.42)
@@ -435,18 +435,18 @@ class RefacBomb extends Component {
       const {minute, tenSecond, singleSecond} = this.state
       this.isDragging = false
       if (
-        this.module2.children.filter(a => a.name.startsWith('Circle'))[0]
+        this.module2.children.filter(a => a.name.startsWith('Button'))[0]
           .position.x < 0.4
       ) {
         this.module2.children
-          .filter(a => a.name.startsWith('Circle'))
+          .filter(a => a.name.startsWith('Button'))
           .map(b => {
             b.position.x += 0.18
           })
       }
       if (
         this.intersects[0] &&
-        this.intersects[0].object.name.startsWith('Circle')
+        this.intersects[0].object.name.startsWith('Button')
       ) {
         if (minute === 7 || tenSecond === 7 || singleSecond === 7) {
           this.props.passModule('BigButton')
@@ -534,9 +534,9 @@ class RefacBomb extends Component {
         let {name} = itemClicked
         if (name.startsWith('Wire')) {
           this.handleWires(itemClicked)
-        } else if (name.startsWith('Circle')) {
+        } else if (name.startsWith('Button')) {
           this.module2.children
-            .filter(child => child.name.startsWith('Circle'))
+            .filter(child => child.name.startsWith('Button'))
             .forEach(child => {
               child.position.x -= 0.18
             })
