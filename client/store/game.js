@@ -16,12 +16,16 @@ const initialGame = {
   strikeCount: 0,
   modules: [
     {
-      name: 'SubjectOfWires',
+      name: 'Wires',
+      passed: false
+    },
+    {
+      name: 'BigButton',
       passed: false
     }
   ],
   gameStarted: false,
-  gameStatus: 'pending'
+  gameStatus: 'pending' // is this even needed?
 }
 
 //ACTION TYPES
@@ -29,15 +33,15 @@ const START_GAME = 'START_GAME'
 const SET_STRIKE = 'SET_STRIKE'
 const PASS_MODULE = 'PASS_MODULE'
 const DIFFUSED = 'DIFFUSED'
+const END_GAME = 'END_GAME'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
 export const setStrike = () => ({type: SET_STRIKE})
 export const passModule = moduleName => ({type: PASS_MODULE, moduleName})
 export const diffused = () => ({type: DIFFUSED})
+export const endGame = status => ({type: END_GAME, status})
 // THUNK CREATORS
-
-// here will go the saveGame thunk for storing it to the db
 
 export default function(state = initialGame, action) {
   switch (action.type) {
@@ -66,6 +70,8 @@ export default function(state = initialGame, action) {
         ...state,
         strikeCount: state.strikeCount + 1
       }
+    case END_GAME:
+      return {...state, gameStatus: action.status}
     default:
       return state
   }

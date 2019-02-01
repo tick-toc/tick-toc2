@@ -1,5 +1,5 @@
 /* eslint-disable max-statements */
-
+import '../../styles/Bomb.css'
 import React, {Component, Fragment} from 'react'
 import * as THREE from 'three'
 import GLTFLoader from 'three-gltf-loader'
@@ -9,7 +9,7 @@ import * as util from './modules/util'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
-import {setStrike, passModule} from '../../store/game'
+import {setStrike, passModule, endGame} from '../../store'
 
 class RefacBomb extends Component {
   state = {
@@ -370,11 +370,11 @@ class RefacBomb extends Component {
           })
       }
       if (this.intersects[0].object.name.startsWith('Circle')) {
-        if (minute === 4 || tenSecond === 4 || singleSecond === 4) {
+        if (minute === 7 || tenSecond === 7 || singleSecond === 7) {
+          this.props.passModule('BigButton')
           this.handlePass('module2')
-          console.log('HAAA')
         } else {
-          console.log('NAHHHHH')
+          this.props.setStrike()
         }
       }
     })
@@ -403,25 +403,24 @@ class RefacBomb extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // check game status;on success or failure, display banner & redirect w/ transition to recap
-    if (
+    if (this.props.moduleTotal === this.props.modulesPassed) {
+      this.handleDiffusal()
+    } else if (
       this.props.strikeCount === this.props.strikeTotal ||
       this.state.count === 0
     ) {
-      // dispatch action to update game status to failed
-    }
-    // check if modulesPassed === moduleTotal
-    // stop clock & dispatch action to store time in store
-    // dispatch action to update game status to diffused
-    if (prevProps.strikeCount !== this.props.strikeCount) {
-      const count = this.props.strikeCount
-      const Strike = this.clock.children.find(
-        child => child.name === `Strike${count}`
-      )
-      Strike.visible = true
-    }
-    if (prevState.count !== this.state.count) {
-      this.calcClock(prevState)
+      this.handleFailure()
+    } else {
+      if (prevProps.strikeCount !== this.props.strikeCount) {
+        const count = this.props.strikeCount
+        const Strike = this.clock.children.find(
+          child => child.name === `Strike${count}`
+        )
+        Strike.visible = true
+      }
+      if (prevState.count !== this.state.count) {
+        this.calcClock(prevState)
+      }
     }
   }
 
@@ -456,7 +455,7 @@ class RefacBomb extends Component {
       if (this.targetList.includes(itemClicked)) {
         let {name} = itemClicked
         if (name.startsWith('Wire')) {
-          this.handleSOW(itemClicked)
+          this.handleWires(itemClicked)
         } else if (name.startsWith('Circle')) {
           this.module2.children
             .filter(child => child.name.startsWith('Circle'))
@@ -466,6 +465,18 @@ class RefacBomb extends Component {
         }
       }
     }
+  }
+
+  handleDiffusal = () => {
+    clearTimeout(this.timer)
+    this.targetList = []
+    this.props.endGame('diffused')
+  }
+
+  handleFailure = () => {
+    if (this.state.count) clearTimeout(this.timer)
+    this.targetList = []
+    this.props.endGame('failed')
   }
 
   handleCountStart = () => {
@@ -536,9 +547,9 @@ class RefacBomb extends Component {
       })
   }
 
-  handleSOW = wire => {
+  handleWires = wire => {
     if (wire.userData.correct === true) {
-      this.props.passModule('SubjectOfWires')
+      this.props.passModule('Wires')
       this.handlePass('module1')
     } else {
       this.props.setStrike()
@@ -560,13 +571,19 @@ class RefacBomb extends Component {
 
   render() {
     // if (!this.props.gameStarted) return <Redirect to="/new-game" />
+    const {gameStatus} = this.props
     return (
-      <div
-        className="refac-bomb"
-        ref={mount => {
-          this.mount = mount
-        }}
-      />
+      <Fragment>
+        {gameStatus !== 'pending' && (
+          <div className={`banner ${gameStatus}--banner`}>{gameStatus}</div>
+        )}
+        <div
+          id="bomb-box"
+          ref={mount => {
+            this.mount = mount
+          }}
+        />
+      </Fragment>
     )
   }
 }
@@ -575,7 +592,8 @@ const mapState = ({game}) => ({...game})
 
 const mapProps = dispatch => ({
   setStrike: () => dispatch(setStrike()),
-  passModule: moduleName => dispatch(passModule(moduleName))
+  passModule: moduleName => dispatch(passModule(moduleName)),
+  endGame: status => dispatch(endGame(status))
 })
 
 export default connect(mapState, mapProps)(RefacBomb)

@@ -16,7 +16,6 @@ class App extends Component {
 
   render() {
     const {isLoggedIn} = this.props
-    console.log(isLoggedIn, '<<<?')
     return (
       <div className="App">
         {this.props.location.pathname !== '/diffusing' ||
