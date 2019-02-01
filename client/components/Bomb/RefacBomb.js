@@ -64,8 +64,8 @@ class RefacBomb extends Component {
 
     this.boxLoader = new GLTFLoader()
 
-    await this.boxLoader.load('models/box.glb', gltf => {
-      this.box = gltf.scene
+    await this.boxLoader.load('models/box.glb', box => {
+      this.box = box.scene
       this.scene.add(this.box)
       this.box.scale.set(1, 1, 1)
       this.box.position.x = -0.5 //Position (x = right+ left-)
@@ -81,6 +81,82 @@ class RefacBomb extends Component {
       })
       this.box.castShadow = true
       this.box.receiveShadow = true
+
+      this.batteryLoader = new GLTFLoader()
+      this.batteryLoader.load('models/batterry.glb', battery => {
+        this.battery1 = battery.scene
+        this.box.add(this.battery1)
+        this.battery1.scale.set(0.09, 0.11, 0.11)
+        this.battery1.position.x = -0.3 //Position (x = right+ left-)
+        this.battery1.position.y = -0.51 //Position (y = up+, down-)
+        this.battery1.position.z = -0.91 //Position (z = front +, back-)
+        this.battery1.rotation.y = -Math.PI / 2
+        this.battery1.rotation.z = Math.PI / 2
+        this.battery1.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Dock') {
+              o.material = util.cubeMaterial
+            } else if (o.name === 'Battery') {
+              o.material = util.black
+            } else if (o.name === 'Battery002') {
+              o.material = util.copper
+            } else o.material = util.defaultMaterial
+          }
+        })
+        this.battery1.castShadow = true
+        this.battery1.receiveShadow = true
+        this.battery2 = this.battery1.clone()
+        this.box.add(this.battery2)
+        this.battery2.position.x = 1.3
+        this.battery2.position.y = -0.54
+        this.battery2.position.z = 0.91
+        this.battery2.rotation.x = Math.PI / 2
+      })
+      this.serialText = new THREE.TextureLoader().load(`/models/serial.png`)
+      this.serialText.wrapT = THREE.RepeatWrapping
+      this.serialText.repeat.y = -2
+
+      this.serialLoader = new GLTFLoader()
+      this.serialLoader.load('models/serial.glb', serial => {
+        this.serial = serial.scene
+        this.box.add(this.serial)
+        this.serial.scale.set(0.2, 0.2, 0.2)
+        this.serial.position.x = 1.3 //Position (x = right+ left-)
+        this.serial.position.y = -0.55 //Position (y = up+, down-)
+        this.serial.position.z = -1.013 //Position (z = front +, back-)
+        this.serial.rotation.y = -Math.PI / 2
+        this.serial.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Serial') {
+              o.material = new THREE.MeshPhongMaterial({map: this.serialText})
+            } else o.material = util.cubeMaterial
+          }
+        })
+        this.serial.castShadow = true
+        this.serial.receiveShadow = true
+      })
+      this.parallelLoader = new GLTFLoader()
+      this.parallelLoader.load('models/parallel.glb', parallel => {
+        this.parallel = parallel.scene
+        this.box.add(this.parallel)
+        this.parallel.scale.set(0.3, 0.3, 0.3)
+        this.parallel.position.x = 0.49 //Position (x = right+ left-)
+        this.parallel.position.y = -0.51 //Position (y = up+, down-)
+        this.parallel.position.z = 1 //Position (z = front +, back-)
+        this.parallel.rotation.y = -Math.PI / 2
+        this.parallel.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Cube' || o.name === 'Cube002') {
+              o.material = util.cubeMaterial
+            } else o.material = util.defaultMaterial
+          }
+        })
+        this.parallel.castShadow = true
+        this.parallel.receiveShadow = true
+      })
+      this.box.castShadow = true
+      this.box.receiveShadow = true
+      this.scene.add(this.box)
     })
 
     this.clockLoader = new GLTFLoader()
