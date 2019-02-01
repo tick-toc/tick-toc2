@@ -160,6 +160,50 @@ class Bomb extends Component {
           battery2.position.z = 0.91
           battery2.rotation.x = Math.PI / 2
         })
+        var serialText = new THREE.TextureLoader().load(`/models/serial.png`)
+        serialText.wrapT = THREE.RepeatWrapping
+        serialText.repeat.y = -2
+        let serial
+        let serialLoader = new GLTFLoader()
+        serialLoader.load('models/serial.glb', function(gltf) {
+          serial = gltf.scene
+          gltf.scene.scale.set(0.2, 0.2, 0.2)
+          gltf.scene.position.x = 1.3 //Position (x = right+ left-)
+          gltf.scene.position.y = -0.55 //Position (y = up+, down-)
+          gltf.scene.position.z = -1.013 //Position (z = front +, back-)
+          gltf.scene.rotation.y = -Math.PI / 2
+          // gltf.scene.rotation.z = Math.PI / 2
+          serial.traverse(o => {
+            if (o.isMesh) {
+              if (o.name === 'Serial') {
+                o.material = new THREE.MeshPhongMaterial({map: serialText})
+              } else o.material = SOW.cubeMaterial
+            }
+          })
+          serial.castShadow = true
+          serial.receiveShadow = true
+          box.add(serial)
+        })
+        let parallel
+        let parallelLoader = new GLTFLoader()
+        parallelLoader.load('models/parallel.glb', function(gltf) {
+          parallel = gltf.scene
+          gltf.scene.scale.set(0.3, 0.3, 0.3)
+          gltf.scene.position.x = 0.49 //Position (x = right+ left-)
+          gltf.scene.position.y = -0.51 //Position (y = up+, down-)
+          gltf.scene.position.z = 1 //Position (z = front +, back-)
+          gltf.scene.rotation.y = -Math.PI / 2
+          parallel.traverse(o => {
+            if (o.isMesh) {
+              if (o.name === 'Cube' || o.name === 'Cube002') {
+                o.material = SOW.cubeMaterial
+              } else o.material = SOW.defaultMaterial
+            }
+          })
+          parallel.castShadow = true
+          parallel.receiveShadow = true
+          box.add(parallel)
+        })
         box.castShadow = true
         box.receiveShadow = true
         THIS.setState({box})

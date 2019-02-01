@@ -46,11 +46,10 @@ export const endGame = status => ({type: END_GAME, status})
 export default function(state = initialGame, action) {
   switch (action.type) {
     case START_GAME:
-      const {moduleTotal, startTime, strikesAllowed} = action.settings
-      const strikeTotal = strikesAllowed ? 3 : 0
+      const {startTime, strikesAllowed} = action.settings
+      const strikeTotal = strikesAllowed ? 3 : 1
       return {
         ...state,
-        moduleTotal,
         startTime,
         strikeTotal,
         strikesAllowed,

@@ -6,26 +6,33 @@ import history from '../history'
  */
 const GET_USER = 'GET_USER'
 const REMOVE_USER = 'REMOVE_USER'
+const IS_FETCHING = 'IS_FETCHING'
 //add remove user for logging out
 
 /**
  * INITIAL STATE
  */
-const defaultUser = {}
+const defaultUser = {
+  user: {},
+  isFetching: false
+}
 
 /**
  * ACTION CREATORS
  */
 const getUser = user => ({type: GET_USER, user})
 const removeUser = () => ({type: REMOVE_USER})
+const isFetching = () => ({type: IS_FETCHING})
 
 /**
  * THUNK CREATORS
  */
 export const me = () => async dispatch => {
   try {
+    dispatch(isFetching())
     const res = await axios.get('/auth/me')
     dispatch(getUser(res.data || defaultUser))
+    dispatch(isFetching())
   } catch (err) {
     console.error(err)
   }
@@ -84,9 +91,11 @@ export const logout = () => async dispatch => {
 export default function(state = defaultUser, action) {
   switch (action.type) {
     case GET_USER:
-      return action.user
+      return {...state, user: action.user}
     case REMOVE_USER:
       return defaultUser
+    case IS_FETCHING:
+      return {...state, isFetching: !state.isFetching}
     default:
       return state
   }

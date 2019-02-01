@@ -8,7 +8,6 @@ import {clockCases} from './modules/clock'
 import * as util from './modules/util'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
-import {Redirect} from 'react-router-dom'
 import {setStrike, passModule, endGame} from '../../store'
 
 class RefacBomb extends Component {
@@ -65,7 +64,7 @@ class RefacBomb extends Component {
 
     this.boxLoader = new GLTFLoader()
 
-    this.boxLoader.load('models/box.glb', gltf => {
+    await this.boxLoader.load('models/box.glb', gltf => {
       this.box = gltf.scene
       this.scene.add(this.box)
       this.box.scale.set(1, 1, 1)
@@ -86,7 +85,7 @@ class RefacBomb extends Component {
 
     this.clockLoader = new GLTFLoader()
 
-    this.clockLoader.load('models/clock.glb', glft => {
+    await this.clockLoader.load('models/clock.glb', glft => {
       this.clock = glft.scene
       this.box.add(this.clock)
       this.clock.scale.set(0.44, 0.44, 0.44)
@@ -135,7 +134,7 @@ class RefacBomb extends Component {
 
     this.module1Loader = new GLTFLoader()
 
-    this.module1Loader.load('models/mo1.glb', gltf => {
+    await this.module1Loader.load('models/mo1.glb', gltf => {
       this.module1 = gltf.scene
       this.box.add(this.module1)
       this.module1.scale.set(0.42, 0.42, 0.42)
@@ -196,7 +195,7 @@ class RefacBomb extends Component {
 
     this.module2Loader = new GLTFLoader()
 
-    this.module2Loader.load('models/mo2.glb', glft => {
+    await this.module2Loader.load('models/mo2.glb', glft => {
       this.module2 = glft.scene
       this.box.add(this.module2)
       this.module2.scale.set(0.42, 0.42, 0.42)
@@ -369,7 +368,10 @@ class RefacBomb extends Component {
             b.position.x += 0.18
           })
       }
-      if (this.intersects[0].object.name.startsWith('Circle')) {
+      if (
+        this.intersects[0] &&
+        this.intersects[0].object.name.startsWith('Circle')
+      ) {
         if (minute === 7 || tenSecond === 7 || singleSecond === 7) {
           this.props.passModule('BigButton')
           this.handlePass('module2')
@@ -407,7 +409,7 @@ class RefacBomb extends Component {
       this.handleDiffusal()
     } else if (
       this.props.strikeCount === this.props.strikeTotal ||
-      this.state.count === 0
+      (this.state.count === 0 && this.state.singleSecond === 0)
     ) {
       this.handleFailure()
     } else {
@@ -570,7 +572,6 @@ class RefacBomb extends Component {
   }
 
   render() {
-    // if (!this.props.gameStarted) return <Redirect to="/new-game" />
     const {gameStatus} = this.props
     return (
       <Fragment>
