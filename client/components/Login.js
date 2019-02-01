@@ -7,8 +7,6 @@ import '../styles/Login.css'
 class LoginForm extends Component {
   constructor(props) {
     super(props)
-    console.log('this.props', this.props)
-
     this.state = {
       login: true, //login view
       email: '',
@@ -84,7 +82,7 @@ class LoginForm extends Component {
  */
 // map state and props
 
-const mapProps = dispatch => {
+const mapDispatch = dispatch => {
   return {
     // state,
     authLogin: (email, password) => dispatch(authLogin(email, password)),
@@ -93,16 +91,4 @@ const mapProps = dispatch => {
   }
 }
 
-// const mapSignup = state => {
-//   return {
-//     name: 'signup',
-//     displayName: 'Sign Up',
-//     error: state.user.error,
-//     state,
-//     userId: state.user.id
-//   }
-// }
-
-export const Login = connect(null, mapProps)(LoginForm)
-
-// export const LoginForm = connect(mapLogin, mapDispatch)(Login) // connect to store
+export const Login = connect(null, mapDispatch)(LoginForm)
