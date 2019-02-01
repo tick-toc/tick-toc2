@@ -12,7 +12,7 @@ import {me} from '../store'
 class App extends Component {
   componentDidMount() {
     // Check if user is logged in
-    console.log(this.props, '<<PROPS')
+    this.props.loadInitialData()
   }
 
   render() {
