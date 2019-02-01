@@ -85,7 +85,3 @@ export const LEDMaterialON = new MeshPhongMaterial({
   color: 0x00ff00,
   shininess: 100
 })
-
-export const buttonHold = new MeshBasicMaterial({
-  map: ImageUtils.loadTexture('/models/Button1.png')
-})

@@ -3,9 +3,9 @@
 import React, {Component, Fragment} from 'react'
 import * as THREE from 'three'
 import GLTFLoader from 'three-gltf-loader'
-import {wireCount, wireCountCases} from './ModuleLogic/SubjectOfWires'
-import {clockCases} from './ModuleLogic/Clock'
-import * as util from './ModuleLogic/util'
+import {wireCount, wireCountCases} from './modules/wires'
+import {clockCases} from './modules/clock'
+import * as util from './modules/util'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
@@ -546,12 +546,6 @@ class RefacBomb extends Component {
     this.module1.remove(wire)
     this.removeTarget(wire)
   }
-
-  // handleFail = () => {
-  //   if (this.props.stikesAllowed) {
-  //     this.props.setStrike()
-  //   }
-  // }
 
   handlePass = moduleName => {
     const glow = this[moduleName].children.find(child => child.name === 'glow')

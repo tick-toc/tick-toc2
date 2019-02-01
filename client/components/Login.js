@@ -6,7 +6,7 @@ import '../styles/Login.css'
 
 class Login extends Component {
   state = {
-    login: true, //login view
+    login: true,
     email: '',
     username: '',
     password: ''
@@ -72,7 +72,6 @@ class Login extends Component {
 
 const mapProps = dispatch => {
   return {
-    // state,
     authLogin: (email, password) => dispatch(authLogin(email, password)),
     authSignup: (email, password, userName) =>
       dispatch(authSignup(email, password, userName))

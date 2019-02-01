@@ -3,7 +3,7 @@ import Bomb from './Bomb/Bomb'
 import RefacBomb from './Bomb/RefacBomb'
 import './../styles/App.css'
 import {connect} from 'react-redux'
-import {Login} from './Login'
+import Login from './Login'
 import Main from './Main'
 import NewGame from './NewGame'
 import {Switch, Route, withRouter} from 'react-router-dom'
@@ -11,7 +11,7 @@ import {me} from '../store'
 
 class App extends Component {
   componentDidMount() {
-    // Check if user is logged in
+    this.props.loadInitialData()
   }
 
   render() {
@@ -44,7 +44,6 @@ class App extends Component {
           {/* ^^ Will render main-menu or Login, if logged in or not */}
           <Route exact path="/" component={Login} />
           <Route exact path="/recap" component={RefacBomb} />
-          <Route exact path="/diffusing" component={Bomb} />
           <Route component={Login} />
         </Switch>
       </div>
@@ -62,9 +61,7 @@ const mapState = state => {
 
 const mapDispatch = dispatch => {
   return {
-    loadInitialData() {
-      dispatch(me())
-    }
+    loadInitialData: () => dispatch(me())
   }
 }
 
