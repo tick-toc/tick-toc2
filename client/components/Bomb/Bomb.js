@@ -67,7 +67,17 @@ class Bomb extends Component {
   }
 
   componentDidMount() {
-    var camera, scene, renderer, box, clock, digital, module1, module2, module3
+    var camera,
+      scene,
+      renderer,
+      box,
+      clock,
+      digital,
+      module1,
+      module2,
+      module3,
+      module4,
+      module5
     var projector,
       mouse = {x: 0, y: 0}
 
@@ -368,7 +378,7 @@ class Bomb extends Component {
             )
               o.material = SOW.defaultMaterial
             else if (o.name === 'Cube001') o.material = SOW.cubeMaterial
-            else if (o.name === 'Circle002' || o.name === 'Circle') {
+            else if (o.name === 'Button002' || o.name === 'Button') {
               o.material = new THREE.MeshPhongMaterial({map: texture})
               o.rotation.x = -2.85
               THIS.setState(prevState => ({
@@ -472,32 +482,32 @@ class Bomb extends Component {
                 color: em,
                 shininess: 100
               })
-            } else if (o.name.includes('Bface1')) {
+            } else if (o.name.includes('Lface1')) {
               o.material = new THREE.MeshPhongMaterial({map: texture1})
               THIS.setState(prevState => ({
                 targetList: [...prevState.targetList, o]
               }))
-            } else if (o.name.includes('Bface2')) {
+            } else if (o.name.includes('Lface2')) {
               o.material = new THREE.MeshPhongMaterial({map: texture2})
               THIS.setState(prevState => ({
                 targetList: [...prevState.targetList, o]
               }))
-            } else if (o.name.includes('Bface3')) {
+            } else if (o.name.includes('Lface3')) {
               o.material = new THREE.MeshPhongMaterial({map: texture3})
               THIS.setState(prevState => ({
                 targetList: [...prevState.targetList, o]
               }))
-            } else if (o.name.includes('Bface4')) {
+            } else if (o.name.includes('Lface4')) {
               o.material = new THREE.MeshPhongMaterial({map: texture4})
               THIS.setState(prevState => ({
                 targetList: [...prevState.targetList, o]
               }))
-            } else if (o.name.includes('Button')) {
+            } else if (o.name.includes('Letter')) {
               o.material = new THREE.MeshPhongMaterial({map: texture1})
               THIS.setState(prevState => ({
                 targetList: [...prevState.targetList, o]
               }))
-            } else if (o.name.includes('BG')) {
+            } else if (o.name.includes('LG')) {
               o.material = new THREE.MeshPhongMaterial({
                 color: new THREE.Color(0x000000),
                 shininess: 100
@@ -512,6 +522,52 @@ class Bomb extends Component {
         module3.receiveShadow = true
         THIS.setState({module3})
         box.add(module3)
+      })
+
+      let module4Loader = new GLTFLoader()
+      module4Loader.load('models/mo4.glb', function(gltf) {
+        module4 = gltf.scene
+        gltf.scene.scale.set(0.42, 0.42, 0.42)
+        gltf.scene.position.x = 1.45 //Position (x = right+ left-)
+        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
+        gltf.scene.position.z = 0.47 //Position (z = front +, back-)
+        gltf.scene.rotation.z = Math.PI / 2
+        gltf.scene.rotation.y = -Math.PI / 2
+
+        module4.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Cube000') o.material = SOW.cubeMaterial
+            else if (
+              o.name === 'LEDbase' ||
+              o.name === 'Cylinder' ||
+              o.name === 'Cube'
+            )
+              o.material = SOW.defaultMaterial
+            else if (o.name === 'LED') {
+              let em = new THREE.Color(0x000000)
+              let LEDmo4 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+              LEDmo4.name = 'LED1'
+              module4.add(LEDmo4)
+              LEDmo4.position.copy(o.position)
+              LEDmo4.visible = false
+              o.material = new THREE.MeshPhongMaterial({
+                transparent: true,
+                opacity: 0.9,
+                emissive: em,
+                color: em,
+                shininess: 100
+              })
+            } else if (o.name === 'Board') {
+              o.material = SOW.cubeMaterial
+            } else {
+              o.material = SOW.black
+            }
+          }
+        })
+        module4.castShadow = true
+        module4.receiveShadow = true
+        THIS.setState({module4})
+        box.add(module4)
       })
 
       // Renderer
@@ -570,11 +626,11 @@ class Bomb extends Component {
       document.addEventListener('mouseup', e => {
         isDragging = false
         if (
-          module2.children.filter(a => a.name.startsWith('Circle'))[0].position
+          module2.children.filter(a => a.name.startsWith('Button'))[0].position
             .x < 0.4
         )
           module2.children
-            .filter(a => a.name.startsWith('Circle'))
+            .filter(a => a.name.startsWith('Button'))
             .map(b => (b.position.x += 0.18))
       })
 
@@ -615,16 +671,16 @@ class Bomb extends Component {
         THIS.handleSOW(intersects[0].object.userData)
         module1.remove(intersects[0].object)
         if (
-          intersects[0].object.name === 'Circle' ||
-          intersects[0].object.name === 'Circle002'
+          intersects[0].object.name === 'Button' ||
+          intersects[0].object.name === 'Button002'
         ) {
           module2.children
-            .filter(a => a.name.startsWith('Circle'))
+            .filter(a => a.name.startsWith('Button'))
             .map(b => (b.position.x -= 0.18))
         }
         if (
-          intersects[0].object.name.includes('Button') ||
-          intersects[0].object.name.includes('Bface')
+          intersects[0].object.name.includes('Letter') ||
+          intersects[0].object.name.includes('Lface')
         ) {
           module3.children
             .filter(a =>
