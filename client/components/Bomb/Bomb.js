@@ -1,5 +1,6 @@
 /* eslint-disable max-statements */
 /* eslint-disable react/no-unused-state */
+/* eslint-disable complexity */
 import React, {Component, Fragment} from 'react'
 import * as THREE from 'three'
 import '../../styles/Bomb.css'
@@ -117,7 +118,18 @@ class Bomb extends Component {
       dirLight.shadow.mapSize.height = 1024
       scene.add(dirLight)
 
-      let boxLoader = new GLTFLoader()
+      //first we need our box to be finished
+      const boxLoader = new GLTFLoader()
+      //then the clock - so we will put the clockLoaderInit **inside** the boxLoader
+      const clockLoader = new GLTFLoader()
+      //then the digital - so we will put the digitalLoaderInit **inside** the clockLoader
+      //and we will not explicitly call the digitalLoaderInit outside the clockLoader
+      const digitalLoader = new GLTFLoader()
+      //afterward we load modules! I've got one init function that wraps all three loaders
+      const module1Loader = new GLTFLoader()
+      const module2Loader = new GLTFLoader()
+      const module3Loader = new GLTFLoader()
+
       boxLoader.load('models/box.glb', function(gltf) {
         box = gltf.scene
         gltf.scene.scale.set(1, 1, 1)
@@ -167,308 +179,312 @@ class Bomb extends Component {
         box.receiveShadow = true
         THIS.setState({box})
         scene.add(box)
+        clockLoaderInit()
       })
 
-      var clockLoader = new GLTFLoader()
-      clockLoader.load('models/clock.glb', function(glft) {
-        clock = glft.scene
-        glft.scene.scale.set(0.44, 0.44, 0.44)
-        glft.scene.position.x = 0.488 //Position (x = right+ left-)
-        glft.scene.position.y = -0.31 //Position (y = up+, down-)
-        glft.scene.position.z = -0.47 //Position (z = front +, back-)
-        glft.scene.rotation.z = Math.PI / 2
-        glft.scene.rotation.y = -Math.PI / 2
-        var material2 = new THREE.MeshPhongMaterial({
-          color: 0x222222,
-          shininess: 10
-        })
-        clock.traverse(o => {
-          if (o.isMesh) {
-            if (o.name === 'Cube001') o.material = material2
-            else if (o.name === 'Cube002') {
-              o.material = SOW.cubeMaterial
-            } else if (o.name === 'Strike1' || o.name === 'Strike2') {
-              o.material = new THREE.MeshPhongMaterial({
-                color: 0xff0000,
-                shininess: 10
-              })
-              o.visible = false
-            } else o.material = SOW.defaultMaterial
-          }
-        })
-        clock.castShadow = true
-        clock.receiveShadow = true
-        THIS.setState({clock})
-        box.add(clock)
-      })
-
-      var digitalLoader = new GLTFLoader()
-      digitalLoader.load('models/digital.glb', function(glft) {
-        digital = glft.scene
-        glft.scene.scale.set(0.9, 0.9, 0.9)
-        glft.scene.position.x = 0 //Position (x = right+ left-)
-        glft.scene.position.y = -0.03 //Position (y = up+, down-)
-        glft.scene.position.z = 0 //Position (z = front +, back-)
-        var material = new THREE.MeshPhongMaterial({
-          color: 0xee0000,
-          shininess: 100
-        })
-        digital.traverse(o => {
-          if (o.isMesh) {
-            o.material = material //this is where we paint the clock
-            if (o.name === 'D1-2') o.visible = false
-            if (o.name === 'D1-5') o.visible = false
-            if (o.name === 'D2-7') o.visible = false
-            if (o.name === 'D3-7') o.visible = false
-          }
-        })
-        clock.castShadow = true
-        clock.receiveShadow = true
-        // THIS.setState({ clock })
-        clock.add(digital)
-      })
-
-      let module1Loader = new GLTFLoader()
-      module1Loader.load('models/mo1.glb', function(gltf) {
-        module1 = gltf.scene
-        gltf.scene.scale.set(0.42, 0.42, 0.42)
-        gltf.scene.position.x = -0.49 //Position (x = right+ left-)
-        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
-        gltf.scene.position.z = -0.47 //Position (z = front +, back-)
-        gltf.scene.rotation.z = Math.PI / 2
-        gltf.scene.rotation.y = -Math.PI / 2
-
-        let count = 3 // parseInt(SOW.wireCount[Math.floor(Math.random() * wireCount.length)])
-        let wireCases = SOW.wireCountCases[count]
-        let wireCase = wireCases[generateRandomIndex(wireCases.length)]
-        let wires = module1.children.filter(element =>
-          element.name.startsWith('Wire')
-        )
-        let uncutWires = wires
-          .filter(wire => !wire.name.endsWith('Cut'))
-          .sort((a, b) => sortByKey(a, b, 'name'))
-        let cutWires = wires
-          .filter(wire => wire.name.endsWith('Cut'))
-          .sort((a, b) => sortByKey(a, b, 'name'))
-        while (cutWires.length > count) {
-          let wireIndex = generateRandomIndex(cutWires.length)
-          module1.remove(cutWires[wireIndex])
-          module1.remove(uncutWires[wireIndex])
-          cutWires = cutWires.filter((wire, index) => index !== wireIndex)
-          uncutWires = uncutWires.filter((wire, index) => index !== wireIndex)
-        }
-
-        uncutWires.forEach((wire, index) => {
-          wire.material = wireCase.colors[index]
-          cutWires[index].material = wireCase.colors[index]
-          if (wireCase.correct === index) {
-            wire.userData = {correct: true}
-          } else {
-            wire.userData = {correct: false}
-          }
-          THIS.setState(prevState => ({
-            targetList: [...prevState.targetList, wire]
-          }))
-        })
-
-        module1.traverse(o => {
-          if (o.isMesh) {
-            if (o.name === 'Cube001') o.material = SOW.cubeMaterial
-            else if (o.name === 'Socket') o.material = SOW.socketMaterial
-            else if (o.name === 'LED') {
-              let em = new THREE.Color(0x000000)
-              let LEDmo1 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
-              LEDmo1.name = 'LED1'
-              module1.add(LEDmo1)
-              LEDmo1.position.copy(o.position)
-              LEDmo1.visible = false
-              o.material = new THREE.MeshPhongMaterial({
-                transparent: true,
-                opacity: 0.9,
-                emissive: em,
-                color: em,
-                shininess: 100
-              })
-            } else if (!o.name.includes('Wire'))
-              o.material = SOW.defaultMaterial
-          }
-        })
-
-        module1.castShadow = true
-        module1.receiveShadow = true
-        THIS.setState({module1})
-        box.add(module1)
-      })
-
-      var module2Loader = new GLTFLoader()
-      module2Loader.load('models/mo2.glb', function(glft) {
-        module2 = glft.scene
-        glft.scene.scale.set(0.42, 0.42, 0.42)
-        glft.scene.position.x = 1.45 //Position (x = right+ left-)
-        glft.scene.position.y = -0.31 //Position (y = up+, down-)
-        glft.scene.position.z = -0.47 //Position (z = front +, back-)
-        glft.scene.rotation.z = Math.PI / 2
-        glft.scene.rotation.y = -Math.PI / 2
-
-        var texture = new THREE.TextureLoader().load('/models/Button1.png')
-        texture.wrapS = THREE.RepeatWrapping
-        texture.repeat.x = -1
-
-        module2.traverse(o => {
-          if (o.isMesh) {
-            if (
-              o.name === 'Cube' ||
-              o.name === 'Cylinder' ||
-              o.name === 'LEDbase' ||
-              o.name === 'Circle001'
-            )
-              o.material = SOW.defaultMaterial
-            else if (o.name === 'Cube001') o.material = SOW.cubeMaterial
-            else if (o.name === 'Circle002' || o.name === 'Circle') {
-              o.material = new THREE.MeshPhongMaterial({map: texture})
-              o.rotation.x = -2.85
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name === 'LED') {
-              let em = new THREE.Color(0x000000)
-              let LEDmo2 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
-              LEDmo2.name = 'LEDlight'
-              module2.add(LEDmo2)
-              LEDmo2.position.copy(o.position)
-              LEDmo2.visible = false
-              o.material = new THREE.MeshPhongMaterial({
-                transparent: true,
-                opacity: 0.9,
-                emissive: em,
-                color: em,
-                shininess: 100
-              })
-            } else if (o.name === 'Cube002') {
-              let em = new THREE.Color(0x000000)
-              let SED1 = new THREE.PointLight(0x777700, 4, 13, 200)
-              SED1.name = 'LEDstripe1'
-              module2.add(SED1)
-              SED1.position.copy(o.position)
-              SED1.position.z -= 0.9
-              SED1.position.x -= 0.8
-              SED1.position.y += 0.1
-              let SED2 = SED1.clone()
-              SED2.name = 'LEDstripe2'
-              SED2.position.y -= 0.25
-              module2.add(SED2)
-              let SED3 = SED1.clone()
-              SED3.name = 'LEDstripe3'
-              SED3.position.y -= 0.5
-              module2.add(SED3)
-              let SED4 = SED1.clone()
-              SED4.name = 'LEDstripe4'
-              SED4.position.y -= 0.75
-              module2.add(SED4)
-              o.material = new THREE.MeshPhongMaterial({
-                transparent: true,
-                opacity: 0.9,
-                emissive: em,
-                color: SED1.color,
-                shininess: 500
-              })
+      const clockLoaderInit = () => {
+        clockLoader.load('models/clock.glb', function(glft) {
+          clock = glft.scene
+          glft.scene.scale.set(0.44, 0.44, 0.44)
+          glft.scene.position.x = 0.488 //Position (x = right+ left-)
+          glft.scene.position.y = -0.31 //Position (y = up+, down-)
+          glft.scene.position.z = -0.47 //Position (z = front +, back-)
+          glft.scene.rotation.z = Math.PI / 2
+          glft.scene.rotation.y = -Math.PI / 2
+          var material2 = new THREE.MeshPhongMaterial({
+            color: 0x222222,
+            shininess: 10
+          })
+          clock.traverse(o => {
+            if (o.isMesh) {
+              if (o.name === 'Cube001') o.material = material2
+              else if (o.name === 'Cube002') {
+                o.material = SOW.cubeMaterial
+              } else if (o.name === 'Strike1' || o.name === 'Strike2') {
+                o.material = new THREE.MeshPhongMaterial({
+                  color: 0xff0000,
+                  shininess: 10
+                })
+                o.visible = false
+              } else o.material = SOW.defaultMaterial
             }
-          }
-          module2.castShadow = true
-          module2.receiveShadow = true
-          THIS.setState({module2})
-          box.add(module2)
+          })
+          clock.castShadow = true
+          clock.receiveShadow = true
+          THIS.setState({clock})
+          box.add(clock)
+          digitalLoaderInit()
         })
-      })
+      }
 
-      let module3Loader = new GLTFLoader()
-      module3Loader.load('models/mo3.glb', function(gltf) {
-        module3 = gltf.scene
-        gltf.scene.scale.set(0.42, 0.42, 0.42)
-        gltf.scene.position.x = -0.49 //Position (x = right+ left-)
-        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
-        gltf.scene.position.z = 0.47 //Position (z = front +, back-)
-        gltf.scene.rotation.z = Math.PI / 2
-        gltf.scene.rotation.y = -Math.PI / 2
-        module3.traverse(o => {
-          var texture1 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
-          )
-          texture1.wrapT = THREE.RepeatWrapping
-          texture1.repeat.y = -1
-          var texture2 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
-          )
-          texture2.wrapT = THREE.RepeatWrapping
-          texture2.repeat.y = -1
-          var texture3 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
-          )
-          texture3.wrapT = THREE.RepeatWrapping
-          texture3.repeat.y = -1
-          var texture4 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
-          )
-          texture4.wrapT = THREE.RepeatWrapping
-          texture4.repeat.y = -1
+      const digitalLoaderInit = () => {
+        digitalLoader.load('models/digital.glb', function(glft) {
+          digital = glft.scene
+          glft.scene.scale.set(0.9, 0.9, 0.9)
+          glft.scene.position.x = 0 //Position (x = right+ left-)
+          glft.scene.position.y = -0.03 //Position (y = up+, down-)
+          glft.scene.position.z = 0 //Position (z = front +, back-)
+          var material = new THREE.MeshPhongMaterial({
+            color: 0xee0000,
+            shininess: 100
+          })
+          digital.traverse(o => {
+            if (o.isMesh) {
+              o.material = material //this is where we paint the clock
+              if (o.name === 'D1-2') o.visible = false
+              if (o.name === 'D1-5') o.visible = false
+              if (o.name === 'D2-7') o.visible = false
+              if (o.name === 'D3-7') o.visible = false
+            }
+          })
+          clock.castShadow = true
+          clock.receiveShadow = true
+          // THIS.setState({ clock })
+          clock.add(digital)
+          modulesLoaderInit()
+        })
+      }
 
-          if (o.isMesh) {
-            if (o.name === 'Cube000') o.material = SOW.cubeMaterial
-            else if (o.name === 'LED') {
-              let em = new THREE.Color(0x000000)
-              let LEDmo3 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
-              LEDmo3.name = 'LED3'
-              module3.add(LEDmo3)
-              LEDmo3.position.copy(o.position)
-              LEDmo3.visible = false
-              o.material = new THREE.MeshPhongMaterial({
-                transparent: true,
-                opacity: 0.9,
-                emissive: em,
-                color: em,
-                shininess: 100
-              })
-            } else if (o.name.includes('Bface1')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture1})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('Bface2')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture2})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('Bface3')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture3})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('Bface4')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture4})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('Button')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture1})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('BG')) {
-              o.material = new THREE.MeshPhongMaterial({
-                color: new THREE.Color(0x000000),
-                shininess: 100
-              })
+      const modulesLoaderInit = () => {
+        module1Loader.load('models/mo1.glb', function(gltf) {
+          module1 = gltf.scene
+          gltf.scene.scale.set(0.42, 0.42, 0.42)
+          gltf.scene.position.x = -0.49 //Position (x = right+ left-)
+          gltf.scene.position.y = -0.31 //Position (y = up+, down-)
+          gltf.scene.position.z = -0.47 //Position (z = front +, back-)
+          gltf.scene.rotation.z = Math.PI / 2
+          gltf.scene.rotation.y = -Math.PI / 2
+
+          let count = 3 // parseInt(SOW.wireCount[Math.floor(Math.random() * wireCount.length)])
+          let wireCases = SOW.wireCountCases[count]
+          let wireCase = wireCases[generateRandomIndex(wireCases.length)]
+          let wires = module1.children.filter(element =>
+            element.name.startsWith('Wire')
+          )
+          let uncutWires = wires
+            .filter(wire => !wire.name.endsWith('Cut'))
+            .sort((a, b) => sortByKey(a, b, 'name'))
+          let cutWires = wires
+            .filter(wire => wire.name.endsWith('Cut'))
+            .sort((a, b) => sortByKey(a, b, 'name'))
+          while (cutWires.length > count) {
+            let wireIndex = generateRandomIndex(cutWires.length)
+            module1.remove(cutWires[wireIndex])
+            module1.remove(uncutWires[wireIndex])
+            cutWires = cutWires.filter((wire, index) => index !== wireIndex)
+            uncutWires = uncutWires.filter((wire, index) => index !== wireIndex)
+          }
+
+          uncutWires.forEach((wire, index) => {
+            wire.material = wireCase.colors[index]
+            cutWires[index].material = wireCase.colors[index]
+            if (wireCase.correct === index) {
+              wire.userData = {correct: true}
             } else {
-              o.material = SOW.defaultMaterial
+              wire.userData = {correct: false}
             }
-          }
+            THIS.setState(prevState => ({
+              targetList: [...prevState.targetList, wire]
+            }))
+          })
+
+          module1.traverse(o => {
+            if (o.isMesh) {
+              if (o.name === 'Cube001') o.material = SOW.cubeMaterial
+              else if (o.name === 'Socket') o.material = SOW.socketMaterial
+              else if (o.name === 'LED') {
+                let em = new THREE.Color(0x000000)
+                let LEDmo1 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+                LEDmo1.name = 'LED1'
+                module1.add(LEDmo1)
+                LEDmo1.position.copy(o.position)
+                LEDmo1.visible = false
+                o.material = new THREE.MeshPhongMaterial({
+                  transparent: true,
+                  opacity: 0.9,
+                  emissive: em,
+                  color: em,
+                  shininess: 100
+                })
+              } else if (!o.name.includes('Wire'))
+                o.material = SOW.defaultMaterial
+            }
+          })
+
+          module1.castShadow = true
+          module1.receiveShadow = true
+          THIS.setState({module1})
+          box.add(module1)
         })
 
-        module3.castShadow = true
-        module3.receiveShadow = true
-        THIS.setState({module3})
-        box.add(module3)
-      })
+        module2Loader.load('models/mo2.glb', function(glft) {
+          module2 = glft.scene
+          glft.scene.scale.set(0.42, 0.42, 0.42)
+          glft.scene.position.x = 1.45 //Position (x = right+ left-)
+          glft.scene.position.y = -0.31 //Position (y = up+, down-)
+          glft.scene.position.z = -0.47 //Position (z = front +, back-)
+          glft.scene.rotation.z = Math.PI / 2
+          glft.scene.rotation.y = -Math.PI / 2
+
+          var texture = new THREE.TextureLoader().load('/models/Button1.png')
+          texture.wrapS = THREE.RepeatWrapping
+          texture.repeat.x = -1
+
+          module2.traverse(o => {
+            if (o.isMesh) {
+              if (
+                o.name === 'Cube' ||
+                o.name === 'Cylinder' ||
+                o.name === 'LEDbase' ||
+                o.name === 'Circle001'
+              )
+                o.material = SOW.defaultMaterial
+              else if (o.name === 'Cube001') o.material = SOW.cubeMaterial
+              else if (o.name === 'Circle002' || o.name === 'Circle') {
+                o.material = new THREE.MeshPhongMaterial({map: texture})
+                o.rotation.x = -2.85
+                THIS.setState(prevState => ({
+                  targetList: [...prevState.targetList, o]
+                }))
+              } else if (o.name === 'LED') {
+                let em = new THREE.Color(0x000000)
+                let LEDmo2 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+                LEDmo2.name = 'LEDlight'
+                module2.add(LEDmo2)
+                LEDmo2.position.copy(o.position)
+                LEDmo2.visible = false
+                o.material = new THREE.MeshPhongMaterial({
+                  transparent: true,
+                  opacity: 0.9,
+                  emissive: em,
+                  color: em,
+                  shininess: 100
+                })
+              } else if (o.name === 'Cube002') {
+                let em = new THREE.Color(0x000000)
+                let SED1 = new THREE.PointLight(0x777700, 4, 13, 200)
+                SED1.name = 'LEDstripe1'
+                module2.add(SED1)
+                SED1.position.copy(o.position)
+                SED1.position.z -= 0.9
+                SED1.position.x -= 0.8
+                SED1.position.y += 0.1
+                let SED2 = SED1.clone()
+                SED2.name = 'LEDstripe2'
+                SED2.position.y -= 0.25
+                module2.add(SED2)
+                let SED3 = SED1.clone()
+                SED3.name = 'LEDstripe3'
+                SED3.position.y -= 0.5
+                module2.add(SED3)
+                let SED4 = SED1.clone()
+                SED4.name = 'LEDstripe4'
+                SED4.position.y -= 0.75
+                module2.add(SED4)
+                o.material = new THREE.MeshPhongMaterial({
+                  transparent: true,
+                  opacity: 0.9,
+                  emissive: em,
+                  color: SED1.color,
+                  shininess: 500
+                })
+              }
+            }
+            module2.castShadow = true
+            module2.receiveShadow = true
+            THIS.setState({module2})
+            box.add(module2)
+          })
+        })
+
+        module3Loader.load('models/mo3.glb', function(gltf) {
+          module3 = gltf.scene
+          gltf.scene.scale.set(0.42, 0.42, 0.42)
+          gltf.scene.position.x = -0.49 //Position (x = right+ left-)
+          gltf.scene.position.y = -0.31 //Position (y = up+, down-)
+          gltf.scene.position.z = 0.47 //Position (z = front +, back-)
+          gltf.scene.rotation.z = Math.PI / 2
+          gltf.scene.rotation.y = -Math.PI / 2
+          module3.traverse(o => {
+            var texture1 = new THREE.TextureLoader().load(
+              `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            )
+            texture1.wrapT = THREE.RepeatWrapping
+            texture1.repeat.y = -1
+            var texture2 = new THREE.TextureLoader().load(
+              `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            )
+            texture2.wrapT = THREE.RepeatWrapping
+            texture2.repeat.y = -1
+            var texture3 = new THREE.TextureLoader().load(
+              `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            )
+            texture3.wrapT = THREE.RepeatWrapping
+            texture3.repeat.y = -1
+            var texture4 = new THREE.TextureLoader().load(
+              `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            )
+            texture4.wrapT = THREE.RepeatWrapping
+            texture4.repeat.y = -1
+
+            if (o.isMesh) {
+              if (o.name === 'Cube000') o.material = SOW.cubeMaterial
+              else if (o.name === 'LED') {
+                let em = new THREE.Color(0x000000)
+                let LEDmo3 = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
+                LEDmo3.name = 'LED3'
+                module3.add(LEDmo3)
+                LEDmo3.position.copy(o.position)
+                LEDmo3.visible = false
+                o.material = new THREE.MeshPhongMaterial({
+                  transparent: true,
+                  opacity: 0.9,
+                  emissive: em,
+                  color: em,
+                  shininess: 100
+                })
+              } else if (o.name.includes('Bface1')) {
+                o.material = new THREE.MeshPhongMaterial({map: texture1})
+                THIS.setState(prevState => ({
+                  targetList: [...prevState.targetList, o]
+                }))
+              } else if (o.name.includes('Bface2')) {
+                o.material = new THREE.MeshPhongMaterial({map: texture2})
+                THIS.setState(prevState => ({
+                  targetList: [...prevState.targetList, o]
+                }))
+              } else if (o.name.includes('Bface3')) {
+                o.material = new THREE.MeshPhongMaterial({map: texture3})
+                THIS.setState(prevState => ({
+                  targetList: [...prevState.targetList, o]
+                }))
+              } else if (o.name.includes('Bface4')) {
+                o.material = new THREE.MeshPhongMaterial({map: texture4})
+                THIS.setState(prevState => ({
+                  targetList: [...prevState.targetList, o]
+                }))
+              } else if (o.name.includes('Button')) {
+                o.material = new THREE.MeshPhongMaterial({map: texture1})
+                THIS.setState(prevState => ({
+                  targetList: [...prevState.targetList, o]
+                }))
+              } else if (o.name.includes('BG')) {
+                o.material = new THREE.MeshPhongMaterial({
+                  color: new THREE.Color(0x000000),
+                  shininess: 100
+                })
+              } else {
+                o.material = SOW.defaultMaterial
+              }
+            }
+          })
+
+          module3.castShadow = true
+          module3.receiveShadow = true
+          THIS.setState({module3})
+          box.add(module3)
+        })
+      }
 
       // Renderer
 
