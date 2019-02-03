@@ -1,6 +1,5 @@
 import React, {Component, Fragment} from 'react'
 import Bomb from './Bomb/Bomb'
-import RefacBomb from './Bomb/RefacBomb'
 import ProtectedBomb from './Bomb/ProtectedBomb'
 import './../styles/App.css'
 import {connect} from 'react-redux'
@@ -32,14 +31,14 @@ class App extends Component {
             {/* ^^^ Will render previous games */}
             <Route exact path="/leaderboard" component={Login} />
             {/* ^^^ Will render leaderboard*/}
-            <ProtectedBomb exact path="/diffusing" component={RefacBomb} />
+            <ProtectedBomb exact path="/diffusing" component={Bomb} />
             <Route component={Main} />
             {/* ^^^ Will render post game results */}
           </Switch>
         ) : (
           <Switch>
             <Route exact path="/" component={Login} />
-            <Route exact path="/recap" component={RefacBomb} />
+            <Route exact path="/recap" component={Bomb} />
             <Route component={Login} />
           </Switch>
         )}
