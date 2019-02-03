@@ -11,28 +11,16 @@ import {
 class NewGame extends Component {
   state = {
     startTime: this.props.startTime,
-    moduleTotal: this.props.moduleTotal,
     strikesAllowed: this.props.strikesAllowed
   }
 
   handleStart = () => {
-    const {moduleTotal, startTime, strikesAllowed} = this.state
+    const {startTime, strikesAllowed} = this.state
     this.props.startGame({
-      moduleTotal,
       startTime,
       strikesAllowed
     })
     this.props.history.push('/diffusing')
-  }
-
-  handleModule = char => {
-    const {moduleTotal} = this.state
-    const {minMod, maxMod} = this.props
-    if (moduleTotal > minMod && char === 'l') {
-      this.setState(prevState => ({moduleTotal: prevState.moduleTotal - 1}))
-    } else if (moduleTotal < maxMod && char === 'm') {
-      this.setState(prevState => ({moduleTotal: prevState.moduleTotal + 1}))
-    }
   }
 
   handleTime = char => {
@@ -52,7 +40,7 @@ class NewGame extends Component {
   }
 
   render() {
-    const {startTime, moduleTotal, strikesAllowed} = this.state
+    const {startTime, strikesAllowed} = this.state
     const minute = Math.floor(startTime / 60)
     const seconds = startTime % 60
     return (
@@ -72,20 +60,6 @@ class NewGame extends Component {
               <FaArrowR
                 className="ng-action ng-icon"
                 onClick={() => this.handleTime('m')}
-              />
-            </span>
-          </div>
-          <div>
-            <span>Modules</span>
-            <span>
-              <FaArrowL
-                className="ng-action ng-icon"
-                onClick={() => this.handleModule('l')}
-              />
-              {moduleTotal}
-              <FaArrowR
-                className="ng-action ng-icon"
-                onClick={() => this.handleModule('m')}
               />
             </span>
           </div>
@@ -119,10 +93,17 @@ class NewGame extends Component {
   }
 }
 
-const mapState = ({game}) => ({...game})
+const mapState = ({game}) => ({
+  startTime: game.startTime,
+  strikesAllowed: game.strikesAllowed,
+  minTime: game.minTime,
+  maxTime: game.maxTime
+})
+
 const mapProps = dispatch => ({
   startGame: settings => {
     dispatch(startGame(settings))
   }
 })
+
 export default connect(mapState, mapProps)(NewGame)

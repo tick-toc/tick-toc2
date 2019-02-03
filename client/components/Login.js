@@ -1,19 +1,16 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {authSignup, authLogin} from '../store'
-import {Link} from 'react-router-dom'
 import '../styles/Login.css'
 
-class LoginForm extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      login: true, //login view
-      email: '',
-      username: '',
-      password: ''
-    }
+class Login extends Component {
+  state = {
+    login: true,
+    email: '',
+    username: '',
+    password: ''
   }
+
   handleSubmit = event => {
     const {email, username, password} = this.state
     event.preventDefault()
@@ -37,12 +34,7 @@ class LoginForm extends Component {
   render() {
     return (
       <div className="login-form-container">
-        <form
-          onSubmit={async evt => {
-            await this.handleSubmit(evt)
-          }}
-          className="login-form"
-        >
+        <form onSubmit={this.handleSubmit} className="login-form">
           <input
             name="email"
             onChange={this.handleChange}
@@ -77,18 +69,12 @@ class LoginForm extends Component {
   }
 }
 
-/**
- * Here we will implement
- */
-// map state and props
-
 const mapDispatch = dispatch => {
   return {
-    // state,
     authLogin: (email, password) => dispatch(authLogin(email, password)),
     authSignup: (email, password, userName) =>
       dispatch(authSignup(email, password, userName))
   }
 }
 
-export const Login = connect(null, mapDispatch)(LoginForm)
+export default connect(null, mapDispatch)(Login)
