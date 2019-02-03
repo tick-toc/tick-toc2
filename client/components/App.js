@@ -5,6 +5,7 @@ import './../styles/App.css'
 import {connect} from 'react-redux'
 import Login from './Login'
 import Main from './Main'
+import Recap from './Recap'
 import NewGame from './NewGame'
 import {Switch, Route, withRouter} from 'react-router-dom'
 import {me} from '../store'
@@ -26,19 +27,15 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/new-game" component={NewGame} />
-            {/* ^^^ Will render game menu / game options */}
             <Route exact path="/previous-games" component={Login} />
-            {/* ^^^ Will render previous games */}
             <Route exact path="/leaderboard" component={Login} />
-            {/* ^^^ Will render leaderboard*/}
+            <Route exact path="/recap" component={Recap} />
             <ProtectedBomb exact path="/diffusing" component={Bomb} />
             <Route component={Main} />
-            {/* ^^^ Will render post game results */}
           </Switch>
         ) : (
           <Switch>
             <Route exact path="/" component={Login} />
-            <Route exact path="/recap" component={Bomb} />
             <Route component={Login} />
           </Switch>
         )}

@@ -18,7 +18,8 @@ class RefacBomb extends Component {
     singleSecond: 0
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    console.log(this.props, '<<<PROPS')
     this.targetList = []
 
     this.scene = new THREE.Scene()
@@ -547,12 +548,16 @@ class RefacBomb extends Component {
       this.state.minute !== nextState.minute ||
       this.state.tenSecond !== nextState.tenSecond ||
       this.state.singleSecond !== nextState.singleSecond
-    )
+    ) {
       return false
+    }
     return true
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.props.gameStatus !== 'pending') {
+      setTimeout(() => this.props.history.push('/recap'), 3000)
+    }
     if (this.props.moduleTotal === this.props.modulesPassed) {
       this.handleDiffusal()
     } else if (
@@ -630,15 +635,19 @@ class RefacBomb extends Component {
   }
 
   handleDiffusal = () => {
-    clearTimeout(this.timer)
-    this.targetList = []
-    this.props.endGame('diffused')
+    if (this.props.gameStatus === 'pending') {
+      clearTimeout(this.timer)
+      this.targetList = []
+      this.props.endGame('diffused')
+    }
   }
 
   handleFailure = () => {
-    if (this.state.count) clearTimeout(this.timer)
-    this.targetList = []
-    this.props.endGame('failed')
+    if (this.props.gameStatus === 'pending') {
+      if (this.state.count) clearTimeout(this.timer)
+      this.targetList = []
+      this.props.endGame('failed')
+    }
   }
 
   handleCountStart = () => {
@@ -749,7 +758,7 @@ class RefacBomb extends Component {
   }
 }
 
-const mapState = ({game}) => ({...game})
+const mapState = ({game}, ownProps) => ({...game, ...ownProps})
 
 const mapProps = dispatch => ({
   setStrike: () => dispatch(setStrike()),
