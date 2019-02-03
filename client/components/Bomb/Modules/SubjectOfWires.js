@@ -9,6 +9,13 @@ export const red = new MeshPhongMaterial({
   shininess: 100
 })
 
+export const redTran = new MeshPhongMaterial({
+  color: 0xff0000,
+  shininess: 100,
+  opacity: 0.5,
+  transparent: true
+})
+
 export const white = new MeshPhongMaterial({
   color: 0xffffff,
   shininess: 100
@@ -32,6 +39,13 @@ export const blue = new MeshPhongMaterial({
 export const yellow = new MeshPhongMaterial({
   color: 0xffff00,
   shininess: 100
+})
+
+export const green = new MeshPhongMaterial({
+  color: 0x00ff00,
+  shininess: 100
+  // opacity: 0.9,
+  // transparent: true
 })
 
 export const defaultMaterial = new MeshPhongMaterial({

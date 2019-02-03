@@ -55,7 +55,9 @@ class Bomb extends Component {
       module3: {},
       module4: {},
       module5: {},
-      targetList: []
+      targetList: [],
+      head: {},
+      correct: 5
     }
   }
 
@@ -77,7 +79,8 @@ class Bomb extends Component {
       module2,
       module3,
       module4,
-      module5
+      module5,
+      head
     var projector,
       mouse = {x: 0, y: 0}
 
@@ -245,7 +248,6 @@ class Bomb extends Component {
         })
         clock.castShadow = true
         clock.receiveShadow = true
-        THIS.setState({clock})
         box.add(clock)
       })
 
@@ -256,13 +258,9 @@ class Bomb extends Component {
         glft.scene.position.x = 0 //Position (x = right+ left-)
         glft.scene.position.y = -0.03 //Position (y = up+, down-)
         glft.scene.position.z = 0 //Position (z = front +, back-)
-        var material = new THREE.MeshPhongMaterial({
-          color: 0xee0000,
-          shininess: 100
-        })
         digital.traverse(o => {
           if (o.isMesh) {
-            o.material = material //this is where we paint the clock
+            o.material = SOW.red
             if (o.name === 'D1-2') o.visible = false
             if (o.name === 'D1-5') o.visible = false
             if (o.name === 'D2-7') o.visible = false
@@ -271,8 +269,8 @@ class Bomb extends Component {
         })
         clock.castShadow = true
         clock.receiveShadow = true
-        // THIS.setState({ clock })
         clock.add(digital)
+        THIS.setState({clock})
       })
 
       let module1Loader = new GLTFLoader()
@@ -359,7 +357,9 @@ class Bomb extends Component {
         glft.scene.rotation.z = Math.PI / 2
         glft.scene.rotation.y = -Math.PI / 2
 
-        var texture = new THREE.TextureLoader().load('/models/Button1.png')
+        var texture = new THREE.TextureLoader().load(
+          `/models/Button${Math.ceil(Math.random() * 4)}.png`
+        )
         texture.wrapS = THREE.RepeatWrapping
         texture.repeat.x = -1
 
@@ -369,7 +369,7 @@ class Bomb extends Component {
               o.name === 'Cube' ||
               o.name === 'Cylinder' ||
               o.name === 'LEDbase' ||
-              o.name === 'Circle001'
+              o.name === 'Button001'
             )
               o.material = SOW.defaultMaterial
             else if (o.name === 'Cube001') o.material = SOW.cubeMaterial
@@ -503,6 +503,11 @@ class Bomb extends Component {
         gltf.scene.rotation.z = Math.PI / 2
         gltf.scene.rotation.y = -Math.PI / 2
 
+        let ranPos = () => {
+          return Math.ceil(Math.random() * 6)
+          // return ans ? ans : 1
+        }
+
         module4.traverse(o => {
           if (o.isMesh) {
             if (o.name === 'Cube000') o.material = SOW.cubeMaterial
@@ -513,11 +518,43 @@ class Bomb extends Component {
             )
               o.material = SOW.defaultMaterial
             else if (o.name === 'LED') LEDcreate(o, module4, 'LED4')
-            else if (o.name === 'Board' || o.name.includes('Go'))
+            else if (o.name === 'Board') o.material = SOW.cubeMaterial
+            else if (o.name.includes('Go')) {
               o.material = SOW.cubeMaterial
-            else o.material = SOW.flatBlack
+              THIS.setState(prevState => ({
+                targetList: [...prevState.targetList, o]
+              }))
+            } else if (o.name === 'CircleOne') {
+              o.material = SOW.green
+              o.position.copy(
+                module4.children.filter(a => a.name === 'Pos21')[0].position
+              )
+              o.position.x -= 0.165
+            } else if (o.name === 'CircleTwo') {
+              o.material = SOW.green
+              o.position.copy(
+                module4.children.filter(a => a.name === 'Pos36')[0].position
+              )
+              o.position.x -= 0.165
+            } else if (o.name === 'End') {
+              o.material = SOW.redTran
+              let randomName = `Pos${ranPos()}${ranPos()}`
+              o.position.copy(
+                module4.children.filter(a => a.name === randomName)[0].position
+              )
+              o.position.x -= 0.1
+              o.position.y += 0.06
+              o.position.z -= 0.07
+            } else {
+              o.material = SOW.flatBlack
+            }
           }
         })
+
+        let randomName = `Pos${ranPos()}${ranPos()}`
+        head = module4.children.filter(a => a.name === randomName)[0]
+        head.material = SOW.white
+        THIS.setState({head})
         module4.castShadow = true
         module4.receiveShadow = true
         THIS.setState({module4})
@@ -546,7 +583,9 @@ class Bomb extends Component {
         let texture4 = new THREE.TextureLoader().load(`/models/Key4.png`)
         texture4.wrapT = THREE.RepeatWrapping
         texture4.repeat.y = -1
-        let texture5 = new THREE.TextureLoader().load(`/models/Read4.png`)
+        let texture5 = new THREE.TextureLoader().load(
+          `/models/Read${Math.ceil(Math.random() * 4)}.png`
+        )
         texture5.wrapT = THREE.RepeatWrapping
         texture5.repeat.y = -1
 
@@ -556,7 +595,7 @@ class Bomb extends Component {
             CED.name = o.name
             module5.add(CED)
             CED.position.set(0.6, y, -0.7)
-            CED.visible = true
+            CED.visible = false
             o.material = new THREE.MeshPhongMaterial({
               transparent: true,
               opacity: 0.9,
@@ -574,7 +613,7 @@ class Bomb extends Component {
               o.name === 'Ftwo'
             )
               o.material = SOW.defaultMaterial
-            else if (o.name === 'LED') LEDcreate(o, module5, 'LED5')
+            else if (o.name === 'LED') LEDcreate(o, module5, 'LEDfive')
             else if (
               o.name === 'Board' ||
               o.name === 'Fone' ||
@@ -583,11 +622,11 @@ class Bomb extends Component {
               o.material = SOW.cubeMaterial
             else if (o.name === 'Read1' || o.name === 'Correct')
               o.material = SOW.flatBlack
-            else if (o.name === 'CEDone') CEDcreate(o, -0.56)
-            else if (o.name === 'CEDtwo') CEDcreate(o, -0.43)
-            else if (o.name === 'CEDthree') CEDcreate(o, -0.3)
-            else if (o.name === 'CEDfour') CEDcreate(o, -0.17)
-            else if (o.name === 'CEDfive') CEDcreate(o, -0.04)
+            else if (o.name === 'CED5') CEDcreate(o, -0.56)
+            else if (o.name === 'CED6') CEDcreate(o, -0.43)
+            else if (o.name === 'CED7') CEDcreate(o, -0.3)
+            else if (o.name === 'CED8') CEDcreate(o, -0.17)
+            else if (o.name === 'CED9') CEDcreate(o, -0.04)
             else if (o.name.includes('1')) {
               o.material = new THREE.MeshPhongMaterial({map: texture1})
               THIS.setState(prevState => ({
@@ -684,6 +723,9 @@ class Bomb extends Component {
           module2.children
             .filter(a => a.name.startsWith('Button'))
             .map(b => (b.position.x += 0.18))
+        module4.children.filter(a => a.name.includes('Go')).map(b => {
+          if (b.material.shininess === 10) b.material = SOW.cubeMaterial
+        })
       })
 
       projector = new THREE.Projector()
@@ -722,6 +764,7 @@ class Bomb extends Component {
       if (intersects.length > 0) {
         THIS.handleSOW(intersects[0].object.userData)
         module1.remove(intersects[0].object)
+        //module2
         if (
           intersects[0].object.name === 'Button' ||
           intersects[0].object.name === 'Button002'
@@ -730,6 +773,7 @@ class Bomb extends Component {
             .filter(a => a.name.startsWith('Button'))
             .map(b => (b.position.x -= 0.18))
         }
+        // module3
         if (
           intersects[0].object.name.includes('Letter') ||
           intersects[0].object.name.includes('Lface')
@@ -747,6 +791,80 @@ class Bomb extends Component {
                 }
               }
             })
+        }
+        // module4
+        let head = THIS.state.head
+        if (intersects[0].object.name.includes('Go')) {
+          intersects[0].object.material = SOW.flatBlack
+          if (intersects[0].object.name === 'GoUp') {
+            if (head.name[3] !== '1') {
+              head.material = SOW.flatBlack
+              let newHead =
+                head.name.slice(0, 3) +
+                (Number(head.name[3]) - 1) +
+                head.name[4]
+              head = module4.children.filter(a => a.name === newHead)[0]
+              head.material = SOW.white
+              THIS.setState({head})
+            }
+          } else if (intersects[0].object.name === 'GoDown') {
+            if (head.name[3] !== '6') {
+              head.material = SOW.flatBlack
+              let newHead =
+                head.name.slice(0, 3) +
+                (Number(head.name[3]) + 1) +
+                head.name[4]
+              head = module4.children.filter(a => a.name === newHead)[0]
+              head.material = SOW.white
+              THIS.setState({head})
+            }
+          } else if (intersects[0].object.name === 'GoLeft') {
+            if (head.name[4] !== '1') {
+              head.material = SOW.flatBlack
+              let newHead = head.name.slice(0, 4) + (Number(head.name[4]) - 1)
+              head = module4.children.filter(a => a.name === newHead)[0]
+              head.material = SOW.white
+              THIS.setState({head})
+            }
+          } else if (intersects[0].object.name === 'GoRight') {
+            if (head.name[4] !== '6') {
+              head.material = SOW.flatBlack
+              let newHead = head.name.slice(0, 4) + (Number(head.name[4]) + 1)
+              head = module4.children.filter(a => a.name === newHead)[0]
+              head.material = SOW.white
+              THIS.setState({head})
+            }
+          }
+        }
+        // module5
+
+        let correct = THIS.state.correct
+        if (intersects[0].object.name.includes('Kface')) {
+          module5.children
+            .filter(a =>
+              a.name.includes('' + intersects[0].object.name.slice(-1))
+            )
+            .map(b => {
+              if (b.position.x > 1.28) b.position.x -= 0.07
+            })
+          if (intersects[0].object.name === 'Kface2') {
+            module5.children.filter(a => a.name.includes(correct)).map(b => {
+              b.visible = true
+            })
+            if (correct !== '9') {
+              correct = Number(correct) + 1 + ''
+              THIS.setState({correct})
+            }
+          }
+          if (intersects[0].object.name === 'Kface3') {
+            module5.children.filter(a => a.name.includes(correct)).map(b => {
+              b.visible = true
+            })
+            if (correct !== '9') {
+              correct = Number(correct) + 1 + ''
+              THIS.setState({correct})
+            }
+          }
         }
       }
     }
