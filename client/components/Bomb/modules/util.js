@@ -1,10 +1,4 @@
-import {
-  MeshPhongMaterial,
-  Color,
-  PointLight,
-  MeshBasicMaterial,
-  ImageUtils
-} from 'three'
+import {MeshPhongMaterial, Color, PointLight, ImageUtils} from 'three'
 
 export const red = new MeshPhongMaterial({
   color: 0xff0000,
@@ -14,6 +8,13 @@ export const red = new MeshPhongMaterial({
 export const brightRed = new MeshPhongMaterial({
   color: 0xee0000,
   shininess: 100
+})
+
+export const redTran = new MeshPhongMaterial({
+  color: 0xff0000,
+  shininess: 100,
+  opacity: 0.5,
+  transparent: true
 })
 
 export const white = new MeshPhongMaterial({
@@ -34,6 +35,13 @@ export const blue = new MeshPhongMaterial({
 export const yellow = new MeshPhongMaterial({
   color: 0xffff00,
   shininess: 100
+})
+
+export const green = new MeshPhongMaterial({
+  color: 0x00ff00,
+  shininess: 100
+  // opacity: 0.9,
+  // transparent: true
 })
 
 export const copper = new MeshPhongMaterial({
@@ -64,9 +72,19 @@ export const clockBackground = new MeshPhongMaterial({
   shininess: 10
 })
 
-/********
- *  LED
- ********/
+export const flatBlack = new MeshPhongMaterial({
+  color: 0x222222,
+  shininess: 10
+})
+
+export const flatRed = new MeshPhongMaterial({
+  color: 0xff0000,
+  shininess: 10
+})
+
+/*******************
+LOGIC
+*******************/
 
 const LEDEmissive = new Color(0x000000)
 
