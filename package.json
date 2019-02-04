@@ -38,6 +38,7 @@
   "author": "Fullstack Academy of Code",
   "license": "MIT",
   "dependencies": {
+    "@andyet/simplewebrtc": "^1.7.4",
     "axios": "^0.15.3",
     "babel-plugin-istanbul": "^5.1.0",
     "compression": "^1.7.3",
@@ -63,6 +64,7 @@
     "redux-logger": "^2.8.1",
     "redux-thunk": "^2.3.0",
     "sequelize": "^4.38.0",
+    "simplewebrtc": "^3.0.2",
     "socket.io": "^2.1.1",
     "three": "^0.100.0",
     "three-gltf-loader": "^1.100.0",
