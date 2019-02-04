@@ -94,6 +94,57 @@ class RefacBomb extends Component {
       })
       this.box.castShadow = true
       this.box.receiveShadow = true
+      this.scene.add(this.box)
+      this.initClock()
+    })
+
+    this.initClock = () => {
+      this.clockLoader.load('models/clock.glb', glft => {
+        this.clock = glft.scene
+        this.box.add(this.clock)
+        this.clock.scale.set(0.44, 0.44, 0.44)
+        this.clock.position.x = 0.49 //Position (x = right+ left-)
+        this.clock.position.y = -0.31 //Position (y = up+, down-)
+        this.clock.position.z = -0.47 //Position (z = front +, back-)
+        this.clock.rotation.z = Math.PI / 2
+        this.clock.rotation.y = -Math.PI / 2
+        this.clock.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Cube001') o.material = util.clockBackground
+            else if (o.name === 'Cube002') {
+              o.material = util.cubeMaterial
+            } else if (o.name === 'Strike1' || o.name === 'Strike2') {
+              o.material = util.flatRed
+              o.visible = false
+            } else o.material = util.defaultMaterial
+          }
+        })
+        this.clock.castShadow = true
+        this.clock.receiveShadow = true
+      })
+      this.initDigital()
+    }
+
+    this.initDigital = async () => {
+      await this.digitalLoader.load('models/digital.glb', glft => {
+        this.digital = glft.scene
+        this.clock.add(this.digital)
+        this.digital.scale.set(0.9, 0.9, 0.9)
+        this.digital.position.x = 0 //Position (x = right+ left-)
+        this.digital.position.y = 0 //Position (y = up+, down-)
+        this.digital.position.z = 0 //Position (z = front +, back-)
+        this.digital.traverse(o => {
+          if (o.isMesh) {
+            o.material = util.brightRed
+            if (o.name !== 'Dot') {
+              o.visible = false
+            }
+          }
+        })
+        if (this.clock.children[6]) this.calcInitialClock()
+        else setTimeout(this.calcInitialClock(), 800)
+      })
+      this.initModules()
 
       this.batteryLoader.load('models/batterry.glb', battery => {
         this.battery1 = battery.scene
@@ -163,59 +214,6 @@ class RefacBomb extends Component {
         this.parallel.castShadow = true
         this.parallel.receiveShadow = true
       })
-      this.box.castShadow = true
-      this.box.receiveShadow = true
-      this.scene.add(this.box)
-      this.initClock()
-    })
-
-    this.initClock = () => {
-      this.clockLoader.load('models/clock.glb', glft => {
-        this.clock = glft.scene
-        this.box.add(this.clock)
-        this.clock.scale.set(0.44, 0.44, 0.44)
-        this.clock.position.x = 0.49 //Position (x = right+ left-)
-        this.clock.position.y = -0.31 //Position (y = up+, down-)
-        this.clock.position.z = -0.47 //Position (z = front +, back-)
-        this.clock.rotation.z = Math.PI / 2
-        this.clock.rotation.y = -Math.PI / 2
-        this.clock.traverse(o => {
-          if (o.isMesh) {
-            if (o.name === 'Cube001') o.material = util.clockBackground
-            else if (o.name === 'Cube002') {
-              o.material = util.cubeMaterial
-            } else if (o.name === 'Strike1' || o.name === 'Strike2') {
-              o.material = util.flatRed
-              o.visible = false
-            } else o.material = util.defaultMaterial
-          }
-        })
-        this.clock.castShadow = true
-        this.clock.receiveShadow = true
-      })
-      this.initDigital()
-    }
-
-    this.initDigital = async () => {
-      await this.digitalLoader.load('models/digital.glb', glft => {
-        this.digital = glft.scene
-        this.clock.add(this.digital)
-        this.digital.scale.set(0.9, 0.9, 0.9)
-        this.digital.position.x = 0 //Position (x = right+ left-)
-        this.digital.position.y = 0 //Position (y = up+, down-)
-        this.digital.position.z = 0 //Position (z = front +, back-)
-        this.digital.traverse(o => {
-          if (o.isMesh) {
-            o.material = util.brightRed
-            if (o.name !== 'Dot') {
-              o.visible = false
-            }
-          }
-        })
-        if (this.clock.children[6]) this.calcInitialClock()
-        else setTimeout(this.calcInitialClock(), 800)
-      })
-      this.initModules()
     }
 
     this.initModules = () => {
@@ -463,82 +461,81 @@ class RefacBomb extends Component {
         this.module4.castShadow = true
         this.module4.receiveShadow = true
       })
-    }
+      this.module5Loader.load('models/mo5.glb', gltf => {
+        this.module5 = gltf.scene
+        this.module5.correct = '5'
+        this.box.add(this.module5)
+        gltf.scene.scale.set(0.42, 0.42, 0.42)
+        gltf.scene.position.x = 0.49 //Position (x = right+ left-)
+        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
+        gltf.scene.position.z = 0.47 //Position (z = front +, back-)
+        gltf.scene.rotation.z = Math.PI / 2
+        gltf.scene.rotation.y = -Math.PI / 2
 
-    this.module5Loader.load('models/mo5.glb', gltf => {
-      this.module5 = gltf.scene
-      this.module5.correct = '5'
-      this.box.add(this.module5)
-      gltf.scene.scale.set(0.42, 0.42, 0.42)
-      gltf.scene.position.x = 0.49 //Position (x = right+ left-)
-      gltf.scene.position.y = -0.31 //Position (y = up+, down-)
-      gltf.scene.position.z = 0.47 //Position (z = front +, back-)
-      gltf.scene.rotation.z = Math.PI / 2
-      gltf.scene.rotation.y = -Math.PI / 2
+        let texture1 = new THREE.TextureLoader().load(`/models/Key1.png`)
+        texture1.wrapT = THREE.RepeatWrapping
+        texture1.repeat.y = -1
+        let texture2 = new THREE.TextureLoader().load(`/models/Key2.png`)
+        texture2.wrapT = THREE.RepeatWrapping
+        texture2.repeat.y = -1
+        let texture3 = new THREE.TextureLoader().load(`/models/Key3.png`)
+        texture3.wrapT = THREE.RepeatWrapping
+        texture3.repeat.y = -1
+        let texture4 = new THREE.TextureLoader().load(`/models/Key4.png`)
+        texture4.wrapT = THREE.RepeatWrapping
+        texture4.repeat.y = -1
+        let texture5 = new THREE.TextureLoader().load(
+          `/models/Read${Math.ceil(Math.random() * 4)}.png`
+        )
+        texture5.wrapT = THREE.RepeatWrapping
+        texture5.repeat.y = -1
 
-      let texture1 = new THREE.TextureLoader().load(`/models/Key1.png`)
-      texture1.wrapT = THREE.RepeatWrapping
-      texture1.repeat.y = -1
-      let texture2 = new THREE.TextureLoader().load(`/models/Key2.png`)
-      texture2.wrapT = THREE.RepeatWrapping
-      texture2.repeat.y = -1
-      let texture3 = new THREE.TextureLoader().load(`/models/Key3.png`)
-      texture3.wrapT = THREE.RepeatWrapping
-      texture3.repeat.y = -1
-      let texture4 = new THREE.TextureLoader().load(`/models/Key4.png`)
-      texture4.wrapT = THREE.RepeatWrapping
-      texture4.repeat.y = -1
-      let texture5 = new THREE.TextureLoader().load(
-        `/models/Read${Math.ceil(Math.random() * 4)}.png`
-      )
-      texture5.wrapT = THREE.RepeatWrapping
-      texture5.repeat.y = -1
-
-      this.module5.traverse(o => {
-        if (o.isMesh) {
-          if (o.name === 'Cube000') o.material = util.cubeMaterial
-          else if (
-            o.name === 'LEDbase' ||
-            o.name === 'Cylinder' ||
-            o.name === 'Cube' ||
-            o.name === 'Ftwo'
-          )
-            o.material = util.defaultMaterial
-          else if (o.name === 'LED') LEDcreate(o, this.module5, 'glow')
-          else if (
-            o.name === 'Board' ||
-            o.name === 'Fone' ||
-            o.name === 'Fthree'
-          )
-            o.material = util.cubeMaterial
-          else if (o.name === 'Read1' || o.name === 'Correct')
-            o.material = util.flatBlack
-          else if (o.name === 'CED5') CEDcreate(o, this.module5, -0.56)
-          else if (o.name === 'CED6') CEDcreate(o, this.module5, -0.43)
-          else if (o.name === 'CED7') CEDcreate(o, this.module5, -0.3)
-          else if (o.name === 'CED8') CEDcreate(o, this.module5, -0.17)
-          else if (o.name === 'CED9') CEDcreate(o, this.module5, -0.04)
-          else if (o.name.includes('1')) {
-            o.material = new THREE.MeshPhongMaterial({map: texture1})
-            this.targetList.push(o)
-          } else if (o.name.includes('2')) {
-            o.material = new THREE.MeshPhongMaterial({map: texture2})
-            this.targetList.push(o)
-          } else if (o.name.includes('3')) {
-            o.material = new THREE.MeshPhongMaterial({map: texture3})
-            this.targetList.push(o)
-          } else if (o.name.includes('4')) {
-            o.material = new THREE.MeshPhongMaterial({map: texture4})
-            this.targetList.push(o)
-          } else if (o.name === 'ReadNumber') {
-            o.material = new THREE.MeshPhongMaterial({map: texture5})
-            this.targetList.push(o)
-          } else o.material = util.flatBlack
-        }
+        this.module5.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Cube000') o.material = util.cubeMaterial
+            else if (
+              o.name === 'LEDbase' ||
+              o.name === 'Cylinder' ||
+              o.name === 'Cube' ||
+              o.name === 'Ftwo'
+            )
+              o.material = util.defaultMaterial
+            else if (o.name === 'LED') LEDcreate(o, this.module5, 'glow')
+            else if (
+              o.name === 'Board' ||
+              o.name === 'Fone' ||
+              o.name === 'Fthree'
+            )
+              o.material = util.cubeMaterial
+            else if (o.name === 'Read1' || o.name === 'Correct')
+              o.material = util.flatBlack
+            else if (o.name === 'CED5') CEDcreate(o, this.module5, -0.56)
+            else if (o.name === 'CED6') CEDcreate(o, this.module5, -0.43)
+            else if (o.name === 'CED7') CEDcreate(o, this.module5, -0.3)
+            else if (o.name === 'CED8') CEDcreate(o, this.module5, -0.17)
+            else if (o.name === 'CED9') CEDcreate(o, this.module5, -0.04)
+            else if (o.name.includes('1')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture1})
+              this.targetList.push(o)
+            } else if (o.name.includes('2')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture2})
+              this.targetList.push(o)
+            } else if (o.name.includes('3')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture3})
+              this.targetList.push(o)
+            } else if (o.name.includes('4')) {
+              o.material = new THREE.MeshPhongMaterial({map: texture4})
+              this.targetList.push(o)
+            } else if (o.name === 'ReadNumber') {
+              o.material = new THREE.MeshPhongMaterial({map: texture5})
+              this.targetList.push(o)
+            } else o.material = util.flatBlack
+          }
+          this.module5.castShadow = true
+          this.module5.receiveShadow = true
+        })
       })
-      this.module5.castShadow = true
-      this.module5.receiveShadow = true
-    })
+    }
 
     this.renderer = new THREE.WebGLRenderer({antialias: true})
     this.renderer.shadowMap.enabled = true
@@ -664,7 +661,8 @@ class RefacBomb extends Component {
         Strike.visible = true
       }
       if (prevState.count !== this.state.count) {
-        this.calcClock(prevState)
+        if (this.clock.children[6]) this.calcClock(prevState)
+        else setTimeout(this.calcClock(prevState), 1000)
       }
     }
   }
