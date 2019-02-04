@@ -5,6 +5,11 @@ export const red = new MeshPhongMaterial({
   shininess: 100
 })
 
+export const flatRed = new MeshPhongMaterial({
+  color: 0xff0000,
+  shininess: 10
+})
+
 export const brightRed = new MeshPhongMaterial({
   color: 0xee0000,
   shininess: 100
