@@ -100,10 +100,10 @@ const mapState = ({game}) => ({
   maxTime: game.maxTime
 })
 
-const mapProps = dispatch => ({
+const mapDispatch = dispatch => ({
   startGame: settings => {
     dispatch(startGame(settings))
   }
 })
 
-export default connect(mapState, mapProps)(NewGame)
+export default connect(mapState, mapDispatch)(NewGame)

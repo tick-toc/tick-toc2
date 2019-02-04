@@ -25,7 +25,7 @@ const initialGame = {
     }
   ],
   gameStarted: false,
-  gameStatus: 'pending' // is this even needed?
+  gameStatus: 'pending'
 }
 
 //ACTION TYPES
@@ -34,6 +34,7 @@ const SET_STRIKE = 'SET_STRIKE'
 const PASS_MODULE = 'PASS_MODULE'
 const DIFFUSED = 'DIFFUSED'
 const END_GAME = 'END_GAME'
+const RESET_GAME = 'RESET_GAME'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
@@ -41,7 +42,18 @@ export const setStrike = () => ({type: SET_STRIKE})
 export const passModule = moduleName => ({type: PASS_MODULE, moduleName})
 export const diffused = () => ({type: DIFFUSED})
 export const endGame = status => ({type: END_GAME, status})
+export const resetGame = () => ({type: RESET_GAME})
+
 // THUNK CREATORS
+
+export const saveGame = game => async dispatch => {
+  try {
+    const result = await axios.post('/api/games', game)
+    console.log(result, '<<RESULT')
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 export default function(state = initialGame, action) {
   switch (action.type) {
@@ -71,6 +83,8 @@ export default function(state = initialGame, action) {
       }
     case END_GAME:
       return {...state, gameStatus: action.status}
+    case RESET_GAME:
+      return initialGame
     default:
       return state
   }
