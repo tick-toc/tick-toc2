@@ -346,6 +346,7 @@ class Bomb extends Component {
 
       this.module3Loader.load('models/mo3.glb', gltf => {
         this.module3 = gltf.scene
+        this.module3.pickFour = []
         this.box.add(this.module3)
         this.module3.scale.set(0.42, 0.42, 0.42)
         this.module3.position.x = -0.49 //Position (x = right+ left-)
@@ -353,24 +354,42 @@ class Bomb extends Component {
         this.module3.position.z = 0.47 //Position (z = front +, back-)
         this.module3.rotation.z = Math.PI / 2
         this.module3.rotation.y = -Math.PI / 2
+        let alphaSet = []
+        if (!alphaSet[0]) {
+          let set = Math.floor(Math.random() * 6)
+          for (let i = 1; i < 8; i++) {
+            alphaSet.push(set * 7 + i)
+          }
+        }
+        let pickFour = [],
+          idx
+        if (!pickFour[0]) {
+          for (let i = 0; i < 4; i++) {
+            idx = Math.floor(Math.random() * alphaSet.length)
+            pickFour.push(alphaSet[idx])
+            alphaSet = [...alphaSet.slice(0, idx), ...alphaSet.slice(idx + 1)]
+          }
+          this.module3.pickFour = pickFour
+        }
+
         this.module3.traverse(o => {
           let texture1 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            `/models/alphabets/Alp${this.module3.pickFour[0]}.png`
           )
           texture1.wrapT = THREE.RepeatWrapping
           texture1.repeat.y = -1
           var texture2 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            `/models/alphabets/Alp${this.module3.pickFour[1]}.png`
           )
           texture2.wrapT = THREE.RepeatWrapping
           texture2.repeat.y = -1
           var texture3 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            `/models/alphabets/Alp${this.module3.pickFour[2]}.png`
           )
           texture3.wrapT = THREE.RepeatWrapping
           texture3.repeat.y = -1
           var texture4 = new THREE.TextureLoader().load(
-            `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
+            `/models/alphabets/Alp${this.module3.pickFour[3]}.png`
           )
           texture4.wrapT = THREE.RepeatWrapping
           texture4.repeat.y = -1
@@ -403,6 +422,7 @@ class Bomb extends Component {
             }
           }
         })
+        this.pickFour = pickFour.sort((a, b) => a - b)
         this.module3.castShadow = true
         this.module3.receiveShadow = true
       })
@@ -471,6 +491,7 @@ class Bomb extends Component {
       this.module5Loader.load('models/mo5.glb', gltf => {
         this.module5 = gltf.scene
         this.module5.correct = '5'
+        this.module5.quest = [[], [], [], []]
         this.box.add(this.module5)
         gltf.scene.scale.set(0.42, 0.42, 0.42)
         gltf.scene.position.x = 0.49 //Position (x = right+ left-)
@@ -721,18 +742,31 @@ class Bomb extends Component {
             .forEach(child => {
               child.position.x -= 0.18
             })
-        } else if (name.startsWith('Letter') || name.startsWith('Lface')) {
-          this.module3.children
-            .filter(a =>
-              a.name.includes('' + this.intersects[0].object.name.slice(-1))
+        }
+        // module3
+        if (name.startsWith('Letter') || name.startsWith('Lface')) {
+          if (
+            this.module3.pickFour[0] ===
+            Number(
+              this.intersects[0].object.material.map.image.src.slice(42, 44)
             )
-            .map(b => {
-              if (b.position.x > 1.26) b.position.x -= 0.07
-              if (b.position.x < 0.5 && b.position.x > 0.35) {
-                b.position.x -= 0.07
-                b.material.color.setRGB(0, 1, 0)
-              }
-            })
+          ) {
+            this.module3.children
+              .filter(a =>
+                a.name.includes('' + this.intersects[0].object.name.slice(-1))
+              )
+              .map(b => {
+                if (b.position.x > 1.26) b.position.x -= 0.07
+                if (b.position.x < 0.5 && b.position.x > 0.35) {
+                  b.position.x -= 0.07
+                  b.material.color.setRGB(0, 1, 0)
+                }
+              })
+            this.module3.pickFour.shift()
+            if (!this.module3.pickFour[0]) this.handleLetters()
+          } else {
+            this.props.setStrike()
+          }
         }
         // module4
         let head = this.module4.head
@@ -780,7 +814,6 @@ class Bomb extends Component {
         }
 
         // module5
-        let correct = this.module5.correct
         if (this.intersects[0].object.name.includes('Kface')) {
           this.module5.children
             .filter(a =>
@@ -935,6 +968,13 @@ class Bomb extends Component {
     } else {
       this.props.setStrike()
     }
+    this.module1.remove(wire)
+    this.removeTarget(wire)
+  }
+
+  handleLetters = wire => {
+    this.props.passModule('Letters')
+    this.handlePass('module3')
     this.module1.remove(wire)
     this.removeTarget(wire)
   }

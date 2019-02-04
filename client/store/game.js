@@ -20,6 +20,10 @@ const initialGame = {
     {
       name: 'BigButton',
       passed: false
+    },
+    {
+      name: 'Letters',
+      passed: false
     }
   ],
   gameStarted: false,
