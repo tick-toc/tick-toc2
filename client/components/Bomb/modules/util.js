@@ -27,6 +27,11 @@ export const black = new MeshPhongMaterial({
   shininess: 100
 })
 
+export const flatBlack = new MeshPhongMaterial({
+  color: 0x000000,
+  shininess: 10
+})
+
 export const blue = new MeshPhongMaterial({
   color: 0x0000ff,
   shininess: 100
