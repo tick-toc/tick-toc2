@@ -11,17 +11,18 @@ import {CEDcreate} from './modules/CED'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
+import {FaBomb} from 'react-icons/fa'
 
 class Bomb extends Component {
   state = {
     count: this.props.startTime,
     minute: 0,
     tenSecond: 0,
-    singleSecond: 0
+    singleSecond: 0,
+    activated: false
   }
 
   componentDidMount() {
-    console.log(this.props, '<<<PROPS')
     this.targetList = []
 
     this.scene = new THREE.Scene()
@@ -95,7 +96,6 @@ class Bomb extends Component {
       })
       this.box.castShadow = true
       this.box.receiveShadow = true
-      this.scene.add(this.box)
       this.initClock()
     })
 
@@ -126,27 +126,32 @@ class Bomb extends Component {
       this.initDigital()
     }
 
-    this.initDigital = async () => {
-      await this.digitalLoader.load('models/digital.glb', glft => {
-        this.digital = glft.scene
-        this.clock.add(this.digital)
-        this.digital.scale.set(0.9, 0.9, 0.9)
-        this.digital.position.x = 0 //Position (x = right+ left-)
-        this.digital.position.y = 0 //Position (y = up+, down-)
-        this.digital.position.z = 0 //Position (z = front +, back-)
-        this.digital.traverse(o => {
-          if (o.isMesh) {
-            o.material = util.brightRed
-            if (o.name !== 'Dot') {
-              o.visible = false
+    this.initDigital = () => {
+      if (this.clock) {
+        this.digitalLoader.load('models/digital.glb', glft => {
+          this.digital = glft.scene
+          this.clock.add(this.digital)
+          this.digital.scale.set(0.9, 0.9, 0.9)
+          this.digital.position.x = 0 //Position (x = right+ left-)
+          this.digital.position.y = 0 //Position (y = up+, down-)
+          this.digital.position.z = 0 //Position (z = front +, back-)
+          this.digital.traverse(o => {
+            if (o.isMesh) {
+              o.material = util.brightRed
+              if (o.name !== 'Dot') {
+                o.visible = false
+              }
             }
-          }
+          })
+          this.calcInitialClock()
         })
-        if (this.clock.children[6]) this.calcInitialClock()
-        else setTimeout(this.calcInitialClock(), 800)
-      })
-      this.initModules()
+        this.initInfo()
+      } else {
+        setTimeout(() => this.initDigital(), 100)
+      }
+    }
 
+    this.initInfo = () => {
       this.batteryLoader.load('models/batterry.glb', battery => {
         this.battery1 = battery.scene
         this.box.add(this.battery1)
@@ -215,6 +220,7 @@ class Bomb extends Component {
         this.parallel.castShadow = true
         this.parallel.receiveShadow = true
       })
+      this.initModules()
     }
 
     this.initModules = () => {
@@ -632,7 +638,12 @@ class Bomb extends Component {
 
     this.projector = new THREE.Projector()
     this.start()
-    this.handleCountStart()
+    setTimeout(() => {
+      this.setState(prevState => ({
+        activated: !prevState.activated
+      }))
+      this.handleCountStart()
+    }, 5000)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -914,13 +925,20 @@ class Bomb extends Component {
 
   render() {
     const {gameStatus} = this.props
+    const {activated} = this.state
     return (
       <Fragment>
         {gameStatus !== 'pending' && (
           <div className={`banner ${gameStatus}--banner`}>{gameStatus}</div>
         )}
+        {!activated && (
+          <div className="banner activating--banner">
+            <div>Bomb is activating. Get ready.</div>
+            <FaBomb />
+          </div>
+        )}
         <div
-          id="bomb-box"
+          className={activated ? 'bomb--activated' : 'bomb--activating'}
           ref={mount => {
             this.mount = mount
           }}
