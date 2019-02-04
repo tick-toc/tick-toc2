@@ -13,6 +13,9 @@ import {me} from '../store'
 class App extends Component {
   componentDidMount() {
     this.props.loadInitialData()
+    // window.addEventListener('load', () => {
+    //   this.props.
+    // })
   }
 
   render() {
@@ -56,6 +59,7 @@ const mapState = state => {
 const mapDispatch = dispatch => {
   return {
     loadInitialData: () => dispatch(me())
+    // fetchWebRTC: () => dispatch(Stream())
   }
 }
 
