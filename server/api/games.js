@@ -14,3 +14,26 @@ router.get('/', async (req, res, next) => {
     next(err)
   }
 })
+
+router.post('/', async (req, res, next) => {
+  // need req.body
+  // need req.session.passport.user
+  try {
+    const userId = req.session.passport.user
+    // const result = Game.create({ where: {
+
+    // }})
+    const result = await Game.create({
+      userId
+    })
+    console.log(req.body, '<<<BODY')
+    console.log(req.session, '<<<SESSION')
+    res.json(result)
+  } catch (err) {
+    next(err)
+  }
+
+  // } catch (err) {
+  //   next(err)
+  // }
+})

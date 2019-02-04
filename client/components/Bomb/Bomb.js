@@ -12,7 +12,7 @@ import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
 
-class RefacBomb extends Component {
+class Bomb extends Component {
   state = {
     count: this.props.startTime,
     minute: 0,
@@ -20,7 +20,8 @@ class RefacBomb extends Component {
     singleSecond: 0
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    console.log(this.props, '<<<PROPS')
     this.targetList = []
 
     this.scene = new THREE.Scene()
@@ -352,17 +353,17 @@ class RefacBomb extends Component {
           )
           texture1.wrapT = THREE.RepeatWrapping
           texture1.repeat.y = -1
-          let texture2 = new THREE.TextureLoader().load(
+          var texture2 = new THREE.TextureLoader().load(
             `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
           )
           texture2.wrapT = THREE.RepeatWrapping
           texture2.repeat.y = -1
-          let texture3 = new THREE.TextureLoader().load(
+          var texture3 = new THREE.TextureLoader().load(
             `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
           )
           texture3.wrapT = THREE.RepeatWrapping
           texture3.repeat.y = -1
-          let texture4 = new THREE.TextureLoader().load(
+          var texture4 = new THREE.TextureLoader().load(
             `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
           )
           texture4.wrapT = THREE.RepeatWrapping
@@ -639,12 +640,16 @@ class RefacBomb extends Component {
       this.state.minute !== nextState.minute ||
       this.state.tenSecond !== nextState.tenSecond ||
       this.state.singleSecond !== nextState.singleSecond
-    )
+    ) {
       return false
+    }
     return true
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.props.gameStatus !== 'pending') {
+      setTimeout(() => this.props.history.push('/recap'), 3000)
+    }
     if (this.props.moduleTotal === this.props.modulesPassed) {
       this.handleDiffusal()
     } else if (
@@ -713,10 +718,8 @@ class RefacBomb extends Component {
             .map(b => {
               if (b.position.x > 1.26) b.position.x -= 0.07
               if (b.position.x < 0.5 && b.position.x > 0.35) {
-                if (b.name !== 'LED3') {
-                  b.position.x -= 0.07
-                  b.material.color.setRGB(0, 1, 0)
-                }
+                b.position.x -= 0.07
+                b.material.color.setRGB(0, 1, 0)
               }
             })
         }
@@ -804,15 +807,19 @@ class RefacBomb extends Component {
   }
 
   handleDiffusal = () => {
-    clearTimeout(this.timer)
-    this.targetList = []
-    this.props.endGame('diffused')
+    if (this.props.gameStatus === 'pending') {
+      clearTimeout(this.timer)
+      this.targetList = []
+      this.props.endGame('diffused')
+    }
   }
 
   handleFailure = () => {
-    if (this.state.count) clearTimeout(this.timer)
-    this.targetList = []
-    this.props.endGame('failed')
+    if (this.props.gameStatus === 'pending') {
+      if (this.state.count) clearTimeout(this.timer)
+      this.targetList = []
+      this.props.endGame('failed')
+    }
   }
 
   handleCountStart = () => {
@@ -923,12 +930,12 @@ class RefacBomb extends Component {
   }
 }
 
-const mapState = ({game}) => ({...game})
+const mapState = ({game}, ownProps) => ({...game, ...ownProps})
 
-const mapProps = dispatch => ({
+const mapDispatch = dispatch => ({
   setStrike: () => dispatch(setStrike()),
   passModule: moduleName => dispatch(passModule(moduleName)),
   endGame: status => dispatch(endGame(status))
 })
 
-export default connect(mapState, mapProps)(RefacBomb)
+export default connect(mapState, mapDispatch)(Bomb)

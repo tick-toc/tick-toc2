@@ -72,16 +72,6 @@ export const clockBackground = new MeshPhongMaterial({
   shininess: 10
 })
 
-export const flatBlack = new MeshPhongMaterial({
-  color: 0x222222,
-  shininess: 10
-})
-
-export const flatRed = new MeshPhongMaterial({
-  color: 0xff0000,
-  shininess: 10
-})
-
 /*******************
 LOGIC
 *******************/
