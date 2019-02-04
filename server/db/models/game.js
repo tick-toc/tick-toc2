@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 
 const Game = db.define('game', {
-  modules: {
+  moduleTotal: {
     type: Sequelize.INTEGER,
     allowNull: false,
     defaultValue: 5,
@@ -23,7 +23,7 @@ const Game = db.define('game', {
     allowNull: false,
     defaultValue: 300
   },
-  endTime: {
+  finishTime: {
     type: Sequelize.INTEGER
   },
   strikesAllowed: {
@@ -34,7 +34,7 @@ const Game = db.define('game', {
       notEmpty: true
     }
   },
-  strikes: {
+  strikeCount: {
     type: Sequelize.INTEGER,
     allowNull: false,
     defaultValue: 3,
@@ -43,12 +43,9 @@ const Game = db.define('game', {
     }
   },
   status: {
-    type: Sequelize.ENUM('passed', 'failed', 'active'),
+    type: Sequelize.ENUM('passed', 'failed'),
     allowNull: false,
-    defaultValue: 'active',
-    validate: {
-      notEmpty: true
-    }
+    defaultValue: 'passed'
   }
 })
 
