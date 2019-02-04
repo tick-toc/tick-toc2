@@ -40,7 +40,11 @@ export const startGame = settings => ({type: START_GAME, settings})
 export const setStrike = () => ({type: SET_STRIKE})
 export const passModule = moduleName => ({type: PASS_MODULE, moduleName})
 export const diffused = () => ({type: DIFFUSED})
-export const endGame = status => ({type: END_GAME, status})
+export const endGame = (status, finishTime) => ({
+  type: END_GAME,
+  status,
+  finishTime
+})
 export const resetGame = () => ({type: RESET_GAME})
 export const replayGame = () => ({type: REPLAY_GAME})
 
@@ -82,7 +86,11 @@ export default function(state = initialGame, action) {
         strikeCount: state.strikeCount + 1
       }
     case END_GAME:
-      return {...state, gameStatus: action.status}
+      return {
+        ...state,
+        gameStatus: action.status,
+        finishTime: action.finishTime
+      }
     case RESET_GAME:
       return initialGame
     case REPLAY_GAME:
