@@ -760,10 +760,10 @@ class RefacBomb extends Component {
 
 const mapState = ({game}, ownProps) => ({...game, ...ownProps})
 
-const mapProps = dispatch => ({
+const mapDispatch = dispatch => ({
   setStrike: () => dispatch(setStrike()),
   passModule: moduleName => dispatch(passModule(moduleName)),
   endGame: status => dispatch(endGame(status))
 })
 
-export default connect(mapState, mapProps)(RefacBomb)
+export default connect(mapState, mapDispatch)(RefacBomb)

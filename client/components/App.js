@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import Bomb from './Bomb/Bomb'
 import ProtectedBomb from './Bomb/ProtectedBomb'
 import './../styles/App.css'
