@@ -11,17 +11,18 @@ import {CEDcreate} from './modules/CED'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
+import {FaBomb} from 'react-icons/fa'
 
 class Bomb extends Component {
   state = {
     count: this.props.startTime,
     minute: 0,
     tenSecond: 0,
-    singleSecond: 0
+    singleSecond: 0,
+    activated: false
   }
 
   componentDidMount() {
-    console.log(this.props, '<<<PROPS')
     this.targetList = []
 
     this.scene = new THREE.Scene()
@@ -95,7 +96,6 @@ class Bomb extends Component {
       })
       this.box.castShadow = true
       this.box.receiveShadow = true
-      this.scene.add(this.box)
       this.initClock()
     })
 
@@ -126,27 +126,32 @@ class Bomb extends Component {
       this.initDigital()
     }
 
-    this.initDigital = async () => {
-      await this.digitalLoader.load('models/digital.glb', glft => {
-        this.digital = glft.scene
-        this.clock.add(this.digital)
-        this.digital.scale.set(0.9, 0.9, 0.9)
-        this.digital.position.x = 0 //Position (x = right+ left-)
-        this.digital.position.y = 0 //Position (y = up+, down-)
-        this.digital.position.z = 0 //Position (z = front +, back-)
-        this.digital.traverse(o => {
-          if (o.isMesh) {
-            o.material = util.brightRed
-            if (o.name !== 'Dot') {
-              o.visible = false
+    this.initDigital = () => {
+      if (this.clock) {
+        this.digitalLoader.load('models/digital.glb', glft => {
+          this.digital = glft.scene
+          this.clock.add(this.digital)
+          this.digital.scale.set(0.9, 0.9, 0.9)
+          this.digital.position.x = 0 //Position (x = right+ left-)
+          this.digital.position.y = 0 //Position (y = up+, down-)
+          this.digital.position.z = 0 //Position (z = front +, back-)
+          this.digital.traverse(o => {
+            if (o.isMesh) {
+              o.material = util.brightRed
+              if (o.name !== 'Dot') {
+                o.visible = false
+              }
             }
-          }
+          })
+          this.calcInitialClock()
         })
-        if (this.clock.children[6]) this.calcInitialClock()
-        else setTimeout(this.calcInitialClock(), 800)
-      })
-      this.initModules()
+        this.initInfo()
+      } else {
+        setTimeout(() => this.initDigital(), 100)
+      }
+    }
 
+    this.initInfo = () => {
       this.batteryLoader.load('models/batterry.glb', battery => {
         this.battery1 = battery.scene
         this.box.add(this.battery1)
@@ -215,6 +220,7 @@ class Bomb extends Component {
         this.parallel.castShadow = true
         this.parallel.receiveShadow = true
       })
+      this.initModules()
     }
 
     this.initModules = () => {
@@ -632,7 +638,12 @@ class Bomb extends Component {
 
     this.projector = new THREE.Projector()
     this.start()
-    this.handleCountStart()
+    setTimeout(() => {
+      this.setState(prevState => ({
+        activated: !prevState.activated
+      }))
+      this.handleCountStart()
+    }, 5000)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -725,7 +736,6 @@ class Bomb extends Component {
         }
         // module4
         let head = this.module4.head
-        // console.log(this.intersects)
         if (this.intersects[0].object.name.includes('Go')) {
           this.intersects[0].object.material = util.flatBlack
           if (this.intersects[0].object.name === 'GoUp') {
@@ -779,19 +789,13 @@ class Bomb extends Component {
             .map(b => {
               if (b.position.x > 1.28) b.position.x -= 0.07
             })
-          if (this.intersects[0].object.name === 'Kface2') {
+          if (
+            this.intersects[0].object.name[5] ===
             this.module5.children
-              .filter(a => a.name.includes(correct))
-              .map(b => {
-                b.visible = true
-              })
-            console.log(this.module5.correct)
-            if (correct !== '9') {
-              this.module5.correct = Number(correct) + 1 + ''
-            }
-            console.log(this.module5.correct)
-          }
-          if (this.intersects[0].object.name === 'Kface3') {
+              .filter(a => a.name === 'ReadNumber')[0]
+              .material.map.image.src.slice(-5)[0]
+          ) {
+            //Lit up correct CED & change the ReadNumber on the radar
             this.module5.children
               .filter(a => a.name.includes(correct))
               .map(b => {
@@ -800,6 +804,30 @@ class Bomb extends Component {
             if (correct !== '9') {
               this.module5.correct = Number(correct) + 1 + ''
             }
+            let texture5 = new THREE.TextureLoader().load(
+              `/models/Read${Math.ceil(Math.random() * 4)}.png`
+            )
+            texture5.wrapT = THREE.RepeatWrapping
+            texture5.repeat.y = -1
+            this.module5.children.filter(
+              a => a.name === 'ReadNumber'
+            )[0].material = new THREE.MeshPhongMaterial({map: texture5})
+            //Reset Keys
+            this.module5.children
+              .filter(a => a.name.includes('K'))
+              .map(b => (b.visible = false))
+            this.setKey = k => {
+              this.module5.children
+                .filter(a => a.name.includes(k))
+                .map(b => (b.visible = true))
+            }
+            this.module5.children.filter(a => a.name.includes('K')).map(b => {
+              if (b.position.x < 1.28) b.position.x += 0.07
+            })
+            setTimeout(() => this.setKey('1'), 250)
+            setTimeout(() => this.setKey('2'), 500)
+            setTimeout(() => this.setKey('3'), 750)
+            setTimeout(() => this.setKey('4'), 1000)
           }
         }
       }
@@ -860,6 +888,16 @@ class Bomb extends Component {
     if (state.minute !== minute) {
       this.setState({minute})
       this.setClock('1', minute)
+      if (minute === 0) {
+        let spotLight = this.spotLight
+        spotLight.color.g = 0
+        spotLight.color.b = 0
+        spotLight.intensity = 0.7
+        setInterval(function() {
+          spotLight.visible = !spotLight.visible
+        }, 1000)
+        this.spotLight = spotLight
+      }
     }
     if (state.tenSecond !== tenSecond) {
       this.setState({tenSecond})
@@ -914,13 +952,20 @@ class Bomb extends Component {
 
   render() {
     const {gameStatus} = this.props
+    const {activated} = this.state
     return (
       <Fragment>
         {gameStatus !== 'pending' && (
           <div className={`banner ${gameStatus}--banner`}>{gameStatus}</div>
         )}
+        {!activated && (
+          <div className="banner activating--banner">
+            <div>Bomb is activating. Get ready.</div>
+            <FaBomb />
+          </div>
+        )}
         <div
-          id="bomb-box"
+          className={activated ? 'bomb--activated' : 'bomb--activating'}
           ref={mount => {
             this.mount = mount
           }}

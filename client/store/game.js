@@ -8,8 +8,6 @@ const initialGame = {
   maxTime: 570,
   finishTime: 0,
   moduleTotal: 2,
-  minMod: 2,
-  maxMod: 2,
   modulesPassed: 0,
   strikesAllowed: true,
   strikeTotal: 3,
@@ -35,6 +33,7 @@ const PASS_MODULE = 'PASS_MODULE'
 const DIFFUSED = 'DIFFUSED'
 const END_GAME = 'END_GAME'
 const RESET_GAME = 'RESET_GAME'
+const REPLAY_GAME = 'REPLAY_GAME'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
@@ -43,10 +42,11 @@ export const passModule = moduleName => ({type: PASS_MODULE, moduleName})
 export const diffused = () => ({type: DIFFUSED})
 export const endGame = status => ({type: END_GAME, status})
 export const resetGame = () => ({type: RESET_GAME})
+export const replayGame = () => ({type: REPLAY_GAME})
 
 // THUNK CREATORS
 
-export const saveGame = game => async dispatch => {
+export const saveGame = game => async () => {
   try {
     const result = await axios.post('/api/games', game)
     console.log(result, '<<RESULT')
@@ -85,6 +85,14 @@ export default function(state = initialGame, action) {
       return {...state, gameStatus: action.status}
     case RESET_GAME:
       return initialGame
+    case REPLAY_GAME:
+      return {
+        ...initialGame,
+        startTime: state.startTime,
+        gameStarted: state.gameStarted,
+        strikesAllowed: state.strikesAllowed,
+        strikeTotal: state.strikeTotal
+      }
     default:
       return state
   }

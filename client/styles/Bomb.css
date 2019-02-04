@@ -1,3 +1,11 @@
+.bomb--activated {
+  display: initial;
+}
+
+.bomb--activating {
+  display: none;
+}
+
 .banner {
   position: absolute;
   z-index: 10;
@@ -9,6 +17,10 @@
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
+}
+
+.failed--banner,
+.diffused--banner {
   font-size: 8rem;
 }
 
@@ -18,4 +30,13 @@
 
 .diffused--banner {
   color: #00ff00;
+}
+
+.activating--banner {
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.87);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

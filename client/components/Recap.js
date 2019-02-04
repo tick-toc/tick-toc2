@@ -2,26 +2,44 @@ import React, {Component} from 'react'
 import '../styles/Recap.css'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
-import {resetGame, saveGame} from '../store'
+import {resetGame, saveGame, replayGame} from '../store'
 
 class Recap extends Component {
   componentDidMount() {
-    this.props.saveGame('testing 1 2 3')
+    const {
+      startTime,
+      finishTime,
+      moduleTotal,
+      strikeTotal,
+      strikeCount
+    } = this.props
+
+    this.props.saveGame({
+      startTime,
+      finishTime,
+      moduleTotal,
+      strikeTotal,
+      strikeCount
+    })
   }
 
-  handleClick = () => {
+  handleExit = () => {
     this.props.resetGame()
+  }
+
+  handleReplay = () => {
+    this.props.replayGame()
   }
 
   render() {
     return (
       <div className="new-game-container">
         {/* Display game information here */}
-        <Link onClick={this.handleClick} to="/" className="return">
-          Return to main menu
+        <Link onClick={this.handleExit} to="/" className="return">
+          Back
         </Link>
-        <Link onClick={this.handleClick} to="/new-game" className="return">
-          Play again
+        <Link onClick={this.handleReplay} to="/diffusing" className="return">
+          Replay
         </Link>
       </div>
     )
@@ -32,7 +50,8 @@ const mapState = ({game}) => ({...game})
 
 const mapDispatch = dispatch => ({
   resetGame: () => dispatch(resetGame()),
-  saveGame: game => dispatch(saveGame(game))
+  saveGame: game => dispatch(saveGame(game)),
+  replayGame: () => dispatch(replayGame())
 })
 
 export default connect(mapState, mapDispatch)(Recap)
