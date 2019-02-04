@@ -1,11 +1,12 @@
-import {MeshPhongMaterial} from 'three'
-
-/*******************
-COLORS
-*******************/
+import {MeshPhongMaterial, Color, PointLight, ImageUtils} from 'three'
 
 export const red = new MeshPhongMaterial({
   color: 0xff0000,
+  shininess: 100
+})
+
+export const brightRed = new MeshPhongMaterial({
+  color: 0xee0000,
   shininess: 100
 })
 
@@ -26,11 +27,6 @@ export const black = new MeshPhongMaterial({
   shininess: 100
 })
 
-export const copper = new MeshPhongMaterial({
-  color: 0xaa7755,
-  shininess: 100
-})
-
 export const blue = new MeshPhongMaterial({
   color: 0x0000ff,
   shininess: 100
@@ -48,6 +44,16 @@ export const green = new MeshPhongMaterial({
   // transparent: true
 })
 
+export const copper = new MeshPhongMaterial({
+  color: 0xaa7755,
+  shininess: 100
+})
+
+export const buttonMaterial = new MeshPhongMaterial({
+  color: 0xccbbaa,
+  shininess: 100
+})
+
 export const defaultMaterial = new MeshPhongMaterial({
   color: 0xaaaab4,
   shininess: 100
@@ -61,9 +67,9 @@ export const socketMaterial = new MeshPhongMaterial({
   shininess: 10
 })
 
-export const buttonMaterial = new MeshPhongMaterial({
-  color: 0xccbbaa,
-  shininess: 100
+export const clockBackground = new MeshPhongMaterial({
+  color: 0x222222,
+  shininess: 10
 })
 
 export const flatBlack = new MeshPhongMaterial({
@@ -80,36 +86,20 @@ export const flatRed = new MeshPhongMaterial({
 LOGIC
 *******************/
 
-export const wireCount = ['3', '4', '5', '6']
+const LEDEmissive = new Color(0x000000)
 
-export const wireCountCases = {
-  '3': [
-    {
-      colors: [red, white, blue],
-      correct: 2
-    },
-    {
-      colors: [red, blue, red],
-      correct: 2
-    },
-    {
-      colors: [white, white, blue],
-      correct: 1
-    },
-    {
-      colors: [blue, blue, red],
-      correct: 1
-    },
-    {
-      colors: [blue, white, white],
-      correct: 1
-    },
-    {
-      colors: [blue, red, white],
-      correct: 2
-    }
-  ]
-  // '4': [],
-  // '5': [],
-  // '6': []
-}
+export const LEDMaterialOFF = new MeshPhongMaterial({
+  transparent: true,
+  opacity: 0.9,
+  emissive: LEDEmissive,
+  color: LEDEmissive,
+  shininess: 100
+})
+
+export const LEDMaterialON = new MeshPhongMaterial({
+  transparent: true,
+  opacity: 0.9,
+  emissive: LEDEmissive,
+  color: 0x00ff00,
+  shininess: 100
+})

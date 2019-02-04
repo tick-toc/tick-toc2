@@ -1,10 +1,13 @@
 import React, {Component} from 'react'
 import '../styles/Main.css'
 import {Link} from 'react-router-dom'
+import {logout} from '../store'
+import {connect} from 'react-redux'
 
 class Main extends Component {
   handleClick = () => {
-    // dispatch action to logout
+    event.preventDefault()
+    this.props.logout()
   }
 
   render() {
@@ -13,14 +16,20 @@ class Main extends Component {
         <Link to="new-game">Start New Game</Link>
         <Link to="previous-games">Previous Games</Link>
         <Link to="leaderboard">Leaderboard</Link>
-        <button onClick={this.handleClick} type="button">
-          Logout
-        </button>
+        <Link to="/">
+          <button onClick={this.handleClick} type="button">
+            Logout
+          </button>
+        </Link>
       </div>
     )
   }
 }
 
-// map state and props
+const mapDispatch = dispatch => {
+  return {
+    logout: () => dispatch(logout())
+  }
+}
 
-export default Main // connect component
+export default connect(null, mapDispatch)(Main)

@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {authSignup, authLogin} from '../store'
 import '../styles/Login.css'
 
 class Login extends Component {
@@ -10,9 +12,10 @@ class Login extends Component {
   }
 
   handleSubmit = event => {
+    const {email, username, password} = this.state
     event.preventDefault()
-    if (this.state.login) console.log('LOGGING IN ACTION')
-    else console.log('SIGNING UP ACTION')
+    if (this.state.login) this.props.authLogin(email, password)
+    else this.props.authSignup(email, password, username)
   }
 
   handleChange = event => {
@@ -56,7 +59,7 @@ class Login extends Component {
             {this.state.login ? 'Log in' : 'Sign up'}
           </button>
         </form>
-        <button onClick={this.handleClick}>
+        <button type="submit" onClick={this.handleClick}>
           {this.state.login
             ? "Don't have an account? Sign up"
             : 'Already have an account? Log in'}
@@ -66,6 +69,12 @@ class Login extends Component {
   }
 }
 
-// map state and props
+const mapDispatch = dispatch => {
+  return {
+    authLogin: (email, password) => dispatch(authLogin(email, password)),
+    authSignup: (email, password, userName) =>
+      dispatch(authSignup(email, password, userName))
+  }
+}
 
-export default Login // connect to store
+export default connect(null, mapDispatch)(Login)

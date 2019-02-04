@@ -6,43 +6,72 @@ import history from '../history'
  */
 const GET_USER = 'GET_USER'
 const REMOVE_USER = 'REMOVE_USER'
+const IS_FETCHING = 'IS_FETCHING'
+//add remove user for logging out
 
 /**
  * INITIAL STATE
  */
-const defaultUser = {}
+const defaultUser = {
+  user: {},
+  isFetching: false
+}
 
 /**
  * ACTION CREATORS
  */
 const getUser = user => ({type: GET_USER, user})
 const removeUser = () => ({type: REMOVE_USER})
+const isFetching = () => ({type: IS_FETCHING})
 
 /**
  * THUNK CREATORS
  */
 export const me = () => async dispatch => {
   try {
+    dispatch(isFetching())
     const res = await axios.get('/auth/me')
     dispatch(getUser(res.data || defaultUser))
+    dispatch(isFetching())
   } catch (err) {
     console.error(err)
   }
 }
 
-export const auth = (email, password, method) => async dispatch => {
+//method
+export const authLogin = (email, password) => async dispatch => {
   let res
+  console.log('do we hit this?')
+
   try {
-    res = await axios.post(`/auth/${method}`, {email, password})
+    res = await axios.post(`/auth/login`, {email, password})
   } catch (authError) {
     return dispatch(getUser({error: authError}))
   }
 
   try {
     dispatch(getUser(res.data))
-    history.push('/home')
-  } catch (dispatchOrHistoryErr) {
-    console.error(dispatchOrHistoryErr)
+    history.push('/')
+  } catch (loginError) {
+    console.error(loginError)
+  }
+}
+
+export const authSignup = (email, password, userName) => async dispatch => {
+  let res
+  console.log('do we hit this?')
+
+  try {
+    res = await axios.post(`/auth/signup`, {email, password, userName})
+  } catch (authError) {
+    return dispatch(getUser({error: authError}))
+  }
+
+  try {
+    dispatch(getUser(res.data))
+    history.push('/')
+  } catch (loginError) {
+    console.error(loginError)
   }
 }
 
@@ -62,9 +91,11 @@ export const logout = () => async dispatch => {
 export default function(state = defaultUser, action) {
   switch (action.type) {
     case GET_USER:
-      return action.user
+      return {...state, user: action.user}
     case REMOVE_USER:
       return defaultUser
+    case IS_FETCHING:
+      return {...state, isFetching: !state.isFetching}
     default:
       return state
   }

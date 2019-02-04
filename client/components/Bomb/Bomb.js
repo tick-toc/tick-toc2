@@ -1,292 +1,238 @@
 /* eslint-disable max-statements */
-/* eslint-disable react/no-unused-state */
+import '../../styles/Bomb.css'
 import React, {Component, Fragment} from 'react'
 import * as THREE from 'three'
-import '../../styles/Bomb.css'
-
 import GLTFLoader from 'three-gltf-loader'
-import * as SOW from './Modules/SubjectOfWires'
-import {clockCases} from './Modules/Clock'
+import {wireCount, wireCountCases} from './modules/wires'
+import {clockCases} from './modules/clock'
+import * as util from './modules/util'
+import {LEDcreate, ranPos} from './modules/LED'
+import {CEDcreate} from './modules/CED'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
-import {Redirect} from 'react-router-dom'
+import {setStrike, passModule, endGame} from '../../store'
 
-class Bomb extends Component {
-  constructor(props) {
-    super(props)
-    this.canvasRef = React.createRef()
-    this.state = {
-      SubjectOfWires: {
-        inactive: true,
-        active: false,
-        passed: false
-      },
-      // eslint-disable-next-line react/no-unused-state
-      moduleTwo: {
-        inactive: true,
-        active: false,
-        passed: false
-      },
-      moduleThree: {
-        inactive: true,
-        active: false,
-        passed: false
-      },
-      moduleFour: {
-        inactive: true,
-        active: false,
-        passed: false
-      },
-      moduleFive: {
-        inactive: true,
-        active: false,
-        passed: false
-      },
-
-      count: this.props.startTime,
-      minute: 0,
-      tenSecond: 0,
-      singleSecond: 0,
-      spotLight: {},
-      box: {},
-      clock: {},
-      module1: {},
-      module2: {},
-      module3: {},
-      module4: {},
-      module5: {},
-      targetList: [],
-      head: {},
-      correct: 5
-    }
+class RefacBomb extends Component {
+  state = {
+    count: this.props.startTime,
+    minute: 0,
+    tenSecond: 0,
+    singleSecond: 0
   }
 
-  handleStart() {
-    this.timer = setInterval(() => {
-      const newCount = this.state.count - 1
-      this.setState({count: newCount >= 0 ? newCount : 0})
-    }, 1000)
-  }
+  async componentDidMount() {
+    this.targetList = []
 
-  componentDidMount() {
-    var camera,
-      scene,
-      renderer,
-      box,
-      clock,
-      digital,
-      module1,
-      module2,
-      module3,
-      module4,
-      module5,
-      head
-    var projector,
-      mouse = {x: 0, y: 0}
+    this.scene = new THREE.Scene()
 
-    init(this)
-    animate()
+    this.camera = new THREE.PerspectiveCamera(
+      36,
+      window.innerWidth / window.innerHeight,
+      0.25,
+      16
+    )
 
-    function init(THIS) {
-      camera = new THREE.PerspectiveCamera(
-        36,
-        window.innerWidth / window.innerHeight,
-        0.25,
-        16
-      )
+    this.camera.position.set(0, 1.8, 4)
 
-      camera.position.set(0, 1.8, 4)
+    this.scene.add(new THREE.AmbientLight(0x505050))
 
-      scene = new THREE.Scene()
+    this.spotLight = new THREE.SpotLight(0xffffff)
 
-      // Lights
+    this.spotLight.angle = Math.PI / 4
+    this.spotLight.penumbra = 0.2
+    this.spotLight.position.set(3.2, 3.2, 2.9)
+    this.spotLight.castShadow = true
+    this.spotLight.shadow.camera.near = 3
+    this.spotLight.shadow.camera.far = 10
+    this.spotLight.shadow.mapSize.width = 1024
+    this.spotLight.shadow.mapSize.height = 1024
 
-      scene.add(new THREE.AmbientLight(0x505050))
+    this.scene.add(this.spotLight)
 
-      let spotLight = new THREE.SpotLight(0xffffff)
-      spotLight.angle = Math.PI / 4
-      spotLight.penumbra = 0.2
-      spotLight.position.set(3.2, 3.2, 2.9)
-      spotLight.castShadow = true
-      spotLight.shadow.camera.near = 3
-      spotLight.shadow.camera.far = 10
-      spotLight.shadow.mapSize.width = 1024
-      spotLight.shadow.mapSize.height = 1024
-      scene.add(spotLight)
-      THIS.setState({spotLight})
+    this.dirLight = new THREE.DirectionalLight(0x55505a, 1)
 
-      let dirLight = new THREE.DirectionalLight(0x55505a, 1)
-      dirLight.position.set(0, 3, 0)
-      dirLight.castShadow = true
-      dirLight.shadow.camera.near = 1
-      dirLight.shadow.camera.far = 10
+    this.dirLight.position.set(0, 3, 0)
+    this.dirLight.castShadow = true
+    this.dirLight.shadow.camera.near = 1
+    this.dirLight.shadow.camera.far = 10
+    this.dirLight.shadow.camera.right = 1
+    this.dirLight.shadow.camera.left = -1
+    this.dirLight.shadow.camera.top = 1
+    this.dirLight.shadow.camera.bottom = -1
+    this.dirLight.shadow.mapSize.width = 1024
+    this.dirLight.shadow.mapSize.height = 1024
 
-      dirLight.shadow.camera.right = 1
-      dirLight.shadow.camera.left = -1
-      dirLight.shadow.camera.top = 1
-      dirLight.shadow.camera.bottom = -1
+    this.scene.add(this.dirLight)
 
-      dirLight.shadow.mapSize.width = 1024
-      dirLight.shadow.mapSize.height = 1024
-      scene.add(dirLight)
+    this.boxLoader = new GLTFLoader()
+    this.batteryLoader = new GLTFLoader()
+    this.serialText = new THREE.TextureLoader().load(`/models/serial.png`)
+    this.serialLoader = new GLTFLoader()
+    this.parallelLoader = new GLTFLoader()
+    this.clockLoader = new GLTFLoader()
+    this.digitalLoader = new GLTFLoader()
+    this.module1Loader = new GLTFLoader()
+    this.module2Loader = new GLTFLoader()
+    this.module3Loader = new GLTFLoader()
+    this.module4Loader = new GLTFLoader()
+    this.module5Loader = new GLTFLoader()
 
-      let boxLoader = new GLTFLoader()
-      boxLoader.load('models/box.glb', function(gltf) {
-        box = gltf.scene
-        gltf.scene.scale.set(1, 1, 1)
-        gltf.scene.position.x = -0.5 //Position (x = right+ left-)
-        gltf.scene.position.y = 1.7 //Position (y = up+, down-)
-        gltf.scene.position.z = 0 //Position (z = front +, back-)
-        gltf.scene.rotation.x = Math.PI / 2
-        box.traverse(o => {
+    this.boxLoader.load('models/box.glb', box => {
+      this.box = box.scene
+      this.scene.add(this.box)
+      this.box.scale.set(1, 1, 1)
+      this.box.position.x = -0.5 //Position (x = right+ left-)
+      this.box.position.y = 1.7 //Position (y = up+, down-)
+      this.box.position.z = 0 //Position (z = front +, back-)
+      this.box.rotation.x = Math.PI / 2
+      this.box.traverse(o => {
+        if (o.isMesh) {
+          if (o.name === 'Cube001') {
+            o.material = util.cubeMaterial
+          } else o.material = util.defaultMaterial
+        }
+      })
+      this.box.castShadow = true
+      this.box.receiveShadow = true
+
+      this.batteryLoader.load('models/batterry.glb', battery => {
+        this.battery1 = battery.scene
+        this.box.add(this.battery1)
+        this.battery1.scale.set(0.09, 0.11, 0.11)
+        this.battery1.position.x = -0.3 //Position (x = right+ left-)
+        this.battery1.position.y = -0.51 //Position (y = up+, down-)
+        this.battery1.position.z = -0.91 //Position (z = front +, back-)
+        this.battery1.rotation.y = -Math.PI / 2
+        this.battery1.rotation.z = Math.PI / 2
+        this.battery1.traverse(o => {
           if (o.isMesh) {
-            if (o.name === 'Cube001') {
-              o.material = SOW.cubeMaterial
-            } else o.material = SOW.defaultMaterial
+            if (o.name === 'Dock') {
+              o.material = util.cubeMaterial
+            } else if (o.name === 'Battery') {
+              o.material = util.black
+            } else if (o.name === 'Battery002') {
+              o.material = util.copper
+            } else o.material = util.defaultMaterial
           }
         })
-        let battery1
-        let batteryLoader = new GLTFLoader()
-        batteryLoader.load('models/batterry.glb', function(gltf) {
-          battery1 = gltf.scene
-          gltf.scene.scale.set(0.09, 0.11, 0.11)
-          gltf.scene.position.x = -0.3 //Position (x = right+ left-)
-          gltf.scene.position.y = -0.51 //Position (y = up+, down-)
-          gltf.scene.position.z = -0.91 //Position (z = front +, back-)
-          gltf.scene.rotation.y = -Math.PI / 2
-          gltf.scene.rotation.z = Math.PI / 2
-          battery1.traverse(o => {
-            if (o.isMesh) {
-              if (o.name === 'Dock') {
-                o.material = SOW.cubeMaterial
-              } else if (o.name === 'Battery') {
-                o.material = SOW.black
-              } else if (o.name === 'Battery002') {
-                o.material = SOW.copper
-              } else o.material = SOW.defaultMaterial
-            }
-          })
-          battery1.castShadow = true
-          battery1.receiveShadow = true
-          box.add(battery1)
-          let battery2 = battery1.clone()
-          box.add(battery2)
-          battery2.position.x = 1.3
-          battery2.position.y = -0.54
-          battery2.position.z = 0.91
-          battery2.rotation.x = Math.PI / 2
-        })
-        var serialText = new THREE.TextureLoader().load(`/models/serial.png`)
-        serialText.wrapT = THREE.RepeatWrapping
-        serialText.repeat.y = -2
-        let serial
-        let serialLoader = new GLTFLoader()
-        serialLoader.load('models/serial.glb', function(gltf) {
-          serial = gltf.scene
-          gltf.scene.scale.set(0.2, 0.2, 0.2)
-          gltf.scene.position.x = 1.3 //Position (x = right+ left-)
-          gltf.scene.position.y = -0.55 //Position (y = up+, down-)
-          gltf.scene.position.z = -1.013 //Position (z = front +, back-)
-          gltf.scene.rotation.y = -Math.PI / 2
-          // gltf.scene.rotation.z = Math.PI / 2
-          serial.traverse(o => {
-            if (o.isMesh) {
-              if (o.name === 'Serial') {
-                o.material = new THREE.MeshPhongMaterial({map: serialText})
-              } else o.material = SOW.cubeMaterial
-            }
-          })
-          serial.castShadow = true
-          serial.receiveShadow = true
-          box.add(serial)
-        })
-        let parallel
-        let parallelLoader = new GLTFLoader()
-        parallelLoader.load('models/parallel.glb', function(gltf) {
-          parallel = gltf.scene
-          gltf.scene.scale.set(0.3, 0.3, 0.3)
-          gltf.scene.position.x = 0.49 //Position (x = right+ left-)
-          gltf.scene.position.y = -0.51 //Position (y = up+, down-)
-          gltf.scene.position.z = 1 //Position (z = front +, back-)
-          gltf.scene.rotation.y = -Math.PI / 2
-          parallel.traverse(o => {
-            if (o.isMesh) {
-              if (o.name === 'Cube' || o.name === 'Cube002') {
-                o.material = SOW.cubeMaterial
-              } else o.material = SOW.defaultMaterial
-            }
-          })
-          parallel.castShadow = true
-          parallel.receiveShadow = true
-          box.add(parallel)
-        })
-        box.castShadow = true
-        box.receiveShadow = true
-        THIS.setState({box})
-        scene.add(box)
+        this.battery1.castShadow = true
+        this.battery1.receiveShadow = true
+        this.battery2 = this.battery1.clone()
+        this.box.add(this.battery2)
+        this.battery2.position.x = 1.3
+        this.battery2.position.y = -0.54
+        this.battery2.position.z = 0.91
+        this.battery2.rotation.x = Math.PI / 2
       })
+      this.serialText.wrapT = THREE.RepeatWrapping
+      this.serialText.repeat.y = -2
 
-      var clockLoader = new GLTFLoader()
-      clockLoader.load('models/clock.glb', function(glft) {
-        clock = glft.scene
-        glft.scene.scale.set(0.44, 0.44, 0.44)
-        glft.scene.position.x = 0.488 //Position (x = right+ left-)
-        glft.scene.position.y = -0.31 //Position (y = up+, down-)
-        glft.scene.position.z = -0.47 //Position (z = front +, back-)
-        glft.scene.rotation.z = Math.PI / 2
-        glft.scene.rotation.y = -Math.PI / 2
-        clock.traverse(o => {
+      this.serialLoader.load('models/serial.glb', serial => {
+        this.serial = serial.scene
+        this.box.add(this.serial)
+        this.serial.scale.set(0.2, 0.2, 0.2)
+        this.serial.position.x = 1.3 //Position (x = right+ left-)
+        this.serial.position.y = -0.55 //Position (y = up+, down-)
+        this.serial.position.z = -1.013 //Position (z = front +, back-)
+        this.serial.rotation.y = -Math.PI / 2
+        this.serial.traverse(o => {
           if (o.isMesh) {
-            if (o.name === 'Cube001') o.material = SOW.flatBlack
+            if (o.name === 'Serial') {
+              o.material = new THREE.MeshPhongMaterial({map: this.serialText})
+            } else o.material = util.cubeMaterial
+          }
+        })
+        this.serial.castShadow = true
+        this.serial.receiveShadow = true
+      })
+      this.parallelLoader.load('models/parallel.glb', parallel => {
+        this.parallel = parallel.scene
+        this.box.add(this.parallel)
+        this.parallel.scale.set(0.3, 0.3, 0.3)
+        this.parallel.position.x = 0.49 //Position (x = right+ left-)
+        this.parallel.position.y = -0.51 //Position (y = up+, down-)
+        this.parallel.position.z = 1 //Position (z = front +, back-)
+        this.parallel.rotation.y = -Math.PI / 2
+        this.parallel.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Cube' || o.name === 'Cube002') {
+              o.material = util.cubeMaterial
+            } else o.material = util.defaultMaterial
+          }
+        })
+        this.parallel.castShadow = true
+        this.parallel.receiveShadow = true
+      })
+      this.box.castShadow = true
+      this.box.receiveShadow = true
+      this.scene.add(this.box)
+      this.initClock()
+    })
+
+    this.initClock = () => {
+      this.clockLoader.load('models/clock.glb', glft => {
+        this.clock = glft.scene
+        this.box.add(this.clock)
+        this.clock.scale.set(0.44, 0.44, 0.44)
+        this.clock.position.x = 0.49 //Position (x = right+ left-)
+        this.clock.position.y = -0.31 //Position (y = up+, down-)
+        this.clock.position.z = -0.47 //Position (z = front +, back-)
+        this.clock.rotation.z = Math.PI / 2
+        this.clock.rotation.y = -Math.PI / 2
+        this.clock.traverse(o => {
+          if (o.isMesh) {
+            if (o.name === 'Cube001') o.material = util.clockBackground
             else if (o.name === 'Cube002') {
-              o.material = SOW.cubeMaterial
+              o.material = util.cubeMaterial
             } else if (o.name === 'Strike1' || o.name === 'Strike2') {
-              o.material = SOW.flatRed
+              o.material = util.flatRed
               o.visible = false
-            } else o.material = SOW.defaultMaterial
+            } else o.material = util.defaultMaterial
           }
         })
-        clock.castShadow = true
-        clock.receiveShadow = true
-        box.add(clock)
+        this.clock.castShadow = true
+        this.clock.receiveShadow = true
       })
+      this.initDigital()
+    }
 
-      var digitalLoader = new GLTFLoader()
-      digitalLoader.load('models/digital.glb', function(glft) {
-        digital = glft.scene
-        glft.scene.scale.set(0.9, 0.9, 0.9)
-        glft.scene.position.x = 0 //Position (x = right+ left-)
-        glft.scene.position.y = -0.03 //Position (y = up+, down-)
-        glft.scene.position.z = 0 //Position (z = front +, back-)
-        digital.traverse(o => {
+    this.initDigital = async () => {
+      await this.digitalLoader.load('models/digital.glb', glft => {
+        this.digital = glft.scene
+        this.clock.add(this.digital)
+        this.digital.scale.set(0.9, 0.9, 0.9)
+        this.digital.position.x = 0 //Position (x = right+ left-)
+        this.digital.position.y = 0 //Position (y = up+, down-)
+        this.digital.position.z = 0 //Position (z = front +, back-)
+        this.digital.traverse(o => {
           if (o.isMesh) {
-            o.material = SOW.red
-            if (o.name === 'D1-2') o.visible = false
-            if (o.name === 'D1-5') o.visible = false
-            if (o.name === 'D2-7') o.visible = false
-            if (o.name === 'D3-7') o.visible = false
+            o.material = util.brightRed
+            if (o.name !== 'Dot') {
+              o.visible = false
+            }
           }
         })
-        clock.castShadow = true
-        clock.receiveShadow = true
-        clock.add(digital)
-        THIS.setState({clock})
+        if (this.clock.children[6]) this.calcInitialClock()
+        else setTimeout(this.calcInitialClock(), 800)
       })
+      this.initModules()
+    }
 
-      let module1Loader = new GLTFLoader()
-      module1Loader.load('models/mo1.glb', function(gltf) {
-        module1 = gltf.scene
-        gltf.scene.scale.set(0.42, 0.42, 0.42)
-        gltf.scene.position.x = -0.49 //Position (x = right+ left-)
-        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
-        gltf.scene.position.z = -0.47 //Position (z = front +, back-)
-        gltf.scene.rotation.z = Math.PI / 2
-        gltf.scene.rotation.y = -Math.PI / 2
+    this.initModules = () => {
+      this.module1Loader.load('models/mo1.glb', gltf => {
+        this.module1 = gltf.scene
+        this.box.add(this.module1)
+        this.module1.scale.set(0.42, 0.42, 0.42)
+        this.module1.position.x = -0.49 //Position (x = right+ left-)
+        this.module1.position.y = -0.31 //Position (y = up+, down-)
+        this.module1.position.z = -0.47 //Position (z = front +, back-)
+        this.module1.rotation.z = Math.PI / 2
+        this.module1.rotation.y = -Math.PI / 2
 
-        let count = 3 // parseInt(SOW.wireCount[Math.floor(Math.random() * wireCount.length)])
-        let wireCases = SOW.wireCountCases[count]
+        let count = 3 // parseInt(wireCount[Math.floor(Math.random() * wireCount.length)])
+        let wireCases = wireCountCases[count]
         let wireCase = wireCases[generateRandomIndex(wireCases.length)]
-        let wires = module1.children.filter(element =>
+        let wires = this.module1.children.filter(element =>
           element.name.startsWith('Wire')
         )
         let uncutWires = wires
@@ -297,8 +243,8 @@ class Bomb extends Component {
           .sort((a, b) => sortByKey(a, b, 'name'))
         while (cutWires.length > count) {
           let wireIndex = generateRandomIndex(cutWires.length)
-          module1.remove(cutWires[wireIndex])
-          module1.remove(uncutWires[wireIndex])
+          this.module1.remove(cutWires[wireIndex])
+          this.module1.remove(uncutWires[wireIndex])
           cutWires = cutWires.filter((wire, index) => index !== wireIndex)
           uncutWires = uncutWires.filter((wire, index) => index !== wireIndex)
         }
@@ -311,59 +257,37 @@ class Bomb extends Component {
           } else {
             wire.userData = {correct: false}
           }
-          THIS.setState(prevState => ({
-            targetList: [...prevState.targetList, wire]
-          }))
+          this.targetList.push(wire)
         })
 
-        module1.traverse(o => {
+        this.module1.traverse(o => {
           if (o.isMesh) {
-            if (o.name === 'Cube001') o.material = SOW.cubeMaterial
-            else if (o.name === 'Socket') o.material = SOW.socketMaterial
-            else if (o.name === 'LED') LEDcreate(o, module1, 'LED1')
-            else if (!o.name.includes('Wire')) o.material = SOW.defaultMaterial
+            if (o.name === 'Cube001') o.material = util.cubeMaterial
+            else if (o.name === 'Socket') o.material = util.socketMaterial
+            else if (o.name === 'LED') LEDcreate(o, this.module1, 'glow')
+            else if (!o.name.includes('Wire')) o.material = util.defaultMaterial
           }
         })
-
-        module1.castShadow = true
-        module1.receiveShadow = true
-        THIS.setState({module1})
-        box.add(module1)
+        this.module1.castShadow = true
+        this.module1.receiveShadow = true
       })
+      this.module2Loader.load('models/mo2.glb', glft => {
+        this.module2 = glft.scene
+        this.box.add(this.module2)
+        this.module2.scale.set(0.42, 0.42, 0.42)
+        this.module2.position.x = 1.45 //Position (x = right+ left-)
+        this.module2.position.y = -0.31 //Position (y = up+, down-)
+        this.module2.position.z = -0.47 //Position (z = front +, back-)
+        this.module2.rotation.z = Math.PI / 2
+        this.module2.rotation.y = -Math.PI / 2
 
-      function LEDcreate(o, modules, name) {
-        let em = new THREE.Color(0x000000)
-        let LED = new THREE.PointLight(0x00ff00, 5, 0.2, 2)
-        LED.name = name
-        modules.add(LED)
-        LED.position.copy(o.position)
-        LED.visible = false
-        o.material = new THREE.MeshPhongMaterial({
-          transparent: true,
-          opacity: 0.9,
-          emissive: em,
-          color: em,
-          shininess: 100
-        })
-      }
-
-      var module2Loader = new GLTFLoader()
-      module2Loader.load('models/mo2.glb', function(glft) {
-        module2 = glft.scene
-        glft.scene.scale.set(0.42, 0.42, 0.42)
-        glft.scene.position.x = 1.45 //Position (x = right+ left-)
-        glft.scene.position.y = -0.31 //Position (y = up+, down-)
-        glft.scene.position.z = -0.47 //Position (z = front +, back-)
-        glft.scene.rotation.z = Math.PI / 2
-        glft.scene.rotation.y = -Math.PI / 2
-
-        var texture = new THREE.TextureLoader().load(
+        let texture = new THREE.TextureLoader().load(
           `/models/Button${Math.ceil(Math.random() * 4)}.png`
         )
         texture.wrapS = THREE.RepeatWrapping
         texture.repeat.x = -1
 
-        module2.traverse(o => {
+        this.module2.traverse(o => {
           if (o.isMesh) {
             if (
               o.name === 'Cube' ||
@@ -371,20 +295,18 @@ class Bomb extends Component {
               o.name === 'LEDbase' ||
               o.name === 'Button001'
             )
-              o.material = SOW.defaultMaterial
-            else if (o.name === 'Cube001') o.material = SOW.cubeMaterial
+              o.material = util.defaultMaterial
+            else if (o.name === 'Cube001') o.material = util.cubeMaterial
             else if (o.name === 'Button002' || o.name === 'Button') {
               o.material = new THREE.MeshPhongMaterial({map: texture})
               o.rotation.x = -2.85
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name === 'LED') LEDcreate(o, module2, 'LED2')
+              this.targetList.push(o)
+            } else if (o.name === 'LED') LEDcreate(o, this.module2, 'glow')
             else if (o.name === 'Cube002') {
               let em = new THREE.Color(0x000000)
               let SED1 = new THREE.PointLight(0x777700, 4, 13, 200)
               SED1.name = 'LEDstripe1'
-              module2.add(SED1)
+              this.module2.add(SED1)
               SED1.position.copy(o.position)
               SED1.position.z -= 0.9
               SED1.position.x -= 0.8
@@ -392,15 +314,15 @@ class Bomb extends Component {
               let SED2 = SED1.clone()
               SED2.name = 'LEDstripe2'
               SED2.position.y -= 0.25
-              module2.add(SED2)
+              this.module2.add(SED2)
               let SED3 = SED1.clone()
               SED3.name = 'LEDstripe3'
               SED3.position.y -= 0.5
-              module2.add(SED3)
+              this.module2.add(SED3)
               let SED4 = SED1.clone()
               SED4.name = 'LEDstripe4'
               SED4.position.y -= 0.75
-              module2.add(SED4)
+              this.module2.add(SED4)
               o.material = new THREE.MeshPhongMaterial({
                 transparent: true,
                 opacity: 0.9,
@@ -408,25 +330,25 @@ class Bomb extends Component {
                 color: SED1.color,
                 shininess: 500
               })
+            } else {
+              o.material = util.defaultMaterial
             }
           }
-          module2.castShadow = true
-          module2.receiveShadow = true
-          THIS.setState({module2})
-          box.add(module2)
+          this.module2.castShadow = true
+          this.module2.receiveShadow = true
         })
       })
 
-      let module3Loader = new GLTFLoader()
-      module3Loader.load('models/mo3.glb', function(gltf) {
-        module3 = gltf.scene
-        gltf.scene.scale.set(0.42, 0.42, 0.42)
-        gltf.scene.position.x = -0.49 //Position (x = right+ left-)
-        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
-        gltf.scene.position.z = 0.47 //Position (z = front +, back-)
-        gltf.scene.rotation.z = Math.PI / 2
-        gltf.scene.rotation.y = -Math.PI / 2
-        module3.traverse(o => {
+      this.module3Loader.load('models/mo3.glb', gltf => {
+        this.module3 = gltf.scene
+        this.box.add(this.module3)
+        this.module3.scale.set(0.42, 0.42, 0.42)
+        this.module3.position.x = -0.49 //Position (x = right+ left-)
+        this.module3.position.y = -0.31 //Position (y = up+, down-)
+        this.module3.position.z = 0.47 //Position (z = front +, back-)
+        this.module3.rotation.z = Math.PI / 2
+        this.module3.rotation.y = -Math.PI / 2
+        this.module3.traverse(o => {
           let texture1 = new THREE.TextureLoader().load(
             `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
           )
@@ -449,338 +371,346 @@ class Bomb extends Component {
           texture4.repeat.y = -1
 
           if (o.isMesh) {
-            if (o.name === 'Cube000') o.material = SOW.cubeMaterial
-            else if (o.name === 'LED') LEDcreate(o, module3, 'LED3')
-            else if (o.name === 'Lface1') {
+            if (o.name === 'Cube000') o.material = util.cubeMaterial
+            else if (o.name === 'LED') LEDcreate(o, this.module3, 'glow')
+            else if (o.name.includes('Lface1')) {
               o.material = new THREE.MeshPhongMaterial({map: texture1})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name === 'Lface2') {
+              this.targetList.push(o)
+            } else if (o.name.includes('Lface2')) {
               o.material = new THREE.MeshPhongMaterial({map: texture2})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name === 'Lface3') {
+              this.targetList.push(o)
+            } else if (o.name.includes('Lface3')) {
               o.material = new THREE.MeshPhongMaterial({map: texture3})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name === 'Lface4') {
+              this.targetList.push(o)
+            } else if (o.name.includes('Lface4')) {
               o.material = new THREE.MeshPhongMaterial({map: texture4})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
+              this.targetList.push(o)
             } else if (o.name.includes('Letter')) {
               o.material = new THREE.MeshPhongMaterial({map: texture1})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
+              this.targetList.push(o)
             } else if (o.name.includes('LG')) {
               o.material = new THREE.MeshPhongMaterial({
                 color: new THREE.Color(0x000000),
                 shininess: 100
               })
             } else {
-              o.material = SOW.defaultMaterial
+              o.material = util.defaultMaterial
             }
           }
         })
-
-        module3.castShadow = true
-        module3.receiveShadow = true
-        THIS.setState({module3})
-        box.add(module3)
+        this.module3.castShadow = true
+        this.module3.receiveShadow = true
       })
+      this.module4Loader.load('models/mo4.glb', gltf => {
+        this.head = {}
+        this.module4 = gltf.scene
+        this.box.add(this.module4)
+        this.module4.scale.set(0.42, 0.42, 0.42)
+        this.module4.position.x = 1.45 //Position (x = right+ left-)
+        this.module4.position.y = -0.31 //Position (y = up+, down-)
+        this.module4.position.z = 0.47 //Position (z = front +, back-)
+        this.module4.rotation.z = Math.PI / 2
+        this.module4.rotation.y = -Math.PI / 2
 
-      let module4Loader = new GLTFLoader()
-      module4Loader.load('models/mo4.glb', function(gltf) {
-        module4 = gltf.scene
-        gltf.scene.scale.set(0.42, 0.42, 0.42)
-        gltf.scene.position.x = 1.45 //Position (x = right+ left-)
-        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
-        gltf.scene.position.z = 0.47 //Position (z = front +, back-)
-        gltf.scene.rotation.z = Math.PI / 2
-        gltf.scene.rotation.y = -Math.PI / 2
-
-        let ranPos = () => {
-          return Math.ceil(Math.random() * 6)
-          // return ans ? ans : 1
-        }
-
-        module4.traverse(o => {
+        this.module4.traverse(o => {
           if (o.isMesh) {
-            if (o.name === 'Cube000') o.material = SOW.cubeMaterial
+            if (o.name === 'Cube000') o.material = util.cubeMaterial
             else if (
               o.name === 'LEDbase' ||
               o.name === 'Cylinder' ||
               o.name === 'Cube'
             )
-              o.material = SOW.defaultMaterial
-            else if (o.name === 'LED') LEDcreate(o, module4, 'LED4')
-            else if (o.name === 'Board') o.material = SOW.cubeMaterial
-            else if (o.name.includes('Go')) {
-              o.material = SOW.cubeMaterial
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
+              o.material = util.defaultMaterial
+            else if (o.name === 'LED') LEDcreate(o, this.module4, 'glow')
+            else if (o.name === 'Board') {
+              o.material = util.cubeMaterial
+            } else if (o.name.includes('Go')) {
+              o.material = util.cubeMaterial
+              this.targetList.push(o)
             } else if (o.name === 'CircleOne') {
-              o.material = SOW.green
+              o.material = util.green
               o.position.copy(
-                module4.children.filter(a => a.name === 'Pos21')[0].position
+                this.module4.children.filter(a => a.name === 'Pos21')[0]
+                  .position
               )
               o.position.x -= 0.165
             } else if (o.name === 'CircleTwo') {
-              o.material = SOW.green
+              o.material = util.green
               o.position.copy(
-                module4.children.filter(a => a.name === 'Pos36')[0].position
+                this.module4.children.filter(a => a.name === 'Pos36')[0]
+                  .position
               )
               o.position.x -= 0.165
             } else if (o.name === 'End') {
-              o.material = SOW.redTran
+              o.material = util.redTran
               let randomName = `Pos${ranPos()}${ranPos()}`
               o.position.copy(
-                module4.children.filter(a => a.name === randomName)[0].position
+                this.module4.children.filter(a => a.name === randomName)[0]
+                  .position
               )
               o.position.x -= 0.1
               o.position.y += 0.06
               o.position.z -= 0.07
             } else {
-              o.material = SOW.flatBlack
+              o.material = util.flatBlack
             }
           }
         })
-
         let randomName = `Pos${ranPos()}${ranPos()}`
-        head = module4.children.filter(a => a.name === randomName)[0]
-        head.material = SOW.white
-        THIS.setState({head})
-        module4.castShadow = true
-        module4.receiveShadow = true
-        THIS.setState({module4})
-        box.add(module4)
+        let head = this.module4.children.filter(a => a.name === randomName)[0]
+        head.material = util.white
+        this.module4.head = head
+        this.module4.castShadow = true
+        this.module4.receiveShadow = true
       })
-
-      let module5Loader = new GLTFLoader()
-      module5Loader.load('models/mo5.glb', function(gltf) {
-        module5 = gltf.scene
-        gltf.scene.scale.set(0.42, 0.42, 0.42)
-        gltf.scene.position.x = 0.49 //Position (x = right+ left-)
-        gltf.scene.position.y = -0.31 //Position (y = up+, down-)
-        gltf.scene.position.z = 0.47 //Position (z = front +, back-)
-        gltf.scene.rotation.z = Math.PI / 2
-        gltf.scene.rotation.y = -Math.PI / 2
-
-        let texture1 = new THREE.TextureLoader().load(`/models/Key1.png`)
-        texture1.wrapT = THREE.RepeatWrapping
-        texture1.repeat.y = -1
-        let texture2 = new THREE.TextureLoader().load(`/models/Key2.png`)
-        texture2.wrapT = THREE.RepeatWrapping
-        texture2.repeat.y = -1
-        let texture3 = new THREE.TextureLoader().load(`/models/Key3.png`)
-        texture3.wrapT = THREE.RepeatWrapping
-        texture3.repeat.y = -1
-        let texture4 = new THREE.TextureLoader().load(`/models/Key4.png`)
-        texture4.wrapT = THREE.RepeatWrapping
-        texture4.repeat.y = -1
-        let texture5 = new THREE.TextureLoader().load(
-          `/models/Read${Math.ceil(Math.random() * 4)}.png`
-        )
-        texture5.wrapT = THREE.RepeatWrapping
-        texture5.repeat.y = -1
-
-        module5.traverse(o => {
-          function CEDcreate(o, y) {
-            let CED = new THREE.PointLight(0x006600, 5, 0.2, 2)
-            CED.name = o.name
-            module5.add(CED)
-            CED.position.set(0.6, y, -0.7)
-            CED.visible = false
-            o.material = new THREE.MeshPhongMaterial({
-              transparent: true,
-              opacity: 0.9,
-              emissive: new THREE.Color(0x000000),
-              color: new THREE.Color(0x006600),
-              shininess: 70
-            })
-          }
-          if (o.isMesh) {
-            if (o.name === 'Cube000') o.material = SOW.cubeMaterial
-            else if (
-              o.name === 'LEDbase' ||
-              o.name === 'Cylinder' ||
-              o.name === 'Cube' ||
-              o.name === 'Ftwo'
-            )
-              o.material = SOW.defaultMaterial
-            else if (o.name === 'LED') LEDcreate(o, module5, 'LEDfive')
-            else if (
-              o.name === 'Board' ||
-              o.name === 'Fone' ||
-              o.name === 'Fthree'
-            )
-              o.material = SOW.cubeMaterial
-            else if (o.name === 'Read1' || o.name === 'Correct')
-              o.material = SOW.flatBlack
-            else if (o.name === 'CED5') CEDcreate(o, -0.56)
-            else if (o.name === 'CED6') CEDcreate(o, -0.43)
-            else if (o.name === 'CED7') CEDcreate(o, -0.3)
-            else if (o.name === 'CED8') CEDcreate(o, -0.17)
-            else if (o.name === 'CED9') CEDcreate(o, -0.04)
-            else if (o.name.includes('1')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture1})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('2')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture2})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('3')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture3})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name.includes('4')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture4})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else if (o.name === 'ReadNumber') {
-              o.material = new THREE.MeshPhongMaterial({map: texture5})
-              THIS.setState(prevState => ({
-                targetList: [...prevState.targetList, o]
-              }))
-            } else o.material = SOW.flatBlack
-          }
-        })
-        module5.castShadow = true
-        module5.receiveShadow = true
-        THIS.setState({module5})
-        box.add(module5)
-      })
-
-      // Renderer
-
-      renderer = new THREE.WebGLRenderer()
-      renderer.shadowMap.enabled = true
-      renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      window.addEventListener('resize', onWindowResize, false)
-      THIS.mount.appendChild(renderer.domElement)
-
-      // Dragger
-
-      let isDragging = false
-      let previousMousePosition = {
-        x: 0,
-        y: 0
-      }
-
-      const toRadians = angle => {
-        return angle * (Math.PI / 180)
-      }
-
-      const toDegrees = angle => {
-        return angle * (180 / Math.PI)
-      }
-
-      const renderArea = renderer.domElement
-
-      renderArea.addEventListener('mousedown', e => {
-        isDragging = true
-      })
-
-      renderArea.addEventListener('mousemove', e => {
-        let deltaMove = {
-          x: e.offsetX - previousMousePosition.x,
-          y: e.offsetY - previousMousePosition.y
-        }
-
-        if (isDragging) {
-          let deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(
-            new THREE.Euler(toRadians(deltaMove.y * 1), 0, 0, 'XYZ')
-          )
-          box.quaternion.multiplyQuaternions(
-            deltaRotationQuaternion,
-            box.quaternion
-          )
-        }
-
-        previousMousePosition = {
-          x: e.offsetX,
-          y: e.offsetY
-        }
-      })
-
-      document.addEventListener('mouseup', e => {
-        isDragging = false
-        if (
-          module2.children.filter(a => a.name.startsWith('Button'))[0].position
-            .x < 0.4
-        )
-          module2.children
-            .filter(a => a.name.startsWith('Button'))
-            .map(b => (b.position.x += 0.18))
-        module4.children.filter(a => a.name.includes('Go')).map(b => {
-          if (b.material.shininess === 10) b.material = SOW.cubeMaterial
-        })
-      })
-
-      projector = new THREE.Projector()
-      document.addEventListener(
-        'mousedown',
-        e => {
-          onDocumentMouseDown(e, THIS)
-        },
-        false
-      )
     }
 
-    function onDocumentMouseDown(event, THIS) {
-      const {minute, tenSecond, singleSecond} = THIS.state
-      const times = [minute, tenSecond, singleSecond]
-      // the following line would stop any other event handler from firing
-      // (such as the mouse's TrackballControls)
-      // event.preventDefault();
+    this.module5Loader.load('models/mo5.glb', gltf => {
+      this.module5 = gltf.scene
+      this.module5.correct = '5'
+      this.box.add(this.module5)
+      gltf.scene.scale.set(0.42, 0.42, 0.42)
+      gltf.scene.position.x = 0.49 //Position (x = right+ left-)
+      gltf.scene.position.y = -0.31 //Position (y = up+, down-)
+      gltf.scene.position.z = 0.47 //Position (z = front +, back-)
+      gltf.scene.rotation.z = Math.PI / 2
+      gltf.scene.rotation.y = -Math.PI / 2
 
-      // update the mouse variable
-      mouse.x = event.clientX / window.innerWidth * 2 - 1
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-      // find intersections
-      // create a Ray with origin at the mouse position
-      //   and direction into the scene (camera direction)
-      var vector = new THREE.Vector3(mouse.x, mouse.y, 1)
-      projector.unprojectVector(vector, camera)
-      var ray = new THREE.Raycaster(
-        camera.position,
-        vector.sub(camera.position).normalize()
+      let texture1 = new THREE.TextureLoader().load(`/models/Key1.png`)
+      texture1.wrapT = THREE.RepeatWrapping
+      texture1.repeat.y = -1
+      let texture2 = new THREE.TextureLoader().load(`/models/Key2.png`)
+      texture2.wrapT = THREE.RepeatWrapping
+      texture2.repeat.y = -1
+      let texture3 = new THREE.TextureLoader().load(`/models/Key3.png`)
+      texture3.wrapT = THREE.RepeatWrapping
+      texture3.repeat.y = -1
+      let texture4 = new THREE.TextureLoader().load(`/models/Key4.png`)
+      texture4.wrapT = THREE.RepeatWrapping
+      texture4.repeat.y = -1
+      let texture5 = new THREE.TextureLoader().load(
+        `/models/Read${Math.ceil(Math.random() * 4)}.png`
       )
-      // create an array containing all objects in the scene with which the ray intersects
-      var intersects = ray.intersectObjects(THIS.state.targetList)
-      // if there is one (or more) intersections
-      if (intersects.length > 0) {
-        THIS.handleSOW(intersects[0].object.userData)
-        module1.remove(intersects[0].object)
-        //module2
-        if (
-          intersects[0].object.name === 'Button' ||
-          intersects[0].object.name === 'Button002'
-        ) {
-          module2.children
-            .filter(a => a.name.startsWith('Button'))
-            .map(b => (b.position.x -= 0.18))
+      texture5.wrapT = THREE.RepeatWrapping
+      texture5.repeat.y = -1
+
+      this.module5.traverse(o => {
+        if (o.isMesh) {
+          if (o.name === 'Cube000') o.material = util.cubeMaterial
+          else if (
+            o.name === 'LEDbase' ||
+            o.name === 'Cylinder' ||
+            o.name === 'Cube' ||
+            o.name === 'Ftwo'
+          )
+            o.material = util.defaultMaterial
+          else if (o.name === 'LED') LEDcreate(o, this.module5, 'glow')
+          else if (
+            o.name === 'Board' ||
+            o.name === 'Fone' ||
+            o.name === 'Fthree'
+          )
+            o.material = util.cubeMaterial
+          else if (o.name === 'Read1' || o.name === 'Correct')
+            o.material = util.flatBlack
+          else if (o.name === 'CED5') CEDcreate(o, this.module5, -0.56)
+          else if (o.name === 'CED6') CEDcreate(o, this.module5, -0.43)
+          else if (o.name === 'CED7') CEDcreate(o, this.module5, -0.3)
+          else if (o.name === 'CED8') CEDcreate(o, this.module5, -0.17)
+          else if (o.name === 'CED9') CEDcreate(o, this.module5, -0.04)
+          else if (o.name.includes('1')) {
+            o.material = new THREE.MeshPhongMaterial({map: texture1})
+            this.targetList.push(o)
+          } else if (o.name.includes('2')) {
+            o.material = new THREE.MeshPhongMaterial({map: texture2})
+            this.targetList.push(o)
+          } else if (o.name.includes('3')) {
+            o.material = new THREE.MeshPhongMaterial({map: texture3})
+            this.targetList.push(o)
+          } else if (o.name.includes('4')) {
+            o.material = new THREE.MeshPhongMaterial({map: texture4})
+            this.targetList.push(o)
+          } else if (o.name === 'ReadNumber') {
+            o.material = new THREE.MeshPhongMaterial({map: texture5})
+            this.targetList.push(o)
+          } else o.material = util.flatBlack
         }
-        // module3
-        if (
-          intersects[0].object.name.includes('Letter') ||
-          intersects[0].object.name.includes('Lface')
-        ) {
-          module3.children
+      })
+      this.module5.castShadow = true
+      this.module5.receiveShadow = true
+    })
+
+    this.renderer = new THREE.WebGLRenderer({antialias: true})
+    this.renderer.shadowMap.enabled = true
+    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.mount.appendChild(this.renderer.domElement)
+    window.addEventListener('resize', this.onWindowResize, false)
+
+    this.isDragging = false
+
+    this.toRadians = angle => {
+      return angle * (Math.PI / 180)
+    }
+
+    this.toDegress = angle => {
+      return angle * (180 / Math.PI)
+    }
+
+    this.mouse = {
+      x: 0,
+      y: 0
+    }
+
+    this.previousMousePosition = {
+      x: 0,
+      y: 0
+    }
+
+    this.renderArea = this.renderer.domElement
+
+    this.renderArea.addEventListener('mousedown', e => {
+      this.isDragging = true
+    })
+
+    this.renderArea.addEventListener('mousemove', e => {
+      let deltaMove = {
+        x: e.offsetX - this.previousMousePosition.x,
+        y: e.offsetY - this.previousMousePosition.y
+      }
+
+      if (this.isDragging) {
+        let deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(
+          new THREE.Euler(this.toRadians(deltaMove.y * 1), 0, 0, 'XYZ')
+        )
+        this.box.quaternion.multiplyQuaternions(
+          deltaRotationQuaternion,
+          this.box.quaternion
+        )
+      }
+
+      this.previousMousePosition = {
+        x: e.offsetX,
+        y: e.offsetY
+      }
+    })
+
+    document.addEventListener('mouseup', () => {
+      const {minute, tenSecond, singleSecond} = this.state
+      this.isDragging = false
+      if (
+        this.module2.children.filter(a => a.name.startsWith('Button'))[0]
+          .position.x < 0.4
+      ) {
+        this.module2.children
+          .filter(a => a.name.startsWith('Button'))
+          .map(b => {
+            b.position.x += 0.18
+          })
+      }
+      if (
+        this.intersects[0] &&
+        this.intersects[0].object.name.startsWith('Button')
+      ) {
+        if (minute === 7 || tenSecond === 7 || singleSecond === 7) {
+          this.props.passModule('BigButton')
+          this.handlePass('module2')
+        } else {
+          this.props.setStrike()
+        }
+      }
+      this.module4.children.filter(a => a.name.includes('Go')).map(b => {
+        if (b.material.shininess === 10) b.material = util.cubeMaterial
+      })
+    })
+
+    document.addEventListener(
+      'mousedown',
+      e => {
+        this.onDocumentMouseDown(e)
+      },
+      false
+    )
+
+    this.projector = new THREE.Projector()
+    this.start()
+    this.handleCountStart()
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      this.state.minute !== nextState.minute ||
+      this.state.tenSecond !== nextState.tenSecond ||
+      this.state.singleSecond !== nextState.singleSecond
+    )
+      return false
+    return true
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.moduleTotal === this.props.modulesPassed) {
+      this.handleDiffusal()
+    } else if (
+      this.props.strikeCount === this.props.strikeTotal ||
+      (this.state.count === 0 && this.state.singleSecond === 0)
+    ) {
+      this.handleFailure()
+    } else {
+      if (prevProps.strikeCount !== this.props.strikeCount) {
+        const count = this.props.strikeCount
+        const Strike = this.clock.children.find(
+          child => child.name === `Strike${count}`
+        )
+        Strike.visible = true
+      }
+      if (prevState.count !== this.state.count) {
+        this.calcClock(prevState)
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.stop()
+    this.mount.removeChild(this.renderer.domElement)
+  }
+
+  onDocumentMouseDown = e => {
+    // the following line would stop any other event handler from firing
+    // (such as the mouse's TrackballControls)
+    // event.preventDefault();
+
+    // update the mouse variable
+    this.mouse.x = event.clientX / window.innerWidth * 2 - 1
+    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+    // find intersections
+    // create a Ray with origin at the mouse position
+    //   and direction into the scene (camera direction)
+    let vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 1)
+    this.projector.unprojectVector(vector, this.camera)
+    let ray = new THREE.Raycaster(
+      this.camera.position,
+      vector.sub(this.camera.position).normalize()
+    )
+    // create an array containing all objects in the scene with which the ray intersects
+    this.intersects = ray.intersectObjects(this.targetList)
+    // if there is one (or more) intersections
+    if (this.intersects.length > 0) {
+      let itemClicked = this.intersects[0].object
+      if (this.targetList.includes(itemClicked)) {
+        let {name} = itemClicked
+        if (name.startsWith('Wire')) {
+          this.handleWires(itemClicked)
+        } else if (name.startsWith('Button')) {
+          this.module2.children
+            .filter(child => child.name.startsWith('Button'))
+            .forEach(child => {
+              child.position.x -= 0.18
+            })
+        } else if (name.startsWith('Letter') || name.startsWith('Lface')) {
+          this.module3.children
             .filter(a =>
-              a.name.includes('' + intersects[0].object.name.slice(-1))
+              a.name.includes('' + this.intersects[0].object.name.slice(-1))
             )
             .map(b => {
               if (b.position.x > 1.26) b.position.x -= 0.07
@@ -793,186 +723,192 @@ class Bomb extends Component {
             })
         }
         // module4
-        let head = THIS.state.head
-        if (intersects[0].object.name.includes('Go')) {
-          intersects[0].object.material = SOW.flatBlack
-          if (intersects[0].object.name === 'GoUp') {
+        let head = this.module4.head
+        // console.log(this.intersects)
+        if (this.intersects[0].object.name.includes('Go')) {
+          this.intersects[0].object.material = util.flatBlack
+          if (this.intersects[0].object.name === 'GoUp') {
             if (head.name[3] !== '1') {
-              head.material = SOW.flatBlack
+              head.material = util.flatBlack
               let newHead =
                 head.name.slice(0, 3) +
                 (Number(head.name[3]) - 1) +
                 head.name[4]
-              head = module4.children.filter(a => a.name === newHead)[0]
-              head.material = SOW.white
-              THIS.setState({head})
+              head = this.module4.children.filter(a => a.name === newHead)[0]
+              head.material = util.white
+              this.module4.head = head
             }
-          } else if (intersects[0].object.name === 'GoDown') {
+          } else if (this.intersects[0].object.name === 'GoDown') {
             if (head.name[3] !== '6') {
-              head.material = SOW.flatBlack
+              head.material = util.flatBlack
               let newHead =
                 head.name.slice(0, 3) +
                 (Number(head.name[3]) + 1) +
                 head.name[4]
-              head = module4.children.filter(a => a.name === newHead)[0]
-              head.material = SOW.white
-              THIS.setState({head})
+              head = this.module4.children.filter(a => a.name === newHead)[0]
+              head.material = util.white
+              this.module4.head = head
             }
-          } else if (intersects[0].object.name === 'GoLeft') {
+          } else if (this.intersects[0].object.name === 'GoLeft') {
             if (head.name[4] !== '1') {
-              head.material = SOW.flatBlack
+              head.material = util.flatBlack
               let newHead = head.name.slice(0, 4) + (Number(head.name[4]) - 1)
-              head = module4.children.filter(a => a.name === newHead)[0]
-              head.material = SOW.white
-              THIS.setState({head})
+              head = this.module4.children.filter(a => a.name === newHead)[0]
+              head.material = util.white
+              this.module4.head = head
             }
-          } else if (intersects[0].object.name === 'GoRight') {
+          } else if (this.intersects[0].object.name === 'GoRight') {
             if (head.name[4] !== '6') {
-              head.material = SOW.flatBlack
+              head.material = util.flatBlack
               let newHead = head.name.slice(0, 4) + (Number(head.name[4]) + 1)
-              head = module4.children.filter(a => a.name === newHead)[0]
-              head.material = SOW.white
-              THIS.setState({head})
+              head = this.module4.children.filter(a => a.name === newHead)[0]
+              head.material = util.white
+              this.module4.head = head
             }
           }
         }
-        // module5
 
-        let correct = THIS.state.correct
-        if (intersects[0].object.name.includes('Kface')) {
-          module5.children
+        // module5
+        let correct = this.module5.correct
+        if (this.intersects[0].object.name.includes('Kface')) {
+          this.module5.children
             .filter(a =>
-              a.name.includes('' + intersects[0].object.name.slice(-1))
+              a.name.includes('' + this.intersects[0].object.name.slice(-1))
             )
             .map(b => {
               if (b.position.x > 1.28) b.position.x -= 0.07
             })
-          if (intersects[0].object.name === 'Kface2') {
-            module5.children.filter(a => a.name.includes(correct)).map(b => {
-              b.visible = true
-            })
+          if (this.intersects[0].object.name === 'Kface2') {
+            this.module5.children
+              .filter(a => a.name.includes(correct))
+              .map(b => {
+                b.visible = true
+              })
+            console.log(this.module5.correct)
             if (correct !== '9') {
-              correct = Number(correct) + 1 + ''
-              THIS.setState({correct})
+              this.module5.correct = Number(correct) + 1 + ''
+            }
+            console.log(this.module5.correct)
+          }
+          if (this.intersects[0].object.name === 'Kface3') {
+            this.module5.children
+              .filter(a => a.name.includes(correct))
+              .map(b => {
+                b.visible = true
+              })
+            if (correct !== '9') {
+              this.module5.correct = Number(correct) + 1 + ''
             }
           }
-          if (intersects[0].object.name === 'Kface3') {
-            module5.children.filter(a => a.name.includes(correct)).map(b => {
-              b.visible = true
-            })
-            if (correct !== '9') {
-              correct = Number(correct) + 1 + ''
-              THIS.setState({correct})
-            }
-          }
         }
-      }
-    }
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight
-      camera.updateProjectionMatrix()
-
-      renderer.setSize(window.innerWidth, window.innerHeight)
-    }
-
-    function animate() {
-      requestAnimationFrame(animate)
-
-      renderer.render(scene, camera)
-    }
-    this.handleStart()
-  }
-
-  componentWillUnmount() {
-    this.mount.removeChild(this.renderer.domElement)
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.strikeCount < this.state.strikeCount) {
-      if (this.state.strikeCount === this.state.strikesAllowed)
-        console.log('GAME OVER')
-      else {
-        const count = this.state.strikeCount
-        console.log(count)
-        const Strike = this.state.clock.children.find(
-          child => child.name === `Strike${count}`
-        )
-        Strike.visible = true
-      }
-      // make a util for strike material and a helper function for getting and setting a strike
-    } else if (this.state)
-      if (
-        prevState.SubjectOfWires.passed !== this.state.SubjectOfWires.passed
-      ) {
-        // helperfunction and util for LED; pass in the module and turn on its LED
-        const LED = this.state.module1.children.find(
-          child => child.name === 'LED'
-        )
-        LED.material.color.setRGB(0, 1, 0)
-        this.state.module1.children.filter(
-          a => a.name === 'LED1'
-        )[0].visible = true
-      }
-
-    const setClock = (position, time) => {
-      this.state.clock.children[6].children
-        .filter(child => child.name.startsWith(`D${position}`))
-        .sort((a, b) => sortByKey(a, b, 'name'))
-        .forEach(
-          (mark, index) => (mark.visible = clockCases[String(time)][index])
-        )
-    }
-
-    if (prevState.count !== this.state.count) {
-      const {count} = this.state
-      const minute = Math.floor(count / 60)
-      const seconds = count % 60
-      const tenSecond = Math.floor((seconds % 60) / 10)
-      const singleSecond = seconds % 10
-      if (prevState.minute !== minute) {
-        this.setState({minute})
-        setClock('1', minute)
-        if (minute === 0) {
-          let spotLight = this.state.spotLight
-          spotLight.color.g = 0
-          spotLight.color.b = 0
-          spotLight.intensity = 0.7
-          setInterval(function() {
-            spotLight.visible = !spotLight.visible
-          }, 1000)
-          this.setState({spotLight})
-        }
-      }
-      if (prevState.tenSecond !== tenSecond) {
-        this.setState({tenSecond})
-        setClock('2', tenSecond)
-      }
-      if (prevState.singleSecond !== singleSecond) {
-        this.setState({singleSecond})
-        setClock('3', singleSecond)
       }
     }
   }
 
-  handleSOW = wire => {
-    if (wire.correct === true) {
-      this.setState(({SubjectOfWires}) => ({
-        SubjectOfWires: {
-          ...SubjectOfWires,
-          passed: !SubjectOfWires.passed
-        }
-      }))
+  handleDiffusal = () => {
+    clearTimeout(this.timer)
+    this.targetList = []
+    this.props.endGame('diffused')
+  }
+
+  handleFailure = () => {
+    if (this.state.count) clearTimeout(this.timer)
+    this.targetList = []
+    this.props.endGame('failed')
+  }
+
+  handleCountStart = () => {
+    this.timer = setInterval(() => {
+      const newCount = this.state.count - 1
+      this.setState({count: newCount >= 0 ? newCount : 0})
+    }, 1000)
+  }
+
+  start = () => {
+    if (!this.frameId) {
+      this.frameId = requestAnimationFrame(this.animate)
+    }
+  }
+
+  stop = () => {
+    cancelAnimationFrame(this.animate)
+  }
+
+  onWindowResize = () => {
+    this.camera.aspect = window.innerWidth / window.innerHeight
+    this.camera.updateProjectionMatrix()
+
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
+  }
+
+  animate = () => {
+    this.renderer.render(this.scene, this.camera)
+    this.frameId = requestAnimationFrame(this.animate)
+  }
+
+  calcClock = state => {
+    const {count} = this.state
+    const minute = Math.floor(count / 60)
+    const seconds = count % 60
+    const tenSecond = Math.floor((seconds % 60) / 10)
+    const singleSecond = seconds % 10
+    if (state.minute !== minute) {
+      this.setState({minute})
+      this.setClock('1', minute)
+    }
+    if (state.tenSecond !== tenSecond) {
+      this.setState({tenSecond})
+      this.setClock('2', tenSecond)
+    }
+    if (state.singleSecond !== singleSecond) {
+      this.setState({singleSecond})
+      this.setClock('3', singleSecond)
+    }
+  }
+
+  calcInitialClock = () => {
+    const {count, singleSecond} = this.state
+    const minute = Math.floor(count / 60)
+    const seconds = count % 60
+    const tenSecond = Math.floor((seconds % 60) / 10)
+    this.setClock('1', minute)
+    this.setClock('2', tenSecond)
+    this.setClock('3', singleSecond)
+  }
+
+  setClock = (position, time) => {
+    this.clock.children[6].children
+      .filter(child => child.name.startsWith(`D${position}`))
+      .sort((a, b) => sortByKey(a, b, 'name'))
+      .forEach((mark, index) => {
+        mark.visible = clockCases[String(time)][index]
+      })
+  }
+
+  handleWires = wire => {
+    if (wire.userData.correct === true) {
+      this.props.passModule('Wires')
+      this.handlePass('module1')
     } else {
-      this.setState(({strikeCount}) => ({
-        strikeCount: strikeCount + 1
-      }))
+      this.props.setStrike()
     }
+    this.module1.remove(wire)
+    this.removeTarget(wire)
+  }
+
+  handlePass = moduleName => {
+    const glow = this[moduleName].children.find(child => child.name === 'glow')
+    const LED = this[moduleName].children.find(child => child.name === 'LED')
+    glow.visible = true
+    LED.material = util.LEDMaterialON
+  }
+
+  removeTarget = target => {
+    this.targetList = this.targetList.filter(item => item !== target)
   }
 
   render() {
     const {gameStatus} = this.props
-    if (!this.props.gameStarted) return <Redirect to="/new-game" />
     return (
       <Fragment>
         {gameStatus !== 'pending' && (
@@ -991,4 +927,10 @@ class Bomb extends Component {
 
 const mapState = ({game}) => ({...game})
 
-export default connect(mapState, null)(Bomb)
+const mapProps = dispatch => ({
+  setStrike: () => dispatch(setStrike()),
+  passModule: moduleName => dispatch(passModule(moduleName)),
+  endGame: status => dispatch(endGame(status))
+})
+
+export default connect(mapState, mapProps)(RefacBomb)
