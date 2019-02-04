@@ -9,6 +9,6 @@ clientSocket.on('connect', () => {
   console.log('Connected!')
 })
 
-window.addEventListener()
+// window.addEventListener()
 
 export default clientSocket

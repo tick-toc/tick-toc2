@@ -105,6 +105,7 @@ const startListening = () => {
   //the line below is just like this
   //socketListener.on('connection', (serverSocket) => {...})
   require('./socket')(socketListener)
+  socketListener()
 }
 
 const syncDb = () => db.sync()
