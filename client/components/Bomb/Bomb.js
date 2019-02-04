@@ -12,7 +12,7 @@ import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
 
-class RefacBomb extends Component {
+class Bomb extends Component {
   state = {
     count: this.props.startTime,
     minute: 0,
@@ -940,4 +940,4 @@ const mapProps = dispatch => ({
   endGame: status => dispatch(endGame(status))
 })
 
-export default connect(mapState, mapProps)(RefacBomb)
+export default connect(mapState, mapProps)(Bomb)
