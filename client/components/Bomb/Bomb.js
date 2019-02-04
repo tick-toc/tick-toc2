@@ -736,7 +736,6 @@ class Bomb extends Component {
         }
         // module4
         let head = this.module4.head
-        // console.log(this.intersects)
         if (this.intersects[0].object.name.includes('Go')) {
           this.intersects[0].object.material = util.flatBlack
           if (this.intersects[0].object.name === 'GoUp') {
@@ -790,19 +789,13 @@ class Bomb extends Component {
             .map(b => {
               if (b.position.x > 1.28) b.position.x -= 0.07
             })
-          if (this.intersects[0].object.name === 'Kface2') {
+          if (
+            this.intersects[0].object.name[5] ===
             this.module5.children
-              .filter(a => a.name.includes(correct))
-              .map(b => {
-                b.visible = true
-              })
-            console.log(this.module5.correct)
-            if (correct !== '9') {
-              this.module5.correct = Number(correct) + 1 + ''
-            }
-            console.log(this.module5.correct)
-          }
-          if (this.intersects[0].object.name === 'Kface3') {
+              .filter(a => a.name === 'ReadNumber')[0]
+              .material.map.image.src.slice(-5)[0]
+          ) {
+            //Lit up correct CED & change the ReadNumber on the radar
             this.module5.children
               .filter(a => a.name.includes(correct))
               .map(b => {
@@ -811,6 +804,30 @@ class Bomb extends Component {
             if (correct !== '9') {
               this.module5.correct = Number(correct) + 1 + ''
             }
+            let texture5 = new THREE.TextureLoader().load(
+              `/models/Read${Math.ceil(Math.random() * 4)}.png`
+            )
+            texture5.wrapT = THREE.RepeatWrapping
+            texture5.repeat.y = -1
+            this.module5.children.filter(
+              a => a.name === 'ReadNumber'
+            )[0].material = new THREE.MeshPhongMaterial({map: texture5})
+            //Reset Keys
+            this.module5.children
+              .filter(a => a.name.includes('K'))
+              .map(b => (b.visible = false))
+            this.setKey = k => {
+              this.module5.children
+                .filter(a => a.name.includes(k))
+                .map(b => (b.visible = true))
+            }
+            this.module5.children.filter(a => a.name.includes('K')).map(b => {
+              if (b.position.x < 1.28) b.position.x += 0.07
+            })
+            setTimeout(() => this.setKey('1'), 250)
+            setTimeout(() => this.setKey('2'), 500)
+            setTimeout(() => this.setKey('3'), 750)
+            setTimeout(() => this.setKey('4'), 1000)
           }
         }
       }
@@ -871,6 +888,16 @@ class Bomb extends Component {
     if (state.minute !== minute) {
       this.setState({minute})
       this.setClock('1', minute)
+      if (minute === 0) {
+        let spotLight = this.spotLight
+        spotLight.color.g = 0
+        spotLight.color.b = 0
+        spotLight.intensity = 0.7
+        setInterval(function() {
+          spotLight.visible = !spotLight.visible
+        }, 1000)
+        this.spotLight = spotLight
+      }
     }
     if (state.tenSecond !== tenSecond) {
       this.setState({tenSecond})
