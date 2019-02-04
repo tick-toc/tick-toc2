@@ -11,7 +11,7 @@ import {CEDcreate} from './modules/CED'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
-import {FaBomb} from 'react-icons/fa'
+import {GiRollingBomb} from 'react-icons/gi'
 
 class Bomb extends Component {
   state = {
@@ -835,18 +835,20 @@ class Bomb extends Component {
   }
 
   handleDiffusal = () => {
+    const {count} = this.state
     if (this.props.gameStatus === 'pending') {
       clearTimeout(this.timer)
       this.targetList = []
-      this.props.endGame('diffused')
+      this.props.endGame('diffused', count)
     }
   }
 
   handleFailure = () => {
+    const {count} = this.state
     if (this.props.gameStatus === 'pending') {
-      if (this.state.count) clearTimeout(this.timer)
+      if (count) clearTimeout(this.timer)
       this.targetList = []
-      this.props.endGame('failed')
+      this.props.endGame('failed', count)
     }
   }
 
@@ -960,8 +962,8 @@ class Bomb extends Component {
         )}
         {!activated && (
           <div className="banner activating--banner">
-            <div>Bomb is activating. Get ready.</div>
-            <FaBomb />
+            <div>Bomb activating. Get ready.</div>
+            <GiRollingBomb className="banner--spinner" />
           </div>
         )}
         <div
@@ -980,7 +982,7 @@ const mapState = ({game}, ownProps) => ({...game, ...ownProps})
 const mapDispatch = dispatch => ({
   setStrike: () => dispatch(setStrike()),
   passModule: moduleName => dispatch(passModule(moduleName)),
-  endGame: status => dispatch(endGame(status))
+  endGame: (status, finishTime) => dispatch(endGame(status, finishTime))
 })
 
 export default connect(mapState, mapDispatch)(Bomb)

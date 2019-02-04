@@ -16,18 +16,25 @@ router.get('/', async (req, res, next) => {
 })
 
 router.post('/', async (req, res, next) => {
-  // need req.body
-  // need req.session.passport.user
   try {
     const userId = req.session.passport.user
-    // const result = Game.create({ where: {
+    const {
+      strikeCount,
+      strikeTotal: strikesAllowed,
+      startTime,
+      finishTime,
+      moduleTotal
+    } = req.body
+    const status = strikeCount === strikesAllowed ? 'failed' : 'passed'
 
-    // }})
     const result = await Game.create({
-      userId
+      userId,
+      status,
+      moduleTotal,
+      startTime,
+      finishTime,
+      strikesAllowed
     })
-    console.log(req.body, '<<<BODY')
-    console.log(req.session, '<<<SESSION')
     res.json(result)
   } catch (err) {
     next(err)
