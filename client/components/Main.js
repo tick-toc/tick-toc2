@@ -28,11 +28,8 @@ class Main extends Component {
 
 const mapDispatch = dispatch => {
   return {
-    // state,
     logout: () => dispatch(logout())
   }
 }
 
-// map state and props
-const ConnectedMain = connect(null, mapDispatch)(Main)
-export default ConnectedMain
+export default connect(null, mapDispatch)(Main)
