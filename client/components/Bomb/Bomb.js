@@ -353,17 +353,17 @@ class Bomb extends Component {
           )
           texture1.wrapT = THREE.RepeatWrapping
           texture1.repeat.y = -1
-          let texture2 = new THREE.TextureLoader().load(
+          var texture2 = new THREE.TextureLoader().load(
             `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
           )
           texture2.wrapT = THREE.RepeatWrapping
           texture2.repeat.y = -1
-          let texture3 = new THREE.TextureLoader().load(
+          var texture3 = new THREE.TextureLoader().load(
             `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
           )
           texture3.wrapT = THREE.RepeatWrapping
           texture3.repeat.y = -1
-          let texture4 = new THREE.TextureLoader().load(
+          var texture4 = new THREE.TextureLoader().load(
             `/models/alphabets/Alp${Math.ceil(Math.random() * 42)}.png`
           )
           texture4.wrapT = THREE.RepeatWrapping
@@ -718,10 +718,8 @@ class Bomb extends Component {
             .map(b => {
               if (b.position.x > 1.26) b.position.x -= 0.07
               if (b.position.x < 0.5 && b.position.x > 0.35) {
-                if (b.name !== 'LED3') {
-                  b.position.x -= 0.07
-                  b.material.color.setRGB(0, 1, 0)
-                }
+                b.position.x -= 0.07
+                b.material.color.setRGB(0, 1, 0)
               }
             })
         }
