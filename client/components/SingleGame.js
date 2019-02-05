@@ -29,7 +29,9 @@ const SingleGame = props => {
         </div>
         <div className="single-game--result">
           <span>Result</span>
-          <div className="single-game--status">{game.gameStatus}</div>
+          <div className="single-game--status">
+            {game.gameStatus ? game.gameStatus : game.status}
+          </div>
           <div className="single-game--details">
             <span>Time Remaining:</span>
             <span>{calcSingleGameTime(game.finishTime)}</span>

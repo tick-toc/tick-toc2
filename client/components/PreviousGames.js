@@ -67,7 +67,7 @@ class PreviousGames extends Component {
   }
 }
 
-const mapState = ({game}) => ({...game})
+const mapState = ({game: {previousGames}}) => ({previousGames})
 
 const mapDispatch = dispatch => ({
   fetchUserGames: offset => dispatch(fetchUserGames(offset))

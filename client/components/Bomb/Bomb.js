@@ -687,7 +687,6 @@ class Bomb extends Component {
   componentWillUnmount() {
     this.stop()
     this.mount.removeChild(this.renderer.domElement)
-    this.projector.unproject()
   }
 
   onDocumentMouseDown = e => {

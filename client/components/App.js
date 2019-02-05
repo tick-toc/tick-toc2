@@ -27,9 +27,6 @@ class App extends Component {
     if (isFetching) return <div>Loading...</div>
     return (
       <div className="App">
-        {this.props.location.pathname !== '/diffusing' && (
-          <h1 className="App-title">TICK TOC</h1>
-        )}
         {isLoggedIn ? (
           <Switch>
             <Route exact path="/" component={Main} />
