@@ -36,7 +36,6 @@ class ChatApp extends Component {
         this.addChat(`Peer-${peer.id.substring(0, 5)}`, payload)
         break
       default:
-        
     }
   }
 
