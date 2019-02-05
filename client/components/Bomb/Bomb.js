@@ -15,6 +15,7 @@ import {setStrike, passModule, endGame} from '../../store'
 import {GiRollingBomb} from 'react-icons/gi'
 import ChatApp from '../Chat/ChatApp'
 import {CanMove} from './modules/mod4'
+import {ifError} from 'assert'
 
 class Bomb extends Component {
   state = {
@@ -761,13 +762,18 @@ class Bomb extends Component {
               // (CanMove(this.module4.head.name, '1', 'GoUp')) ?
               // console.log('we safe') // move the head
               // : console.log('set strike!!')
-              CanMove(
-                [this.module4.head.name[3], this.module4.head.name[4]],
-                '1',
-                'GoUp'
-              )
-
-              this.module4.head = head
+              if (
+                CanMove(
+                  [this.module4.head.name[3], this.module4.head.name[4]],
+                  '1',
+                  'GoUp'
+                )
+              ) {
+                this.module4.head = head
+              } else {
+                console.log('strikeTime')
+                this.props.setStrike()
+              }
             }
           } else if (this.intersects[0].object.name === 'GoDown') {
             if (head.name[3] !== '6') {

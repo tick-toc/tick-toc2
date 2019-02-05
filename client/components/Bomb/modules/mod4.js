@@ -42,25 +42,8 @@ const maze1 = [
 ]
 
 export function CanMove(position, mazeCase, desiredDirection) {
-  console.log('position', position)
-
   const currentPositionRules =
     mazeCases[mazeCase].Maze[position[0] - 1][position[1] - 1]
-
   const positionRules = CreateCellCheck(currentPositionRules)
-  console.log(positionRules[desiredDirection])
-
-  // return positionRules[desiredDirection]
-  // console.log('Position: ', position)
-
-  console.log('positionRules: ', positionRules)
-
-  return true
-}
-
-const positionHashTable = {
-  GoUp: 0,
-  GoRight: 1,
-  GoDown: 2,
-  GoLeft: 3
+  return positionRules[desiredDirection]
 }
