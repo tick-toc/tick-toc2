@@ -5,13 +5,15 @@ import {connect} from 'react-redux'
 import {resetGame, saveGame, replayGame} from '../store'
 
 class Recap extends Component {
-  handleExit = () => {
+  componentDidMount() {
     this.handleSave()
+  }
+
+  handleExit = () => {
     this.props.resetGame()
   }
 
   handleReplay = () => {
-    this.handleSave()
     this.props.replayGame()
   }
 
@@ -51,7 +53,7 @@ class Recap extends Component {
     } = this.props
     const time = this.calcTime(startTime)
     const timeLeft = this.calcTime(finishTime)
-    console.log(this.props, '<<<PROPS')
+
     return (
       <div>
         <div className="recap">
