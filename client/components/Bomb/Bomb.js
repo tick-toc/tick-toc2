@@ -431,9 +431,11 @@ class Bomb extends Component {
             else if (o.name === 'Board') {
               o.material = util.cubeMaterial
             } else if (o.name.includes('Go')) {
+              //arrows up down left right
               o.material = util.cubeMaterial
               this.targetList.push(o)
             } else if (o.name === 'CircleOne') {
+              // first green circle
               o.material = util.green
               o.position.copy(
                 this.module4.children.filter(a => a.name === 'Pos21')[0]
@@ -441,13 +443,15 @@ class Bomb extends Component {
               )
               o.position.x -= 0.165
             } else if (o.name === 'CircleTwo') {
+              // second green circle
               o.material = util.green
               o.position.copy(
-                this.module4.children.filter(a => a.name === 'Pos36')[0]
+                this.module4.children.filter(a => a.name === 'Pos36')[0] //Pos11, ... Pos66
                   .position
               )
               o.position.x -= 0.165
             } else if (o.name === 'End') {
+              //ending spot
               o.material = util.redTran
               let randomName = `Pos${ranPos()}${ranPos()}`
               o.position.copy(
@@ -741,14 +745,14 @@ class Bomb extends Component {
           this.intersects[0].object.material = util.flatBlack
           if (this.intersects[0].object.name === 'GoUp') {
             if (head.name[3] !== '1') {
-              head.material = util.flatBlack
+              head.material = util.flatBlack // unpaint
               let newHead =
                 head.name.slice(0, 3) +
                 (Number(head.name[3]) - 1) +
-                head.name[4]
-              head = this.module4.children.filter(a => a.name === newHead)[0]
-              head.material = util.white
-              this.module4.head = head
+                head.name[4] //new position established
+              head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+              head.material = util.white // paint
+              this.module4.head = head // move the head
             }
           } else if (this.intersects[0].object.name === 'GoDown') {
             if (head.name[3] !== '6') {
