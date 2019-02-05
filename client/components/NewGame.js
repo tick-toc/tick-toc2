@@ -7,6 +7,7 @@ import {
   FaRegArrowAltCircleLeft as FaArrowL,
   FaRegArrowAltCircleRight as FaArrowR
 } from 'react-icons/fa'
+import ChatApp from './Chat/ChatApp'
 
 class NewGame extends Component {
   state = {
@@ -88,6 +89,8 @@ class NewGame extends Component {
             Start Game
           </div>
         </div>
+        <h4>Let's Party</h4>
+        <ChatApp />
       </div>
     )
   }
