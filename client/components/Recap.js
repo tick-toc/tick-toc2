@@ -3,9 +3,23 @@ import '../styles/Recap.css'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {resetGame, saveGame, replayGame} from '../store'
+import {calcSingleGameTime} from './util'
+import SingleGame from './SingleGame'
 
 class Recap extends Component {
   componentDidMount() {
+    this.handleSave()
+  }
+
+  handleExit = () => {
+    this.props.resetGame()
+  }
+
+  handleReplay = () => {
+    this.props.replayGame()
+  }
+
+  handleSave = () => {
     const {
       startTime,
       finishTime,
@@ -23,24 +37,25 @@ class Recap extends Component {
     })
   }
 
-  handleExit = () => {
-    this.props.resetGame()
-  }
-
-  handleReplay = () => {
-    this.props.replayGame()
-  }
-
   render() {
+    const {
+      gameStatus,
+      finishTime,
+      startTime,
+      moduleTotal,
+      strikeTotal
+    } = this.props
+    const game = {gameStatus, finishTime, startTime, moduleTotal, strikeTotal}
     return (
-      <div className="new-game-container">
-        {/* Display game information here */}
-        <Link onClick={this.handleExit} to="/" className="return">
-          Back
-        </Link>
-        <Link onClick={this.handleReplay} to="/diffusing" className="return">
-          Replay
-        </Link>
+      <div>
+        <SingleGame game={game}>
+          <Link onClick={this.handleExit} to="/" className="return">
+            BACK
+          </Link>
+          <Link onClick={this.handleReplay} to="/diffusing" className="return">
+            {gameStatus === 'diffused' ? 'REPLAY' : 'RETRY'}
+          </Link>
+        </SingleGame>
       </div>
     )
   }

@@ -5,30 +5,30 @@ const {User, Game} = require('../server/db/models')
 
 const gameData = [
   {
-    modules: 5,
+    moduleTotal: 5,
     modulesFailed: 2,
     startTime: 300,
-    endTime: 120,
+    finishTime: 120,
     strikesAllowed: 3,
-    strikes: 2,
+    strikeCount: 2,
     status: 'passed'
   },
   {
-    modules: 5,
+    moduleTotal: 5,
     modulesFailed: 2,
     startTime: 300,
-    endTime: 0,
+    finishTime: 0,
     strikesAllowed: 3,
-    strikes: 2,
+    strikeCount: 2,
     status: 'failed'
   },
   {
-    modules: 5,
+    moduleTotal: 5,
     modulesFailed: 3,
     startTime: 300,
-    endTime: 57,
+    finishTime: 57,
     strikesAllowed: 3,
-    strikes: 2,
+    strikeCount: 2,
     status: 'failed'
   }
 ]

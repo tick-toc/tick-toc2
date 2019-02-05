@@ -1,9 +1,14 @@
-import io from 'socket.io-client'
+import createClientSocket from 'socket.io-client'
 
-const socket = io(window.location.origin)
+const clientSocket = createClientSocket(window.location.origin)
 
-socket.on('connect', () => {
+// what is this? window.location.origin
+//
+
+clientSocket.on('connect', () => {
   console.log('Connected!')
 })
 
-export default socket
+// window.addEventListener()
+
+export default clientSocket

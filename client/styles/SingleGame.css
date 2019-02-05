@@ -1,0 +1,9 @@
+.single-game,
+.leaders {
+  background-color: #eeffff;
+  height: 690px;
+  width: 530px;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
