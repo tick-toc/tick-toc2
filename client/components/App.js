@@ -6,8 +6,8 @@ import './../styles/App.css'
 import {connect} from 'react-redux'
 import Login from './Login'
 import Main from './Main'
-import Recap from './Recap'
 import NewGame from './NewGame'
+import Leaderboard from './Leaderboard'
 import PreviousGames from './PreviousGames'
 import {Switch, Route, withRouter} from 'react-router-dom'
 import {me} from '../store'
@@ -27,15 +27,12 @@ class App extends Component {
     if (isFetching) return <div>Loading...</div>
     return (
       <div className="App">
-        {this.props.location.pathname !== '/diffusing' && (
-          <h1 className="App-title">TICK TOC</h1>
-        )}
         {isLoggedIn ? (
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/new-game" component={NewGame} />
             <Route exact path="/previous-games" component={PreviousGames} />
-            <Route exact path="/leaderboard" component={Login} />
+            <Route exact path="/leaderboard" component={Leaderboard} />
             <ProtectedRecap exact path="/recap" />
             <ProtectedBomb exact path="/diffusing" />
             <Route exact path="/chat" component={ChatApp} />

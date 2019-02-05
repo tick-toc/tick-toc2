@@ -1,0 +1,39 @@
+.leaderboard {
+  display: flex;
+}
+
+.leaderboard > * {
+  margin: 20px;
+}
+
+.leaders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: scroll;
+}
+
+.leaders table {
+  width: 100%;
+}
+
+.leaders--table {
+  display: flex;
+  flex-direction: column;
+  height: 75%;
+}
+
+.leaders--table > * {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  justify-content: space-around;
+}
+
+.leaders--tabe > * > * {
+  flex: 1;
+}
+
+.leader-row {
+  cursor: pointer;
+}

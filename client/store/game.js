@@ -30,7 +30,10 @@ const initialGame = {
   gameStarted: false,
   gameStatus: 'pending',
   previousGames: {
-    pageNumber: 0,
+    games: [],
+    offset: 0
+  },
+  leaders: {
     games: [],
     offset: 0
   }
@@ -45,6 +48,7 @@ const END_GAME = 'END_GAME'
 const RESET_GAME = 'RESET_GAME'
 const REPLAY_GAME = 'REPLAY_GAME'
 const GET_USER_GAMES = 'GET_USER_GAMES'
+const GET_LEADERS = 'GET_LEADERS'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
@@ -59,24 +63,33 @@ export const endGame = (status, finishTime) => ({
 export const resetGame = () => ({type: RESET_GAME})
 export const replayGame = () => ({type: REPLAY_GAME})
 const getUserGames = data => ({type: GET_USER_GAMES, data})
+const getLeaders = data => ({type: GET_LEADERS, data})
 
 // THUNK CREATORS
 
 export const saveGame = game => async () => {
   try {
     const result = await axios.post('/api/games', game)
-    console.log(result, '<<RESULT')
   } catch (err) {
     console.error(err)
   }
 }
 
-export const fetchUserGames = () => async dispatch => {
+export const fetchLeaders = offset => async dispatch => {
   try {
-    const {data} = await axios.get('/api/games/previous')
+    const {data} = await axios.get(`/api/games/${offset}`)
+    dispatch(getLeaders(data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const fetchUserGames = offset => async dispatch => {
+  try {
+    const {data} = await axios.get(`/api/games/previous/${offset}`)
     dispatch(getUserGames(data))
   } catch (err) {
-    console.log(err)
+    console.error(err)
   }
 }
 
@@ -127,8 +140,16 @@ export default function(state = initialGame, action) {
         ...state,
         previousGames: {
           ...state.previousGames,
-          games: action.data.games,
-          offset: action.data.limit
+          games: [...state.previousGames.games, ...action.data.games],
+          offset: state.previousGames.offset + action.data.limit
+        }
+      }
+    case GET_LEADERS:
+      return {
+        ...state,
+        leaders: {
+          games: [...state.leaders.games, ...action.data.games],
+          offset: state.leaders.offset + action.data.offset
         }
       }
     default:

@@ -1,15 +1,18 @@
 const router = require('express').Router()
-const {Game} = require('../db/models')
+const {Game, User} = require('../db/models')
 module.exports = router
 
-router.get('/', async (req, res, next) => {
+router.get('/:offset', async (req, res, next) => {
   try {
+    const {offset} = req.params
+    const limit = 50
     const games = await Game.findAll({
-      // explicitly select only the id and email fields - even though
-      // users' passwords are encrypted, it won't help if we just
-      // send everything to anyone who asks!
+      offset,
+      limit,
+      include: [User],
+      order: [['finishTime', 'ASC']]
     })
-    res.json(games)
+    res.json({games, limit})
   } catch (err) {
     next(err)
   }
@@ -41,17 +44,20 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.get('/previous', async (req, res, next) => {
+router.get('/previous/:offset', async (req, res, next) => {
   try {
+    const {offset} = req.params
     const limit = 20
     const userId = req.session.passport.user
-    const result = await Game.findAll({
+    const games = await Game.findAll({
       where: {
         userId
       },
-      limit
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']]
     })
-    res.send({games: [...result], limit})
+    res.send({games, limit})
   } catch (err) {
     next(err)
   }

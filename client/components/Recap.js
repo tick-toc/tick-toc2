@@ -3,6 +3,8 @@ import '../styles/Recap.css'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {resetGame, saveGame, replayGame} from '../store'
+import {calcSingleGameTime} from './util'
+import SingleGame from './SingleGame'
 
 class Recap extends Component {
   componentDidMount() {
@@ -35,14 +37,6 @@ class Recap extends Component {
     })
   }
 
-  calcTime = time => {
-    const minute = Math.floor(time / 60)
-    const seconds = time % 60
-    const tenSecond = Math.floor((seconds % 60) / 10)
-    const singleSecond = seconds % 10
-    return `${minute}:${tenSecond}${singleSecond}`
-  }
-
   render() {
     const {
       gameStatus,
@@ -51,48 +45,17 @@ class Recap extends Component {
       moduleTotal,
       strikeTotal
     } = this.props
-    const time = this.calcTime(startTime)
-    const timeLeft = this.calcTime(finishTime)
-
+    const game = {gameStatus, finishTime, startTime, moduleTotal, strikeTotal}
     return (
       <div>
-        <div className="recap">
-          <div className="recap--header">
-            <div>CLASSIFIED INFORMATION: Exercise Security Policy S-9</div>
-            <div>DO NOT DISCLOSE</div>
-          </div>
-          <div className="recap--body">
-            <div className="recap--config">
-              <span>Bomb Configuration</span>
-              <div>
-                <span>{time}</span>
-                <span>{`${moduleTotal} Modules`}</span>
-                <span>{`${strikeTotal} Strikes`}</span>
-              </div>
-              {time}
-            </div>
-            <div className="recap--result">
-              <span>Result</span>
-              <div className="recap--status">{gameStatus}</div>
-              <div className="recap--details">
-                <span>Time Remaining:</span>
-                <span>{timeLeft}</span>
-              </div>
-            </div>
-          </div>
-          <div className="recap--links">
-            <Link onClick={this.handleExit} to="/" className="return">
-              BACK
-            </Link>
-            <Link
-              onClick={this.handleReplay}
-              to="/diffusing"
-              className="return"
-            >
-              {gameStatus === 'diffused' ? 'REPLAY' : 'RETRY'}
-            </Link>
-          </div>
-        </div>
+        <SingleGame game={game}>
+          <Link onClick={this.handleExit} to="/" className="return">
+            BACK
+          </Link>
+          <Link onClick={this.handleReplay} to="/diffusing" className="return">
+            {gameStatus === 'diffused' ? 'REPLAY' : 'RETRY'}
+          </Link>
+        </SingleGame>
       </div>
     )
   }
