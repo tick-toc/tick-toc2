@@ -750,18 +750,11 @@ class Bomb extends Component {
           this.intersects[0].object.material = util.flatBlack
           if (this.intersects[0].object.name === 'GoUp') {
             if (head.name[3] !== '1') {
-              head.material = util.flatBlack // unpaint
               let newHead =
                 head.name.slice(0, 3) +
                 (Number(head.name[3]) - 1) +
                 head.name[4] //new position established
-              head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
-              head.material = util.white // paint
-              //where we do the mod 4 check
 
-              // (CanMove(this.module4.head.name, '1', 'GoUp')) ?
-              // console.log('we safe') // move the head
-              // : console.log('set strike!!')
               if (
                 CanMove(
                   [this.module4.head.name[3], this.module4.head.name[4]],
@@ -769,6 +762,9 @@ class Bomb extends Component {
                   'GoUp'
                 )
               ) {
+                head.material = util.flatBlack // unpaint
+                head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+                head.material = util.white // paint
                 this.module4.head = head
               } else {
                 console.log('strikeTime')
