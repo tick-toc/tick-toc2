@@ -21,6 +21,10 @@ const initialGame = {
     {
       name: 'BigButton',
       passed: false
+    },
+    {
+      name: 'Maze',
+      passed: false
     }
   ],
   gameStarted: false,

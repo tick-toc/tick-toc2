@@ -457,6 +457,8 @@ class Bomb extends Component {
               //ending spot
               o.material = util.redTran
               let randomName = `Pos${ranPos()}${ranPos()}`
+              o.userData = {winningPosition: randomName}
+              console.log('randomName', randomName)
               o.position.copy(
                 this.module4.children.filter(a => a.name === randomName)[0]
                   .position
@@ -826,6 +828,16 @@ class Bomb extends Component {
                 this.props.setStrike()
               }
             }
+          }
+
+          if (
+            this.module4.children[0].userData.winningPosition ===
+            this.module4.head.name
+          ) {
+            this.handlePass('module4')
+            this.props.passModule('Maze')
+            console.log(this.targetList)
+            this.removeTarget()
           }
         }
 
