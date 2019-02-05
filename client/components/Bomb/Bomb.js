@@ -789,25 +789,42 @@ class Bomb extends Component {
               } else {
                 this.props.setStrike()
               }
-              // head = this.module4.children.filter(a => a.name === newHead)[0]
-              // head.material = util.white
-              // this.module4.head = head
             }
           } else if (this.intersects[0].object.name === 'GoLeft') {
             if (head.name[4] !== '1') {
-              head.material = util.flatBlack
               let newHead = head.name.slice(0, 4) + (Number(head.name[4]) - 1)
-              head = this.module4.children.filter(a => a.name === newHead)[0]
-              head.material = util.white
-              this.module4.head = head
+              if (
+                CanMove(
+                  [this.module4.head.name[3], this.module4.head.name[4]],
+                  '1',
+                  this.intersects[0].object.name
+                )
+              ) {
+                head.material = util.flatBlack // unpaint
+                head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+                head.material = util.white // paint
+                this.module4.head = head
+              } else {
+                this.props.setStrike()
+              }
             }
           } else if (this.intersects[0].object.name === 'GoRight') {
             if (head.name[4] !== '6') {
-              head.material = util.flatBlack
               let newHead = head.name.slice(0, 4) + (Number(head.name[4]) + 1)
-              head = this.module4.children.filter(a => a.name === newHead)[0]
-              head.material = util.white
-              this.module4.head = head
+              if (
+                CanMove(
+                  [this.module4.head.name[3], this.module4.head.name[4]],
+                  '1',
+                  this.intersects[0].object.name
+                )
+              ) {
+                head.material = util.flatBlack // unpaint
+                head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+                head.material = util.white // paint
+                this.module4.head = head
+              } else {
+                this.props.setStrike()
+              }
             }
           }
         }
