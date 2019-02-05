@@ -9,10 +9,15 @@ import Recap from './Recap'
 import NewGame from './NewGame'
 import {Switch, Route, withRouter} from 'react-router-dom'
 import {me} from '../store'
+import ChatApp from './Chat/ChatApp'
+import VideoChat from './Chat/VideoChat'
 
 class App extends Component {
   componentDidMount() {
     this.props.loadInitialData()
+    // window.addEventListener('load', () => {
+    //   this.props.
+    // })
   }
 
   render() {
@@ -31,11 +36,14 @@ class App extends Component {
             <Route exact path="/leaderboard" component={Login} />
             <Route exact path="/recap" component={Recap} />
             <ProtectedBomb exact path="/diffusing" component={Bomb} />
+            <Route exact path="/chat" component={ChatApp} />
             <Route component={Main} />
           </Switch>
         ) : (
           <Switch>
             <Route exact path="/" component={Login} />
+            <Route exact path="/chat" component={ChatApp} />
+            <Route exact path="/video" component={VideoChat} />
             <Route component={Login} />
           </Switch>
         )}
@@ -56,6 +64,7 @@ const mapState = state => {
 const mapDispatch = dispatch => {
   return {
     loadInitialData: () => dispatch(me())
+    // fetchWebRTC: () => dispatch(Stream())
   }
 }
 
