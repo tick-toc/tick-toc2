@@ -6,7 +6,8 @@ import {
   Segment,
   Form,
   Button,
-  Header
+  Header,
+  Container
 } from 'semantic-ui-react'
 
 class ChatApp extends React.Component {
@@ -29,30 +30,36 @@ class ChatApp extends React.Component {
   render() {
     const red = 'red'
     return (
-      <Fragment>
+      <Container>
         <Header>Simple WebRTC Messenger</Header>
         <Divider />
         <Grid columns={10} relaxed="very" stackable>
-          <Grid.Column>
+          <Segment>
             <Form>
-              <Form.Input
-                icon="user"
-                iconPosition="left"
-                label="Username"
-                placeholder="Username"
-              />
-              <Form.Input
-                icon="lock"
-                iconPosition="left"
-                label="Password"
-                type="password"
-              />
+              <Form.Field>
+                <label>User Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter user name"
+                  id="username"
+                  name="username"
+                />
+              </Form.Field>
+              <Form.Field>
+                <label>Room</label>
+                <input
+                  type="text"
+                  placeholder="Enter room name"
+                  id="roomName"
+                  name="roomName"
+                />
+              </Form.Field>
 
               <Button content="Login" primary />
             </Form>
-          </Grid.Column>
+          </Segment>
         </Grid>
-      </Fragment>
+      </Container>
     )
   }
 }
