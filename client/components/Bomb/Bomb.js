@@ -837,7 +837,7 @@ class Bomb extends Component {
             this.handlePass('module4')
             this.props.passModule('Maze')
             console.log(this.targetList)
-            this.removeTarget()
+            this.removeAllTargets('Go')
           }
         }
 
@@ -1012,6 +1012,12 @@ class Bomb extends Component {
 
   removeTarget = target => {
     this.targetList = this.targetList.filter(item => item !== target)
+  }
+
+  removeAllTargets = target => {
+    this.targetList = this.targetList.filter(
+      item => !item.name.includes(target)
+    )
   }
 
   render() {
