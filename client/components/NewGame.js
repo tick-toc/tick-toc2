@@ -89,8 +89,8 @@ class NewGame extends Component {
             Start Game
           </div>
         </div>
-        <h4>Let's Party</h4>
-        <ChatApp />
+        {/* <h4>Let's Party</h4> */}
+        {/* <ChatApp /> */}
       </div>
     )
   }
