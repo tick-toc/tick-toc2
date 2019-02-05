@@ -492,6 +492,7 @@ class Bomb extends Component {
         this.module5 = gltf.scene
         this.module5.correct = '5'
         this.module5.quest = [[], [], [], []]
+        this.module5.textures = []
         this.box.add(this.module5)
         gltf.scene.scale.set(0.42, 0.42, 0.42)
         gltf.scene.position.x = 0.49 //Position (x = right+ left-)
@@ -500,18 +501,38 @@ class Bomb extends Component {
         gltf.scene.rotation.z = Math.PI / 2
         gltf.scene.rotation.y = -Math.PI / 2
 
-        let texture1 = new THREE.TextureLoader().load(`/models/Key1.png`)
-        texture1.wrapT = THREE.RepeatWrapping
-        texture1.repeat.y = -1
-        let texture2 = new THREE.TextureLoader().load(`/models/Key2.png`)
-        texture2.wrapT = THREE.RepeatWrapping
-        texture2.repeat.y = -1
-        let texture3 = new THREE.TextureLoader().load(`/models/Key3.png`)
-        texture3.wrapT = THREE.RepeatWrapping
-        texture3.repeat.y = -1
-        let texture4 = new THREE.TextureLoader().load(`/models/Key4.png`)
-        texture4.wrapT = THREE.RepeatWrapping
-        texture4.repeat.y = -1
+        this.module5.randomKey = () => {
+          let order = [1, 2, 3, 4]
+          let unOrder = []
+          for (let i = 4; i > 0; i--) {
+            let indx = Math.ceil(Math.random() * i) - 1
+            unOrder.push(order[indx])
+            order = [...order.slice(0, indx), ...order.slice(indx + 1)]
+          }
+          let texture1 = new THREE.TextureLoader().load(
+            `/models/Key${unOrder[0]}.png`
+          )
+          texture1.wrapT = THREE.RepeatWrapping
+          texture1.repeat.y = -1
+          let texture2 = new THREE.TextureLoader().load(
+            `/models/Key${unOrder[1]}.png`
+          )
+          texture2.wrapT = THREE.RepeatWrapping
+          texture2.repeat.y = -1
+          let texture3 = new THREE.TextureLoader().load(
+            `/models/Key${unOrder[2]}.png`
+          )
+          texture3.wrapT = THREE.RepeatWrapping
+          texture3.repeat.y = -1
+          let texture4 = new THREE.TextureLoader().load(
+            `/models/Key${unOrder[3]}.png`
+          )
+          texture4.wrapT = THREE.RepeatWrapping
+          texture4.repeat.y = -1
+          this.module5.textures = [texture1, texture2, texture3, texture4]
+        }
+        this.module5.randomKey()
+
         let texture5 = new THREE.TextureLoader().load(
           `/models/Read${Math.ceil(Math.random() * 4)}.png`
         )
@@ -543,16 +564,24 @@ class Bomb extends Component {
             else if (o.name === 'CED8') CEDcreate(o, this.module5, -0.17)
             else if (o.name === 'CED9') CEDcreate(o, this.module5, -0.04)
             else if (o.name.includes('1')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture1})
+              o.material = new THREE.MeshPhongMaterial({
+                map: this.module5.textures[0]
+              })
               this.targetList.push(o)
             } else if (o.name.includes('2')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture2})
+              o.material = new THREE.MeshPhongMaterial({
+                map: this.module5.textures[1]
+              })
               this.targetList.push(o)
             } else if (o.name.includes('3')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture3})
+              o.material = new THREE.MeshPhongMaterial({
+                map: this.module5.textures[2]
+              })
               this.targetList.push(o)
             } else if (o.name.includes('4')) {
-              o.material = new THREE.MeshPhongMaterial({map: texture4})
+              o.material = new THREE.MeshPhongMaterial({
+                map: this.module5.textures[3]
+              })
               this.targetList.push(o)
             } else if (o.name === 'ReadNumber') {
               o.material = new THREE.MeshPhongMaterial({map: texture5})
@@ -746,27 +775,56 @@ class Bomb extends Component {
         // module3
         if (name.startsWith('Letter') || name.startsWith('Lface')) {
           if (
-            this.module3.pickFour[0] ===
-            Number(
-              this.intersects[0].object.material.map.image.src.slice(42, 44)
-            )
+            this.intersects[0].object.material.map.image.src.slice(-6, -5) !==
+            'p'
           ) {
-            this.module3.children
-              .filter(a =>
-                a.name.includes('' + this.intersects[0].object.name.slice(-1))
+            if (
+              this.module3.pickFour[0] ===
+              Number(
+                this.intersects[0].object.material.map.image.src.slice(-6, -5) +
+                  this.intersects[0].object.material.map.image.src.slice(-5, -4)
               )
-              .map(b => {
-                if (b.position.x > 1.26) b.position.x -= 0.07
-                if (b.position.x < 0.5 && b.position.x > 0.35) {
-                  b.position.x -= 0.07
-                  b.material.color.setRGB(0, 1, 0)
-                }
-              })
-            this.module3.pickFour.shift()
-            if (!this.module3.pickFour[0]) this.handleLetters()
-          } else {
-            this.props.setStrike()
-          }
+            ) {
+              this.module3.children
+                .filter(a =>
+                  a.name.includes('' + this.intersects[0].object.name.slice(-1))
+                )
+                .map(b => {
+                  if (b.position.x > 1.26) b.position.x -= 0.07
+                  if (b.position.x < 0.5 && b.position.x > 0.35) {
+                    b.position.x -= 0.07
+                    b.material.color.setRGB(0, 1, 0)
+                  }
+                })
+              this.removeTarget(this.intersects[0].object)
+              this.module3.pickFour.shift()
+              if (!this.module3.pickFour[0]) this.handleLetters()
+            } else {
+              this.props.setStrike()
+            }
+          } else if (
+              this.module3.pickFour[0] ===
+              Number(
+                this.intersects[0].object.material.map.image.src.slice(-5, -4)
+              )
+            ) {
+              this.module3.children
+                .filter(a =>
+                  a.name.includes('' + this.intersects[0].object.name.slice(-1))
+                )
+                .map(b => {
+                  if (b.position.x > 1.26) b.position.x -= 0.07
+                  if (b.position.x < 0.5 && b.position.x > 0.35) {
+                    b.position.x -= 0.07
+                    b.material.color.setRGB(0, 1, 0)
+                  }
+                })
+              this.removeTarget(this.intersects[0].object)
+              this.module3.pickFour.shift()
+              if (!this.module3.pickFour[0]) this.handleLetters()
+            } else {
+              this.props.setStrike()
+            }
         }
         // module4
         let head = this.module4.head
@@ -815,28 +873,12 @@ class Bomb extends Component {
 
         // module5
         if (this.intersects[0].object.name.includes('Kface')) {
-          this.module5.children
-            .filter(a =>
-              a.name.includes('' + this.intersects[0].object.name.slice(-1))
-            )
-            .map(b => {
-              if (b.position.x > 1.28) b.position.x -= 0.07
+          const lit = str => {
+            this.module5.children.filter(a => a.name.includes(str)).map(b => {
+              b.visible = true
             })
-          if (
-            this.intersects[0].object.name[5] ===
-            this.module5.children
-              .filter(a => a.name === 'ReadNumber')[0]
-              .material.map.image.src.slice(-5)[0]
-          ) {
-            //Lit up correct CED & change the ReadNumber on the radar
-            this.module5.children
-              .filter(a => a.name.includes(correct))
-              .map(b => {
-                b.visible = true
-              })
-            if (correct !== '9') {
-              this.module5.correct = Number(correct) + 1 + ''
-            }
+          }
+          const readAgain = () => {
             let texture5 = new THREE.TextureLoader().load(
               `/models/Read${Math.ceil(Math.random() * 4)}.png`
             )
@@ -845,7 +887,8 @@ class Bomb extends Component {
             this.module5.children.filter(
               a => a.name === 'ReadNumber'
             )[0].material = new THREE.MeshPhongMaterial({map: texture5})
-            //Reset Keys
+          }
+          const resetKey = () => {
             this.module5.children
               .filter(a => a.name.includes('K'))
               .map(b => (b.visible = false))
@@ -854,13 +897,277 @@ class Bomb extends Component {
                 .filter(a => a.name.includes(k))
                 .map(b => (b.visible = true))
             }
-            this.module5.children.filter(a => a.name.includes('K')).map(b => {
-              if (b.position.x < 1.28) b.position.x += 0.07
+            this.module5.children.filter(
+              a => a.name === 'Kface1'
+            )[0].material = new THREE.MeshPhongMaterial({
+              map: this.module5.textures[0]
+            })
+            this.module5.children.filter(
+              a => a.name === 'Kface2'
+            )[0].material = new THREE.MeshPhongMaterial({
+              map: this.module5.textures[1]
+            })
+            this.module5.children.filter(
+              a => a.name === 'Kface3'
+            )[0].material = new THREE.MeshPhongMaterial({
+              map: this.module5.textures[2]
+            })
+            this.module5.children.filter(
+              a => a.name === 'Kface4'
+            )[0].material = new THREE.MeshPhongMaterial({
+              map: this.module5.textures[3]
             })
             setTimeout(() => this.setKey('1'), 250)
             setTimeout(() => this.setKey('2'), 500)
             setTimeout(() => this.setKey('3'), 750)
             setTimeout(() => this.setKey('4'), 1000)
+          }
+          const reRun = () => {
+            readAgain()
+            this.module5.randomKey()
+            resetKey()
+          }
+          const runDown = () => {
+            this.module5.children
+              .filter(a => a.name.includes('CCED'))
+              .map(b => (b.visible = false))
+            this.module5.correct = '5'
+          }
+          let readNumber = this.module5.children
+            .filter(a => a.name === 'ReadNumber')[0]
+            .material.map.image.src.slice(-5)[0]
+
+          if (this.module5.correct === '5') {
+            if (Number(readNumber) < 3) {
+              this.module5.quest[0] = [
+                2,
+                Number(
+                  this.module5.children
+                    .filter(a => a.name === 'Kface2')[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            } else {
+              this.module5.quest[0] = [
+                Number(readNumber),
+                Number(
+                  this.module5.children
+                    .filter(a => a.name === `Kface${readNumber}`)[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            }
+            if (
+              this.intersects[0].object.name[5] ===
+              this.module5.quest[0][0] + ''
+            ) {
+              lit('5')
+              this.module5.correct = '6'
+              reRun()
+            } else {
+              this.props.setStrike()
+              reRun()
+            }
+          } else if (this.module5.correct === '6') {
+            if (readNumber === '1') {
+              let position4 = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(b => b.material.map.image.src.slice(-5, -4) === '4')[0]
+              this.module5.quest[1] = [Number(position4.name.slice(-1)), 4]
+            } else if (readNumber === '3') {
+              this.module5.quest[1] = [
+                1,
+                Number(
+                  this.module5.children
+                    .filter(a => a.name === `Kface1`)[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            } else {
+              this.module5.quest[1] = [
+                this.module5.quest[0][0],
+                Number(
+                  this.module5.children
+                    .filter(
+                      a => a.name === `Kface${this.module5.quest[0][0]}`
+                    )[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            }
+            if (
+              this.intersects[0].object.name[5] ===
+              this.module5.quest[1][0] + ''
+            ) {
+              lit('6')
+              this.module5.correct = '7'
+              reRun()
+            } else {
+              this.props.setStrike()
+              runDown()
+              reRun()
+            }
+          } else if (this.module5.correct === '7') {
+            if (readNumber === '1') {
+              let position = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(
+                  b =>
+                    b.material.map.image.src.slice(-5, -4) ===
+                    this.module5.quest[1][1] + ''
+                )[0]
+              this.module5.quest[2] = [
+                Number(position.name.slice(-1)),
+                this.module5.quest[1][1]
+              ]
+            } else if (readNumber === '2') {
+              let position = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(
+                  b =>
+                    b.material.map.image.src.slice(-5, -4) ===
+                    this.module5.quest[0][1] + ''
+                )[0]
+              this.module5.quest[2] = [
+                Number(position.name.slice(-1)),
+                this.module5.quest[0][1]
+              ]
+            } else if (readNumber === '3') {
+              this.module5.quest[2] = [
+                3,
+                Number(
+                  this.module5.children
+                    .filter(a => a.name === `Kface3`)[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            } else if (readNumber === '4') {
+              let position4 = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(b => b.material.map.image.src.slice(-5, -4) === '4')[0]
+              this.module5.quest[2] = [Number(position4.name.slice(-1)), 4]
+            }
+            if (
+              this.intersects[0].object.name[5] ===
+              this.module5.quest[2][0] + ''
+            ) {
+              lit('7')
+              this.module5.correct = '8'
+              reRun()
+            } else {
+              this.props.setStrike()
+              runDown()
+              reRun()
+            }
+          } else if (this.module5.correct === '8') {
+            if (readNumber === '1') {
+              this.module5.quest[3] = [
+                this.module5.quest[0][0],
+                Number(
+                  this.module5.children
+                    .filter(
+                      a => a.name === `Kface${this.module5.quest[0][0]}`
+                    )[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            } else if (readNumber === '2') {
+              this.module5.quest[3] = [
+                1,
+                Number(
+                  this.module5.children
+                    .filter(a => a.name === `Kface1`)[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            } else {
+              this.module5.quest[3] = [
+                this.module5.quest[1][0],
+                Number(
+                  this.module5.children
+                    .filter(
+                      a => a.name === `Kface${this.module5.quest[1][0]}`
+                    )[0]
+                    .material.map.image.src.slice(-5, -4)
+                )
+              ]
+            }
+            if (
+              this.intersects[0].object.name[5] ===
+              this.module5.quest[3][0] + ''
+            ) {
+              lit('8')
+              this.module5.correct = '9'
+              reRun()
+            } else {
+              this.props.setStrike()
+              runDown()
+              reRun()
+            }
+          } else if (this.module5.correct === '9') {
+            if (readNumber === '1') {
+              let position = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(
+                  b =>
+                    b.material.map.image.src.slice(-5, -4) ===
+                    this.module5.quest[0][1] + ''
+                )[0]
+              this.module5.quest[4] = [
+                Number(position.name.slice(-1)),
+                this.module5.quest[0][1]
+              ]
+            } else if (readNumber === '2') {
+              let position = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(
+                  b =>
+                    b.material.map.image.src.slice(-5, -4) ===
+                    this.module5.quest[1][1] + ''
+                )[0]
+              this.module5.quest[4] = [
+                Number(position.name.slice(-1)),
+                this.module5.quest[1][1]
+              ]
+            } else if (readNumber === '3') {
+              let position = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(
+                  b =>
+                    b.material.map.image.src.slice(-5, -4) ===
+                    this.module5.quest[3][1] + ''
+                )[0]
+              this.module5.quest[4] = [
+                Number(position.name.slice(-1)),
+                this.module5.quest[3][1]
+              ]
+            } else if (readNumber === '4') {
+              let position = this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .filter(
+                  b =>
+                    b.material.map.image.src.slice(-5, -4) ===
+                    this.module5.quest[2][1] + ''
+                )[0]
+              this.module5.quest[4] = [
+                Number(position.name.slice(-1)),
+                this.module5.quest[2][1]
+              ]
+            }
+            if (
+              this.intersects[0].object.name[5] ===
+              this.module5.quest[4][0] + ''
+            ) {
+              lit('9')
+              this.handleKeys()
+              this.module5.children
+                .filter(a => a.name.includes('Kface'))
+                .map(b => this.removeTarget(b))
+            } else {
+              this.props.setStrike()
+              runDown()
+              reRun()
+            }
           }
         }
       }
@@ -972,11 +1279,14 @@ class Bomb extends Component {
     this.removeTarget(wire)
   }
 
-  handleLetters = wire => {
+  handleLetters = () => {
     this.props.passModule('Letters')
     this.handlePass('module3')
-    this.module1.remove(wire)
-    this.removeTarget(wire)
+  }
+
+  handleKeys = () => {
+    this.props.passModule('Keys')
+    this.handlePass('module5')
   }
 
   handlePass = moduleName => {

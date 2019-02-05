@@ -7,7 +7,7 @@ const initialGame = {
   minTime: 30,
   maxTime: 570,
   finishTime: 0,
-  moduleTotal: 2,
+  moduleTotal: 5,
   modulesPassed: 0,
   strikesAllowed: true,
   strikeTotal: 3,
@@ -23,6 +23,10 @@ const initialGame = {
     },
     {
       name: 'Letters',
+      passed: false
+    },
+    {
+      name: 'Keys',
       passed: false
     }
   ],
