@@ -973,7 +973,7 @@ class Bomb extends Component {
             this.mount = mount
           }}
         />
-        <ChatApp />
+        {/* <ChatApp /> */}
       </Fragment>
     )
   }
