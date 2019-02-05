@@ -9,7 +9,8 @@ import Recap from './Recap'
 import NewGame from './NewGame'
 import {Switch, Route, withRouter} from 'react-router-dom'
 import {me} from '../store'
-import ChatApp from './ChatApp'
+import ChatApp from './Chat/ChatApp'
+import VideoChat from './Chat/VideoChat'
 
 class App extends Component {
   componentDidMount() {
@@ -42,6 +43,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/chat" component={ChatApp} />
+            <Route exact path="/video" component={VideoChat} />
             <Route component={Login} />
           </Switch>
         )}

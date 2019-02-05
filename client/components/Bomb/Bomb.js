@@ -12,6 +12,7 @@ import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
 import {GiRollingBomb} from 'react-icons/gi'
+import ChatApp from '../Chat/ChatApp'
 
 class Bomb extends Component {
   state = {
@@ -972,6 +973,7 @@ class Bomb extends Component {
             this.mount = mount
           }}
         />
+        <ChatApp />
       </Fragment>
     )
   }
