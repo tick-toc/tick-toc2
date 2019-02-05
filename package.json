@@ -67,6 +67,7 @@
     "redux-logger": "^2.8.1",
     "redux-thunk": "^2.3.0",
     "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.85.0",
     "sequelize": "^4.38.0",
     "simplewebrtc": "^3.0.2",
     "socket.io": "^2.1.1",
