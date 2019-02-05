@@ -10,7 +10,7 @@ router.get('/:offset', async (req, res, next) => {
       offset,
       limit,
       include: [User],
-      order: [['finishTime', 'ASC']]
+      order: [['solveTime', 'ASC']]
     })
     res.json({games, limit})
   } catch (err) {
@@ -26,7 +26,8 @@ router.post('/', async (req, res, next) => {
       strikeTotal: strikesAllowed,
       startTime,
       finishTime,
-      moduleTotal
+      moduleTotal,
+      solveTime
     } = req.body
     const status = strikeCount === strikesAllowed ? 'failed' : 'passed'
 
@@ -36,7 +37,8 @@ router.post('/', async (req, res, next) => {
       moduleTotal,
       startTime,
       finishTime,
-      strikesAllowed
+      strikesAllowed,
+      solveTime
     })
     res.json(result)
   } catch (err) {

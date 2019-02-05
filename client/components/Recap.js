@@ -27,13 +27,15 @@ class Recap extends Component {
       strikeTotal,
       strikeCount
     } = this.props
+    const solveTime = startTime - finishTime
 
     this.props.saveGame({
       startTime,
       finishTime,
       moduleTotal,
       strikeTotal,
-      strikeCount
+      strikeCount,
+      solveTime
     })
   }
 
