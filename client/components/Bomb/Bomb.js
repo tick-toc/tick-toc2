@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable max-statements */
 import '../../styles/Bomb.css'
 import React, {Component, Fragment} from 'react'
@@ -13,6 +14,7 @@ import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
 import {GiRollingBomb} from 'react-icons/gi'
 import ChatApp from '../Chat/ChatApp'
+import {CanMove} from './modules/mod4'
 
 class Bomb extends Component {
   state = {
@@ -438,7 +440,7 @@ class Bomb extends Component {
               // first green circle
               o.material = util.green
               o.position.copy(
-                this.module4.children.filter(a => a.name === 'Pos21')[0]
+                this.module4.children.filter(a => a.name === 'Pos22')[0]
                   .position
               )
               o.position.x -= 0.165
@@ -472,6 +474,7 @@ class Bomb extends Component {
         this.module4.head = head
         this.module4.castShadow = true
         this.module4.receiveShadow = true
+        console.log('head >>>>', head)
       })
       this.module5Loader.load('models/mo5.glb', gltf => {
         this.module5 = gltf.scene
@@ -741,6 +744,7 @@ class Bomb extends Component {
         }
         // module4
         let head = this.module4.head
+
         if (this.intersects[0].object.name.includes('Go')) {
           this.intersects[0].object.material = util.flatBlack
           if (this.intersects[0].object.name === 'GoUp') {
@@ -752,7 +756,18 @@ class Bomb extends Component {
                 head.name[4] //new position established
               head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
               head.material = util.white // paint
-              this.module4.head = head // move the head
+              //where we do the mod 4 check
+
+              // (CanMove(this.module4.head.name, '1', 'GoUp')) ?
+              // console.log('we safe') // move the head
+              // : console.log('set strike!!')
+              CanMove(
+                [this.module4.head.name[3], this.module4.head.name[4]],
+                '1',
+                'GoUp'
+              )
+
+              this.module4.head = head
             }
           } else if (this.intersects[0].object.name === 'GoDown') {
             if (head.name[3] !== '6') {
