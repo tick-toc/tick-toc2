@@ -1,4 +1,5 @@
 /* eslint-disable no-case-declarations */
+/* eslint-disable complexity */
 
 import axios from 'axios'
 
@@ -23,7 +24,12 @@ const initialGame = {
     }
   ],
   gameStarted: false,
-  gameStatus: 'pending'
+  gameStatus: 'pending',
+  previousGames: {
+    pageNumber: 0,
+    games: [],
+    offset: 0
+  }
 }
 
 //ACTION TYPES
@@ -34,6 +40,7 @@ const DIFFUSED = 'DIFFUSED'
 const END_GAME = 'END_GAME'
 const RESET_GAME = 'RESET_GAME'
 const REPLAY_GAME = 'REPLAY_GAME'
+const GET_USER_GAMES = 'GET_USER_GAMES'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
@@ -47,6 +54,7 @@ export const endGame = (status, finishTime) => ({
 })
 export const resetGame = () => ({type: RESET_GAME})
 export const replayGame = () => ({type: REPLAY_GAME})
+const getUserGames = data => ({type: GET_USER_GAMES, data})
 
 // THUNK CREATORS
 
@@ -56,6 +64,15 @@ export const saveGame = game => async () => {
     console.log(result, '<<RESULT')
   } catch (err) {
     console.error(err)
+  }
+}
+
+export const fetchUserGames = () => async dispatch => {
+  try {
+    const {data} = await axios.get('/api/games/previous')
+    dispatch(getUserGames(data))
+  } catch (err) {
+    console.log(err)
   }
 }
 
@@ -100,6 +117,15 @@ export default function(state = initialGame, action) {
         gameStarted: state.gameStarted,
         strikesAllowed: state.strikesAllowed,
         strikeTotal: state.strikeTotal
+      }
+    case GET_USER_GAMES:
+      return {
+        ...state,
+        previousGames: {
+          ...state.previousGames,
+          games: action.data.games,
+          offset: action.data.limit
+        }
       }
     default:
       return state

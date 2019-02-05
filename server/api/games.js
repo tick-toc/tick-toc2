@@ -39,8 +39,22 @@ router.post('/', async (req, res, next) => {
   } catch (err) {
     next(err)
   }
-
-  // } catch (err) {
-  //   next(err)
-  // }
 })
+
+router.get('/previous', async (req, res, next) => {
+  try {
+    const limit = 20
+    const userId = req.session.passport.user
+    const result = await Game.findAll({
+      where: {
+        userId
+      },
+      limit
+    })
+    res.send({games: [...result], limit})
+  } catch (err) {
+    next(err)
+  }
+})
+
+// need to refactor route to take in offset from axios request

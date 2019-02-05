@@ -1,10 +1,11 @@
 import React from 'react'
 import {Route, Redirect, withRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
+import Bomb from './Bomb/Bomb'
 
-const ProtectedBomb = ({component: Component, gameStarted, ...rest}) => {
+const ProtectedBomb = ({gameStarted, ...rest}) => {
   if (gameStarted) {
-    return <Route {...rest} component={Component} />
+    return <Route {...rest} component={Bomb} />
   } else {
     return <Redirect to="new-game" />
   }

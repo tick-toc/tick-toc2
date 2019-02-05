@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
 import Bomb from './Bomb/Bomb'
-import ProtectedBomb from './Bomb/ProtectedBomb'
+import ProtectedBomb from './ProtectedBomb'
+import ProtectedRecap from './ProtectedRecap'
 import './../styles/App.css'
 import {connect} from 'react-redux'
 import Login from './Login'
 import Main from './Main'
 import Recap from './Recap'
 import NewGame from './NewGame'
+import PreviousGames from './PreviousGames'
 import {Switch, Route, withRouter} from 'react-router-dom'
 import {me} from '../store'
 
@@ -27,10 +29,10 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/new-game" component={NewGame} />
-            <Route exact path="/previous-games" component={Login} />
+            <Route exact path="/previous-games" component={PreviousGames} />
             <Route exact path="/leaderboard" component={Login} />
-            <Route exact path="/recap" component={Recap} />
-            <ProtectedBomb exact path="/diffusing" component={Bomb} />
+            <ProtectedRecap exact path="/recap" />
+            <ProtectedBomb exact path="/diffusing" />
             <Route component={Main} />
           </Switch>
         ) : (

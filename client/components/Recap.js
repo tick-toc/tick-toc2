@@ -51,6 +51,7 @@ class Recap extends Component {
     } = this.props
     const time = this.calcTime(startTime)
     const timeLeft = this.calcTime(finishTime)
+    console.log(this.props, '<<<PROPS')
     return (
       <div>
         <div className="recap">
