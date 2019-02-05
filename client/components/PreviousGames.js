@@ -3,14 +3,26 @@ import '../styles/PreviousGames.css'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {fetchUserGames} from '../store'
+import {calcSingleGameTime} from './util'
 
 class PreviousGames extends Component {
   state = {
-    pageNumber: this.props.previousGames.pageNumber
+    pageNumber: 0
   }
 
   componentDidMount() {
-    this.props.fetchUserGames()
+    const {offset} = this.props.previousGames
+    this.props.fetchUserGames(offset)
+  }
+
+  componentDidUpdate() {
+    const {offset, games} = this.props.previousGames
+    if (
+      this.state.pageNumber > Math.round(games.length * 0.75) &&
+      games.length % offset === 0
+    ) {
+      this.props.fetchUserGames(offset)
+    }
   }
 
   handlePageChange = event => {
@@ -28,64 +40,66 @@ class PreviousGames extends Component {
     }
   }
   render() {
-    // const {
-    //   gameStatus,
-    //   finishTime,
-    //   startTime,
-    //   moduleTotal,
-    //   strikeTotal
-    // } = this.props
-    // const time = this.calcTime(startTime)
-    // const timeLeft = this.calcTime(finishTime)
-    console.log(this.props.previousGames, 'PREV GAMES')
     const {games} = this.props.previousGames
-    if (games.length === 0) return <div>Loading...</div>
+    const game = games[this.state.pageNumber]
+    let time
+    let timeLeft
+    if (game) {
+      time = calcSingleGameTime(game.startTime)
+      timeLeft = calcSingleGameTime(game.finishTime)
+    }
+    if (games.length === 0 || !game) return <div>Loading...</div>
     return (
       <div>
-        <div>{games[this.state.pageNumber].id}</div>
-        <button type="button" name="last" onClick={this.handlePageChange}>
-          LAST
-        </button>
-        <button type="button" name="previous" onClick={this.handlePageChange}>
-          PREVIOUS
-        </button>
-        {/* <div className="recap">
-          <div className="recap--header">
+        <div className="single-game">
+          <div className="single-game--header">
             <div>CLASSIFIED INFORMATION: Exercise Security Policy S-9</div>
             <div>DO NOT DISCLOSE</div>
           </div>
-          <div className="recap--body">
-            <div className="recap--config">
+          <div className="single-game--body">
+            <div className="single-game--date">
+              <span>Date</span>
+              <div>{game.createdAt}</div>
+            </div>
+            <div className="single-game--config">
               <span>Bomb Configuration</span>
               <div>
                 <span>{time}</span>
-                <span>{`${moduleTotal} Modules`}</span>
-                <span>{`${strikeTotal} Strikes`}</span>
+                <span>{`${game.moduleTotal} Modules`}</span>
+                <span>{`${game.strikesAllowed} Strikes`}</span>
               </div>
-              {time}
             </div>
-            <div className="recap--result">
+            <div className="single-game--result">
               <span>Result</span>
-              <div className="recap--status">{gameStatus}</div>
-              <div className="recap--details">
+              <div className="single-game--status">{game.gameStatus}</div>
+              <div className="single-game--details">
                 <span>Time Remaining:</span>
                 <span>{timeLeft}</span>
               </div>
             </div>
           </div>
-          <div className="recap--links">
-            <Link onClick={this.handleExit} to="/" className="return">
-              BACK
-            </Link>
-            <Link
-              onClick={this.handleReplay}
-              to="/diffusing"
-              className="return"
-            >
-              {gameStatus === 'diffused' ? 'REPLAY' : 'RETRY'}
-            </Link>
+          <div className="single-game--links">
+            <Link to="/">BACK</Link>
+            <div>
+              {this.state.pageNumber > 0 && (
+                <button
+                  type="button"
+                  name="last"
+                  onClick={this.handlePageChange}
+                >
+                  PREVIOUS
+                </button>
+              )}
+              <button
+                type="button"
+                name="previous"
+                onClick={this.handlePageChange}
+              >
+                NEXT
+              </button>
+            </div>
           </div>
-        </div> */}
+        </div>
       </div>
     )
   }
@@ -94,7 +108,7 @@ class PreviousGames extends Component {
 const mapState = ({game}) => ({...game})
 
 const mapDispatch = dispatch => ({
-  fetchUserGames: () => dispatch(fetchUserGames())
+  fetchUserGames: offset => dispatch(fetchUserGames(offset))
 })
 
 export default connect(mapState, mapDispatch)(PreviousGames)

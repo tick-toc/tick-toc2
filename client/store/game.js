@@ -26,7 +26,6 @@ const initialGame = {
   gameStarted: false,
   gameStatus: 'pending',
   previousGames: {
-    pageNumber: 0,
     games: [],
     offset: 0
   }
@@ -61,15 +60,14 @@ const getUserGames = data => ({type: GET_USER_GAMES, data})
 export const saveGame = game => async () => {
   try {
     const result = await axios.post('/api/games', game)
-    console.log(result, '<<RESULT')
   } catch (err) {
     console.error(err)
   }
 }
 
-export const fetchUserGames = () => async dispatch => {
+export const fetchUserGames = offset => async dispatch => {
   try {
-    const {data} = await axios.get('/api/games/previous')
+    const {data} = await axios.get(`/api/games/previous/${offset}`)
     dispatch(getUserGames(data))
   } catch (err) {
     console.log(err)
@@ -124,7 +122,7 @@ export default function(state = initialGame, action) {
         previousGames: {
           ...state.previousGames,
           games: action.data.games,
-          offset: action.data.limit
+          offset: state.previousGames.offset + action.data.limit
         }
       }
     default:

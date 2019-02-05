@@ -3,6 +3,7 @@ import '../styles/Recap.css'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {resetGame, saveGame, replayGame} from '../store'
+import {calcSingleGameTime} from './util'
 
 class Recap extends Component {
   componentDidMount() {
@@ -35,14 +36,6 @@ class Recap extends Component {
     })
   }
 
-  calcTime = time => {
-    const minute = Math.floor(time / 60)
-    const seconds = time % 60
-    const tenSecond = Math.floor((seconds % 60) / 10)
-    const singleSecond = seconds % 10
-    return `${minute}:${tenSecond}${singleSecond}`
-  }
-
   render() {
     const {
       gameStatus,
@@ -51,8 +44,8 @@ class Recap extends Component {
       moduleTotal,
       strikeTotal
     } = this.props
-    const time = this.calcTime(startTime)
-    const timeLeft = this.calcTime(finishTime)
+    const time = calcSingleGameTime(startTime)
+    const timeLeft = calcSingleGameTime(finishTime)
 
     return (
       <div>
@@ -69,7 +62,6 @@ class Recap extends Component {
                 <span>{`${moduleTotal} Modules`}</span>
                 <span>{`${strikeTotal} Strikes`}</span>
               </div>
-              {time}
             </div>
             <div className="recap--result">
               <span>Result</span>

@@ -41,15 +41,18 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.get('/previous', async (req, res, next) => {
+router.get('/previous/:offset', async (req, res, next) => {
   try {
+    const {offset} = req.params
     const limit = 20
     const userId = req.session.passport.user
     const result = await Game.findAll({
       where: {
         userId
       },
-      limit
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']]
     })
     res.send({games: [...result], limit})
   } catch (err) {
