@@ -23,6 +23,10 @@ const initialGame = {
       passed: false
     },
     {
+      name: 'Maze',
+      passed: false
+    },
+    {
       name: 'Letters',
       passed: false
     },
