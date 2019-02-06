@@ -49,20 +49,16 @@ class Recap extends Component {
     return (
       <div>
         <SingleGame game={game}>
-          <button className="button" type="button">
-            <Link onClick={this.handleExit} to="/" className="return">
+          <Link onClick={this.handleExit} to="/" className="return">
+            <button className="button" type="button">
               BACK
-            </Link>
-          </button>
-          <button className="button" type="button">
-            <Link
-              onClick={this.handleReplay}
-              to="/diffusing"
-              className="return"
-            >
+            </button>
+          </Link>
+          <Link onClick={this.handleReplay} to="/diffusing" className="return">
+            <button className="button" type="button">
               {gameStatus === 'diffused' ? 'REPLAY' : 'RETRY'}
-            </Link>
-          </button>
+            </button>
+          </Link>
         </SingleGame>
       </div>
     )

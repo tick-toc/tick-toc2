@@ -57,11 +57,11 @@ class Leaderboard extends Component {
               })}
             </tbody>
           </table>
-          <button className="button" type="button">
-            <Link to="/" className="return">
+          <Link to="/" className="return">
+            <button className="button" type="button">
               BACK
-            </Link>
-          </button>
+            </button>
+          </Link>
         </div>
         <SingleGame game={selectedGame} />
       </div>

@@ -67,7 +67,3 @@
 .leader-row > * {
   height: 100%;
 }
-
-.leader-row:active {
-  background-color: teal;
-}
