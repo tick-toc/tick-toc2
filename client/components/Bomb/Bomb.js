@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable max-statements */
 import '../../styles/Bomb.css'
 import React, {Component, Fragment} from 'react'
@@ -13,6 +14,9 @@ import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
 import {GiRollingBomb} from 'react-icons/gi'
 import ChatApp from '../Chat/ChatApp'
+import {CanMove} from './modules/mod4'
+import {ifError} from 'assert'
+import {SEDS} from './modules/bigbutton'
 
 class Bomb extends Component {
   state = {
@@ -287,8 +291,12 @@ class Bomb extends Component {
         this.module2.rotation.z = Math.PI / 2
         this.module2.rotation.y = -Math.PI / 2
 
+        let buttonIndex = String(generateRandomIndex(4) + 1)
+
+        this.SEDIndex = generateRandomIndex(4)
+
         let texture = new THREE.TextureLoader().load(
-          `/models/Button${Math.ceil(Math.random() * 4)}.png`
+          `/models/Button${buttonIndex}.png`
         )
         texture.wrapS = THREE.RepeatWrapping
         texture.repeat.x = -1
@@ -306,11 +314,20 @@ class Bomb extends Component {
             else if (o.name === 'Button002' || o.name === 'Button') {
               o.material = new THREE.MeshPhongMaterial({map: texture})
               o.rotation.x = -2.85
+              if (buttonIndex === '1' || buttonIndex === '2') {
+                o.userData = {
+                  hold: false
+                }
+              } else {
+                o.userData = {
+                  hold: true
+                }
+              }
               this.targetList.push(o)
             } else if (o.name === 'LED') LEDcreate(o, this.module2, 'glow')
             else if (o.name === 'Cube002') {
               let em = new THREE.Color(0x000000)
-              let SED1 = new THREE.PointLight(0x777700, 4, 13, 200)
+              let SED1 = SEDS[this.SEDIndex].color
               SED1.name = 'LEDstripe1'
               this.module2.add(SED1)
               SED1.position.copy(o.position)
@@ -451,25 +468,31 @@ class Bomb extends Component {
             else if (o.name === 'Board') {
               o.material = util.cubeMaterial
             } else if (o.name.includes('Go')) {
+              //arrows up down left right
               o.material = util.cubeMaterial
               this.targetList.push(o)
             } else if (o.name === 'CircleOne') {
+              // first green circle
               o.material = util.green
               o.position.copy(
-                this.module4.children.filter(a => a.name === 'Pos21')[0]
+                this.module4.children.filter(a => a.name === 'Pos22')[0]
                   .position
               )
               o.position.x -= 0.165
             } else if (o.name === 'CircleTwo') {
+              // second green circle
               o.material = util.green
               o.position.copy(
-                this.module4.children.filter(a => a.name === 'Pos36')[0]
+                this.module4.children.filter(a => a.name === 'Pos36')[0] //Pos11, ... Pos66
                   .position
               )
               o.position.x -= 0.165
             } else if (o.name === 'End') {
+              //ending spot
               o.material = util.redTran
               let randomName = `Pos${ranPos()}${ranPos()}`
+              o.userData = {winningPosition: randomName}
+              console.log('randomName', randomName)
               o.position.copy(
                 this.module4.children.filter(a => a.name === randomName)[0]
                   .position
@@ -488,6 +511,7 @@ class Bomb extends Component {
         this.module4.head = head
         this.module4.castShadow = true
         this.module4.receiveShadow = true
+        console.log('head >>>>', head)
       })
       this.module5Loader.load('models/mo5.glb', gltf => {
         this.module5 = gltf.scene
@@ -667,11 +691,20 @@ class Bomb extends Component {
         this.intersects[0] &&
         this.intersects[0].object.name.startsWith('Button')
       ) {
-        if (minute === 7 || tenSecond === 7 || singleSecond === 7) {
+        if (this.intersects[0].object.userData.hold === true) {
+          if (
+            minute === SEDS[this.SEDIndex].num ||
+            tenSecond === SEDS[this.SEDIndex].num ||
+            singleSecond === SEDS[this.SEDIndex].num
+          ) {
+            this.props.passModule('BigButton')
+            this.handlePass('module2')
+          } else {
+            this.props.setStrike()
+          }
+        } else {
           this.props.passModule('BigButton')
           this.handlePass('module2')
-        } else {
-          this.props.setStrike()
         }
       }
       this.module4.children.filter(a => a.name.includes('Go')).map(b => {
@@ -804,71 +837,122 @@ class Bomb extends Component {
               this.props.setStrike()
             }
           } else if (
-              this.module3.pickFour[0] ===
-              Number(
-                this.intersects[0].object.material.map.image.src.slice(-5, -4)
+            this.module3.pickFour[0] ===
+            Number(
+              this.intersects[0].object.material.map.image.src.slice(-5, -4)
+            )
+          ) {
+            this.module3.children
+              .filter(a =>
+                a.name.includes('' + this.intersects[0].object.name.slice(-1))
               )
-            ) {
-              this.module3.children
-                .filter(a =>
-                  a.name.includes('' + this.intersects[0].object.name.slice(-1))
-                )
-                .map(b => {
-                  if (b.position.x > 1.26) b.position.x -= 0.07
-                  if (b.position.x < 0.5 && b.position.x > 0.35) {
-                    b.position.x -= 0.07
-                    b.material.color.setRGB(0, 1, 0)
-                  }
-                })
-              this.removeTarget(this.intersects[0].object)
-              this.module3.pickFour.shift()
-              if (!this.module3.pickFour[0]) this.handleLetters()
-            } else {
-              this.props.setStrike()
-            }
+              .map(b => {
+                if (b.position.x > 1.26) b.position.x -= 0.07
+                if (b.position.x < 0.5 && b.position.x > 0.35) {
+                  b.position.x -= 0.07
+                  b.material.color.setRGB(0, 1, 0)
+                }
+              })
+            this.removeTarget(this.intersects[0].object)
+            this.module3.pickFour.shift()
+            if (!this.module3.pickFour[0]) this.handleLetters()
+          } else {
+            this.props.setStrike()
+          }
         }
         // module4
         let head = this.module4.head
+
         if (this.intersects[0].object.name.includes('Go')) {
           this.intersects[0].object.material = util.flatBlack
           if (this.intersects[0].object.name === 'GoUp') {
             if (head.name[3] !== '1') {
-              head.material = util.flatBlack
               let newHead =
                 head.name.slice(0, 3) +
                 (Number(head.name[3]) - 1) +
-                head.name[4]
-              head = this.module4.children.filter(a => a.name === newHead)[0]
-              head.material = util.white
-              this.module4.head = head
+                head.name[4] //new position established
+              if (
+                CanMove(
+                  [this.module4.head.name[3], this.module4.head.name[4]],
+                  '1',
+                  this.intersects[0].object.name
+                )
+              ) {
+                head.material = util.flatBlack // unpaint
+                head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+                head.material = util.white // paint
+                this.module4.head = head
+              } else {
+                this.props.setStrike()
+              }
             }
           } else if (this.intersects[0].object.name === 'GoDown') {
             if (head.name[3] !== '6') {
-              head.material = util.flatBlack
               let newHead =
                 head.name.slice(0, 3) +
                 (Number(head.name[3]) + 1) +
                 head.name[4]
-              head = this.module4.children.filter(a => a.name === newHead)[0]
-              head.material = util.white
-              this.module4.head = head
+              if (
+                CanMove(
+                  [this.module4.head.name[3], this.module4.head.name[4]],
+                  '1',
+                  this.intersects[0].object.name
+                )
+              ) {
+                head.material = util.flatBlack // unpaint
+                head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+                head.material = util.white // paint
+                this.module4.head = head
+              } else {
+                this.props.setStrike()
+              }
             }
           } else if (this.intersects[0].object.name === 'GoLeft') {
             if (head.name[4] !== '1') {
-              head.material = util.flatBlack
               let newHead = head.name.slice(0, 4) + (Number(head.name[4]) - 1)
-              head = this.module4.children.filter(a => a.name === newHead)[0]
-              head.material = util.white
-              this.module4.head = head
+              if (
+                CanMove(
+                  [this.module4.head.name[3], this.module4.head.name[4]],
+                  '1',
+                  this.intersects[0].object.name
+                )
+              ) {
+                head.material = util.flatBlack // unpaint
+                head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+                head.material = util.white // paint
+                this.module4.head = head
+              } else {
+                this.props.setStrike()
+              }
             }
           } else if (this.intersects[0].object.name === 'GoRight') {
             if (head.name[4] !== '6') {
-              head.material = util.flatBlack
               let newHead = head.name.slice(0, 4) + (Number(head.name[4]) + 1)
-              head = this.module4.children.filter(a => a.name === newHead)[0]
-              head.material = util.white
-              this.module4.head = head
+              if (
+                CanMove(
+                  [this.module4.head.name[3], this.module4.head.name[4]],
+                  '1',
+                  this.intersects[0].object.name
+                )
+              ) {
+                head.material = util.flatBlack // unpaint
+                head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
+                head.material = util.white // paint
+                this.module4.head = head
+              } else {
+                this.props.setStrike()
+              }
             }
+          }
+
+          if (
+            this.module4.children[0].userData.winningPosition ===
+            this.module4.head.name
+          ) {
+            this.handlePass('module4')
+            this.props.passModule('Maze')
+            console.log(this.targetList)
+            this.removeAllTargets('Go')
           }
         }
 
@@ -1301,6 +1385,12 @@ class Bomb extends Component {
 
   removeTarget = target => {
     this.targetList = this.targetList.filter(item => item !== target)
+  }
+
+  removeAllTargets = target => {
+    this.targetList = this.targetList.filter(
+      item => !item.name.includes(target)
+    )
   }
 
   render() {

@@ -10,7 +10,7 @@ router.get('/:offset', async (req, res, next) => {
       offset,
       limit,
       include: [User],
-      order: [['finishTime', 'ASC']]
+      order: [['solveTime', 'ASC']]
     })
     res.json({games, limit})
   } catch (err) {
@@ -28,6 +28,7 @@ router.post('/', async (req, res, next) => {
       finishTime,
       moduleTotal
     } = req.body
+    const solveTime = startTime - finishTime
     const status = strikeCount === strikesAllowed ? 'failed' : 'passed'
 
     const result = await Game.create({
@@ -36,7 +37,8 @@ router.post('/', async (req, res, next) => {
       moduleTotal,
       startTime,
       finishTime,
-      strikesAllowed
+      strikesAllowed,
+      solveTime
     })
     res.json(result)
   } catch (err) {

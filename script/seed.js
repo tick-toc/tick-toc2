@@ -9,6 +9,7 @@ const gameData = [
     modulesFailed: 2,
     startTime: 300,
     finishTime: 120,
+    solveTime: 180,
     strikesAllowed: 3,
     strikeCount: 2,
     status: 'passed'
@@ -18,6 +19,7 @@ const gameData = [
     modulesFailed: 2,
     startTime: 300,
     finishTime: 0,
+    solveTime: 300,
     strikesAllowed: 3,
     strikeCount: 2,
     status: 'failed'
@@ -26,6 +28,7 @@ const gameData = [
     moduleTotal: 5,
     modulesFailed: 3,
     startTime: 300,
+    solveTime: 243,
     finishTime: 57,
     strikesAllowed: 3,
     strikeCount: 2,
@@ -43,6 +46,11 @@ const userData = [
     userName: 'smartUser',
     email: 'smartUser@smartemail.com',
     password: 'smartpassword'
+  },
+  {
+    userName: 'evanalto',
+    email: 'e@a.com',
+    password: 'ea'
   }
 ]
 
