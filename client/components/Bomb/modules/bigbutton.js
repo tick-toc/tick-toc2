@@ -1,20 +1,20 @@
-export const buttons = [
+import {PointLight} from 'three'
+
+export const SEDS = [
   {
-    id: 1,
-    hold: false
+    color: new PointLight(0x0000ff, 4, 13, 200),
+    num: 4
   },
   {
-    id: 2,
-    hold: false
+    color: new PointLight(0xffffff, 4, 13, 200),
+    num: 1
   },
   {
-    id: 3,
-    hold: false
+    color: new PointLight(0xffff00, 4, 13, 200),
+    num: 5
   },
   {
-    id: 4,
-    hold: false
+    color: new PointLight(0xff00ff, 4, 13, 200),
+    num: 1
   }
 ]
-
-export const SEDS = []

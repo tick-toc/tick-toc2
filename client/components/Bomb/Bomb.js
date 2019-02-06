@@ -16,6 +16,7 @@ import {GiRollingBomb} from 'react-icons/gi'
 import ChatApp from '../Chat/ChatApp'
 import {CanMove} from './modules/mod4'
 import {ifError} from 'assert'
+import {SEDS} from './modules/bigbutton'
 
 class Bomb extends Component {
   state = {
@@ -290,8 +291,12 @@ class Bomb extends Component {
         this.module2.rotation.z = Math.PI / 2
         this.module2.rotation.y = -Math.PI / 2
 
+        let buttonIndex = String(generateRandomIndex(4) + 1)
+
+        this.SEDIndex = generateRandomIndex(4)
+
         let texture = new THREE.TextureLoader().load(
-          `/models/Button${Math.ceil(Math.random() * 4)}.png`
+          `/models/Button${buttonIndex}.png`
         )
         texture.wrapS = THREE.RepeatWrapping
         texture.repeat.x = -1
@@ -309,11 +314,20 @@ class Bomb extends Component {
             else if (o.name === 'Button002' || o.name === 'Button') {
               o.material = new THREE.MeshPhongMaterial({map: texture})
               o.rotation.x = -2.85
+              if (buttonIndex === '1' || buttonIndex === '2') {
+                o.userData = {
+                  hold: false
+                }
+              } else {
+                o.userData = {
+                  hold: true
+                }
+              }
               this.targetList.push(o)
             } else if (o.name === 'LED') LEDcreate(o, this.module2, 'glow')
             else if (o.name === 'Cube002') {
               let em = new THREE.Color(0x000000)
-              let SED1 = new THREE.PointLight(0x777700, 4, 13, 200)
+              let SED1 = SEDS[this.SEDIndex].color
               SED1.name = 'LEDstripe1'
               this.module2.add(SED1)
               SED1.position.copy(o.position)
@@ -677,9 +691,15 @@ class Bomb extends Component {
         this.intersects[0] &&
         this.intersects[0].object.name.startsWith('Button')
       ) {
-        if (minute === 7 || tenSecond === 7 || singleSecond === 7) {
-          this.props.passModule('BigButton')
-          this.handlePass('module2')
+        if (this.intersects[0].object.userData.hold === true) {
+          if (
+            minute === SEDS[this.SEDIndex].num ||
+            tenSecond === SEDS[this.SEDIndex].num ||
+            singleSecond === SEDS[this.SEDIndex].num
+          ) {
+            this.props.passModule('BigButton')
+            this.handlePass('module2')
+          }
         } else {
           this.props.setStrike()
         }
