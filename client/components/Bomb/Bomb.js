@@ -14,7 +14,7 @@ import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
 import {GiRollingBomb} from 'react-icons/gi'
 import ChatApp from '../Chat/ChatApp'
-import {CanMove} from './modules/mod4'
+import {CanMove, mazeCases, randomProperty} from './modules/mod4'
 import {ifError} from 'assert'
 
 class Bomb extends Component {
@@ -442,6 +442,7 @@ class Bomb extends Component {
         this.module4.rotation.y = -Math.PI / 2
 
         this.module4.traverse(o => {
+          const selectedMazeCase = randomProperty(mazeCases)
           if (o.isMesh) {
             if (o.name === 'Cube000') o.material = util.cubeMaterial
             else if (
@@ -458,19 +459,21 @@ class Bomb extends Component {
               o.material = util.cubeMaterial
               this.targetList.push(o)
             } else if (o.name === 'CircleOne') {
-              // first green circle
+              // first green circle  mazeCases['1'].CircleOne
               o.material = util.green
               o.position.copy(
-                this.module4.children.filter(a => a.name === 'Pos22')[0]
-                  .position
+                this.module4.children.filter(
+                  a => a.name === selectedMazeCase.CircleOne
+                )[0].position
               )
               o.position.x -= 0.165
             } else if (o.name === 'CircleTwo') {
               // second green circle
               o.material = util.green
               o.position.copy(
-                this.module4.children.filter(a => a.name === 'Pos36')[0] //Pos11, ... Pos66
-                  .position
+                this.module4.children.filter(
+                  a => a.name === selectedMazeCase.CircleTwo
+                )[0].position //Pos11, ... Pos66
               )
               o.position.x -= 0.165
             } else if (o.name === 'End') {
