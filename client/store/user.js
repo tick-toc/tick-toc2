@@ -41,8 +41,6 @@ export const me = () => async dispatch => {
 //method
 export const authLogin = (email, password) => async dispatch => {
   let res
-  console.log('do we hit this?')
-
   try {
     res = await axios.post(`/auth/login`, {email, password})
   } catch (authError) {
@@ -59,8 +57,6 @@ export const authLogin = (email, password) => async dispatch => {
 
 export const authSignup = (email, password, userName) => async dispatch => {
   let res
-  console.log('do we hit this?')
-
   try {
     res = await axios.post(`/auth/signup`, {email, password, userName})
   } catch (authError) {
