@@ -54,6 +54,13 @@ export const green = new MeshPhongMaterial({
   // transparent: true
 })
 
+export const gray = new MeshPhongMaterial({
+  color: 0x999999,
+  shininess: 100
+  // opacity: 0.9,
+  // transparent: true
+})
+
 export const copper = new MeshPhongMaterial({
   color: 0xaa7755,
   shininess: 100
