@@ -38,6 +38,7 @@ class App extends Component {
             <ProtectedRecap exact path="/recap" />
             <ProtectedBomb exact path="/diffusing" />
             <Route exact path="/chat" component={ChatApp} />
+            <Route exact path="/VideoChat" component={VideoChat} />
             <Route component={Main} />
           </Switch>
         ) : (
