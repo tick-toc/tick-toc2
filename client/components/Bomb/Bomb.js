@@ -16,6 +16,7 @@ import {GiRollingBomb} from 'react-icons/gi'
 import ChatApp from '../Chat/ChatApp'
 import {CanMove, mazeCases, randomProperty} from './modules/mod4'
 import {ifError} from 'assert'
+const selectedMazeCase = randomProperty(mazeCases)
 
 class Bomb extends Component {
   state = {
@@ -442,7 +443,6 @@ class Bomb extends Component {
         this.module4.rotation.y = -Math.PI / 2
 
         this.module4.traverse(o => {
-          const selectedMazeCase = randomProperty(mazeCases)
           if (o.isMesh) {
             if (o.name === 'Cube000') o.material = util.cubeMaterial
             else if (
@@ -854,7 +854,7 @@ class Bomb extends Component {
               if (
                 CanMove(
                   [this.module4.head.name[3], this.module4.head.name[4]],
-                  '1',
+                  selectedMazeCase.Maze,
                   this.intersects[0].object.name
                 )
               ) {
@@ -875,7 +875,7 @@ class Bomb extends Component {
               if (
                 CanMove(
                   [this.module4.head.name[3], this.module4.head.name[4]],
-                  '1',
+                  selectedMazeCase.Maze,
                   this.intersects[0].object.name
                 )
               ) {
@@ -893,7 +893,7 @@ class Bomb extends Component {
               if (
                 CanMove(
                   [this.module4.head.name[3], this.module4.head.name[4]],
-                  '1',
+                  selectedMazeCase.Maze,
                   this.intersects[0].object.name
                 )
               ) {
@@ -911,7 +911,7 @@ class Bomb extends Component {
               if (
                 CanMove(
                   [this.module4.head.name[3], this.module4.head.name[4]],
-                  '1',
+                  selectedMazeCase.Maze,
                   this.intersects[0].object.name
                 )
               ) {
