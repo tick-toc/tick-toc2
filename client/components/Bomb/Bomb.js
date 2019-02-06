@@ -239,7 +239,11 @@ class Bomb extends Component {
         this.module1.rotation.z = Math.PI / 2
         this.module1.rotation.y = -Math.PI / 2
 
-        let count = 3 // parseInt(wireCount[Math.floor(Math.random() * wireCount.length)])
+        let count = parseInt(
+          wireCount[Math.floor(Math.random() * wireCount.length)]
+        )
+        console.log('count set?')
+        console.log('count', count)
         let wireCases = wireCountCases[count]
         let wireCase = wireCases[generateRandomIndex(wireCases.length)]
         let wires = this.module1.children.filter(element =>
