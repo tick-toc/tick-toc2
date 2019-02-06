@@ -742,6 +742,7 @@ class Bomb extends Component {
           ) {
             this.props.passModule('BigButton')
             this.handlePass('module2')
+            this.removeAllTargets('Button')
           } else {
             this.box.audio.play()
             this.props.setStrike()
@@ -749,6 +750,7 @@ class Bomb extends Component {
         } else {
           this.props.passModule('BigButton')
           this.handlePass('module2')
+          this.removeAllTargets('Button')
         }
       }
       this.module4.children.filter(a => a.name.includes('Go')).map(b => {
