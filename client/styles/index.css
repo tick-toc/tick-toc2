@@ -26,3 +26,17 @@ code {
 /* /***********
 *** SHARED STYLING
 ************ / */
+
+.button {
+  background-color: #190f00;
+  padding: 10px 20px;
+  margin: 20px 5px;
+  border: none;
+  color: #eeeeee;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.button a {
+  font-size: 1.5rem;
+}

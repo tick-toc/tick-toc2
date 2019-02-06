@@ -6,6 +6,10 @@
   margin: 20px;
 }
 
+.leaders--header {
+  margin: 20px;
+}
+
 .leaders {
   display: flex;
   flex-direction: column;
@@ -22,17 +26,19 @@
   overflow: scroll;
 }
 
-.leaders--table {
+.leaders--table,
+.leaders--main {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.leaders--table > * {
+.leaders--main > * {
   display: flex;
   width: 100%;
   padding: 20px;
   justify-content: space-around;
+  overflow: scroll;
 }
 
 .leader-row {

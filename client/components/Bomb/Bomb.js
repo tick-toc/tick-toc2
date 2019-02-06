@@ -1407,7 +1407,9 @@ class Bomb extends Component {
     return (
       <Fragment>
         {gameStatus !== 'pending' && (
-          <div className={`stamp ${gameStatus}--banner`}>{gameStatus}</div>
+          <div className="banner-container">
+            <div className={`banner ${gameStatus}--banner`}>{gameStatus}</div>
+          </div>
         )}
         {!activated && (
           <div className="stamp activating--banner">
