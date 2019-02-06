@@ -40,6 +40,7 @@
 
 .new-game--config-options {
   color: #8cc2ee;
+  /* text-shadow: 0px 0px 4px #8cc2ee; */
   background-image: repeating-linear-gradient(
     -45deg,
     #45290d,
@@ -49,12 +50,15 @@
   );
 }
 
+.new-game--config-options > * {
+  margin: 20px 0px;
+}
+
 .new-game--config-options > *,
 .new-game--config-selects div > *,
 .new-game--config-selects span {
-  padding: 20px;
-  margin: 20px 0px;
   font-size: 2rem;
+  padding: 20px;
   z-index: 1;
 }
 
@@ -65,6 +69,8 @@
 
 .new-game--config-selects {
   background-color: #212225;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
 .new-game--config-selects div {
@@ -73,8 +79,6 @@
 }
 
 .new-game--config-selects > :first-child {
-  margin-top: 0px;
-  margin-bottom: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,6 +87,16 @@
 .new-game--config-selects > :first-child svg {
   cursor: pointer;
   margin: 0px 10px;
+  color: #86827f;
+  background-color: #322f2d;
+  border-radius: 50%;
+}
+
+.new-game--config-selects > :first-child :nth-child(2) {
+  background-color: #060606;
+  color: #ffa561;
+  padding: 10px 20px;
+  width: 110px;
 }
 
 .new-game--select {
@@ -106,16 +120,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #eee;
+  color: rgba(255, 255, 255, 0.87);
   font-size: 2.5rem;
+}
+
+.new-game--start:hover {
+  text-shadow: 0px 0px 4px #ffffff;
 }
 
 .strikes--active {
   color: #f90404;
+  text-shadow: 0px 0px 4px #f90404;
   cursor: pointer;
 }
 
 .strikes--inactive {
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(255, 255, 255, 0.47);
   cursor: pointer;
 }
