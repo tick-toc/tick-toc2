@@ -10,7 +10,10 @@ class ChatApp extends Component {
       chatLog: [],
       options: {
         debug: true,
-        dataOnly: true
+        media: {
+          video: true,
+          audio: true
+        }
       }
     }
   }
