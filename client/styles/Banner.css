@@ -1,0 +1,73 @@
+.banner {
+  text-transform: uppercase;
+  font-size: 3rem;
+  font-weight: 700;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  font-family: 'Courier';
+  mask-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8399/grunge.png');
+  /* mask-size: 944px 604px; */
+  -webkit-mask-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8399/grunge.png');
+  /* -webkit-mask-size: 944px 604px; */
+  mix-blend-mode: multiply;
+}
+
+.stamp {
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 4rem;
+  padding: 0.25rem 1rem;
+  font-family: 'Courier';
+  mask-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8399/grunge.png');
+  /* mask-size: 944px 604px; */
+  -webkit-mask-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8399/grunge.png');
+  /* -webkit-mask-size: 944px 604px; */
+  mix-blend-mode: multiply;
+}
+
+.failed--banner,
+.diffused--banner {
+  font-size: 8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.failed--stamp,
+.failed--banner {
+  color: #ff0000;
+  border: 0.5rem solid #ff0000;
+}
+
+.failed--banner {
+  mask-position: 13rem 6rem;
+  -webkit-mask-position: 13rem 6rem;
+  transform: rotate(-14deg);
+}
+
+.failed--stamp,
+.diffused--stamp {
+  mask-position: 5rem 5rem;
+  -webkit-mask-position: 5rem 5rem;
+  transform: rotate(-3deg);
+}
+
+.diffused--stamp,
+.diffused--banner {
+  color: #0a9928;
+  border: 0.5rem solid #0a9928;
+}
+
+.activating--banner {
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.87);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.activating--banner > * {
+  margin: 50px;
+}
