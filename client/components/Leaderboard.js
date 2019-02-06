@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import '../styles/Leaderboard.css'
+import '../styles/Loader.css'
+import {FaCog} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 import SingleGame from './SingleGame'
 import {connect} from 'react-redux'
@@ -25,7 +27,7 @@ class Leaderboard extends Component {
   render() {
     const {games} = this.props.leaders
     const selectedGame = games[this.state.selectedGame]
-    if (!games || !selectedGame) return <div>Loading...</div>
+    if (!games || !selectedGame) return <FaCog className="loader" />
     return (
       <div className="leaderboard">
         <div className="leaders">

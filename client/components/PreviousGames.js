@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import '../styles/PreviousGames.css'
+import '../styles/Loader.css'
+import {FaCog} from 'react-icons/fa'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {fetchUserGames} from '../store'
@@ -42,7 +44,7 @@ class PreviousGames extends Component {
   render() {
     const {games} = this.props.previousGames
     const game = games[this.state.pageNumber]
-    if (!game) return <div>Loading...</div>
+    if (!game) return <FaCog className="loader" />
     return (
       <div>
         <SingleGame game={game}>
