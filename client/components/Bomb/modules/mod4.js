@@ -8,18 +8,37 @@ export const mazeCases = {
     CircleTwo: 'Pos36',
     Maze: [
       [[1, 2], [1, 3], [2, 3], [1, 2], [1, 3], [3]],
-      [[0, 2], [1, 2], [0, 3], [0, 1], [1, 3], [2, 3]],
+      [[0, 2], [1, 2], [0, 3], [0, 1], [1, 3], [0, 2, 3]],
       [[0, 2], [0, 1], [2, 3], [1, 2], [1, 3], [2, 3]],
       [[0, 2], [1], [0, 1], [0, 3], [1], [0, 2, 3]],
       [[0, 1, 2], [1, 3], [2, 3], [1, 2], [3], [0, 2]],
       [[0, 1], [3], [0, 1], [0, 3], [1], [0, 3]]
     ]
   },
-  '2': {},
-  '3': {},
-  '4': {},
-  '5': {},
-  '6': {}
+  '2': {
+    CircleOne: 'Pos25',
+    CircleTwo: 'Pos42',
+    Maze: [
+      [[1], [1, 2, 3], [3], [1, 2], [1, 2, 3], [3]],
+      [[1, 2], [0, 3], [1, 2], [0, 3], [0, 1], [2, 3]],
+      [[0, 2], [1, 2], [0, 3], [1, 2], [1, 3], [0, 2, 3]],
+      [[0, 1, 2], [0, 3], [1, 2], [0, 3], [2], [0, 2]],
+      [[0, 2], [2], [0, 2], [1, 2], [0, 3], [0, 2]],
+      [[0], [0, 1], [0, 3], [0, 1], [1, 3], [0, 3]]
+    ]
+  },
+  '3': {
+    CircleOne: 'Pos44',
+    CircleTwo: 'Pos46',
+    Maze: [
+      [[1, 2], [1, 3], [2, 3], [2], [1, 2], [2, 3]],
+      [[0], [2], [0, 2], [0, 1], [0, 3], [0, 2]],
+      [[1, 2], [0, 2, 3], [0, 2], [1, 2], [2, 3], [0, 2]],
+      [[0, 2], [0, 2], [0, 2], [0, 2], [0, 2], [0, 2]],
+      [[0, 2], [0, 1], [0, 3], [0, 2], [0, 2], [0, 2]],
+      [[0, 1], [1, 3], [1, 3], [0, 3], [0, 1], [0, 3]]
+    ]
+  }
 }
 
 export const CreateCellCheck = array => {
@@ -31,19 +50,16 @@ export const CreateCellCheck = array => {
   newCell.array = array
   return newCell
 }
-
-const maze1 = [
-  [[1, 2], [1, 3], [2, 3], [1, 2], [1, 3], [3]],
-  [[0, 2], [1, 2], [0, 3], [0, 1], [1, 3], [2, 3]],
-  [[0, 2], [0, 1], [2, 3], [1, 2], [1, 3], [0, 2, 3]],
-  [[0, 2], [1], [0, 1], [0, 3], [1], [0, 2, 3]],
-  [[0, 1, 2], [1, 3], [2, 3], [1, 2], [3], [0, 2]],
-  [[0, 1], [3], [0, 1], [0, 3], [1], [0, 3]]
-]
+export const randomProperty = function(obj) {
+  var keys = Object.keys(obj)
+  return obj[keys[(keys.length * Math.random()) << 0]]
+}
 
 export function CanMove(position, mazeCase, desiredDirection) {
-  const currentPositionRules =
-    mazeCases[mazeCase].Maze[position[0] - 1][position[1] - 1]
+  console.log('mazecase', mazeCase)
+  const currentPositionRules = mazeCase[position[0] - 1][position[1] - 1]
   const positionRules = CreateCellCheck(currentPositionRules)
   return positionRules[desiredDirection]
 }
+
+//selectedMazeCase.Maze
