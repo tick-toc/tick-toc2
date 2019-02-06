@@ -59,7 +59,9 @@ class NewGame extends Component {
                     className="ng-action ng-icon"
                     onClick={() => this.handleTime('l')}
                   />
-                  {minute}:{seconds === 0 ? '00' : seconds}
+                  <span>
+                    {minute}:{seconds === 0 ? '00' : seconds}
+                  </span>
                   <FaArrowR
                     className="ng-action ng-icon"
                     onClick={() => this.handleTime('m')}
