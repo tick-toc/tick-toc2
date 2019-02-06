@@ -1,11 +1,15 @@
 .single-game,
 .leaders {
-  background-color: #eeffff;
-  height: 690px;
+  background-image: url('https://www.toptal.com/designers/subtlepatterns/patterns/paper.png');
+  background-repeat: repeat;
   width: 530px;
   display: flex;
   flex-direction: column;
   color: #111;
+}
+
+.leaders {
+  height: 690px;
 }
 
 .single-game .typed {
@@ -51,7 +55,7 @@
 
 .single-game--date,
 .single-game--config {
-  border-bottom: 1.4px solid #111;
+  border-bottom: 1.5px solid #111;
 }
 
 .single-game--config div {
@@ -63,12 +67,12 @@
 }
 
 .single-game--config div :nth-child(2) {
-  border-left: 1.4px solid #111;
-  border-right: 1.4px solid #111;
+  border-left: 1.5px solid #111;
+  border-right: 1.5px solid #111;
 }
 
 .single-game--body {
-  border: 1.4px solid #111;
+  border: 1.5px solid #111;
   border-radius: 3px;
   margin: 0px 20px 0px 20px;
 }
@@ -87,5 +91,7 @@
 }
 
 .single-game--links {
-  height: 100px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }

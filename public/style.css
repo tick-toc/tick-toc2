@@ -4,6 +4,7 @@ body {
 
 a {
   text-decoration: none;
+  color: inherit;
 }
 
 label {
@@ -18,4 +19,8 @@ nav a {
 form div {
   margin: 1em;
   display: inline-block;
+}
+
+button:focus {
+  outline: 0;
 }
