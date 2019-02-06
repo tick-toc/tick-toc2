@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {LioWebRTC, LocalVideo, RemoteVideo} from 'react-liowebrtc'
 import MyComponent from './MyComponent'
+import '../../styles/Chat.css'
 
 class VideoChat extends Component {
   constructor(props) {
@@ -27,15 +28,26 @@ class VideoChat extends Component {
 
   render() {
     return (
-      <LioWebRTC
-        options={{debug: true}}
-        onReady={this.join}
-        onCreatedPeer={this.handleCreatedPeer}
-        onRemovedPeer={this.handleRemovedPeer}
+      <iframe
+        src="http://www.bombmanual.com/manual/1/html/index.html"
+        className="iframe"
       >
-        <LocalVideo />
-        {this.state.peers && this.generateRemotes()}
-      </LioWebRTC>
+        <LioWebRTC
+          options={{
+            debug: true,
+            media: {
+              video: false,
+              audio: true
+            }
+          }}
+          onReady={this.join}
+          onCreatedPeer={this.handleCreatedPeer}
+          onRemovedPeer={this.handleRemovedPeer}
+        >
+          <LocalVideo />
+          {this.state.peers && this.generateRemotes()}
+        </LioWebRTC>
+      </iframe>
     )
   }
 }
