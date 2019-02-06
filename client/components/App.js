@@ -38,15 +38,17 @@ class App extends Component {
             <ProtectedRecap exact path="/recap" />
             <ProtectedBomb exact path="/diffusing" />
             <Route exact path="/chat" component={ChatApp} />
-            <Route exact path="/VideoChat" component={VideoChat} />
+            <Route exact path="/manual" component={VideoChat} />
+
             <Route component={Main} />
           </Switch>
         ) : (
           <Switch>
-            <Route exact path="/" component={Login} />
             <Route exact path="/chat" component={ChatApp} />
             <Route exact path="/video" component={VideoChat} />
+            <Route exact path="/manual" component={VideoChat} />
             <Route component={Login} />
+            {/* <Route path="/" component={Login} /> */}
           </Switch>
         )}
       </Fragment>

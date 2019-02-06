@@ -56,7 +56,6 @@ export const randomProperty = function(obj) {
 }
 
 export function CanMove(position, mazeCase, desiredDirection) {
-  console.log('mazecase', mazeCase)
   const currentPositionRules = mazeCase[position[0] - 1][position[1] - 1]
   const positionRules = CreateCellCheck(currentPositionRules)
   return positionRules[desiredDirection]
