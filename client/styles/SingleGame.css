@@ -82,6 +82,10 @@
   font-size: 2rem;
 }
 
+.single-game--status {
+  margin: 25px;
+}
+
 .single-game--links {
   height: 100px;
 }
