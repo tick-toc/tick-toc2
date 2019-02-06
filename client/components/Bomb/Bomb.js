@@ -102,6 +102,18 @@ class Bomb extends Component {
       this.box.castShadow = true
       this.box.receiveShadow = true
       this.initClock()
+      this.box.audio1 = document.createElement('audio')
+      let source1 = document.createElement('source')
+      source1.src = '/models/sound/squiggle.mp3'
+      this.box.audio1.appendChild(source1)
+      this.box.audio2 = document.createElement('audio')
+      let source2 = document.createElement('source')
+      source2.src = '/models/sound/Bomb.mp3'
+      this.box.audio2.appendChild(source2)
+      this.box.audio3 = document.createElement('audio')
+      let source3 = document.createElement('source')
+      source3.src = '/models/sound/onePiece.mp3'
+      this.box.audio3.appendChild(source3)
     })
 
     this.initClock = () => {
@@ -129,6 +141,10 @@ class Bomb extends Component {
         this.clock.receiveShadow = true
       })
       this.initDigital()
+      this.box.audio = document.createElement('audio')
+      let source = document.createElement('source')
+      source.src = '/models/sound/xBuzzer.mp3'
+      this.box.audio.appendChild(source)
     }
 
     this.initDigital = () => {
@@ -280,6 +296,10 @@ class Bomb extends Component {
         })
         this.module1.castShadow = true
         this.module1.receiveShadow = true
+        this.module1.audio = document.createElement('audio')
+        let source = document.createElement('source')
+        source.src = '/models/sound/wipe.mp3'
+        this.module1.audio.appendChild(source)
       })
       this.module2Loader.load('models/mo2.glb', glft => {
         this.module2 = glft.scene
@@ -360,6 +380,10 @@ class Bomb extends Component {
           this.module2.castShadow = true
           this.module2.receiveShadow = true
         })
+        this.module2.audio = document.createElement('audio')
+        let source = document.createElement('source')
+        source.src = '/models/sound/bigButton.mp3'
+        this.module2.audio.appendChild(source)
       })
 
       this.module3Loader.load('models/mo3.glb', gltf => {
@@ -443,6 +467,10 @@ class Bomb extends Component {
         this.pickFour = pickFour.sort((a, b) => a - b)
         this.module3.castShadow = true
         this.module3.receiveShadow = true
+        this.module3.audio = document.createElement('audio')
+        var source = document.createElement('source')
+        source.src = '/models/sound/press1.mov'
+        this.module3.audio.appendChild(source)
       })
       this.module4Loader.load('models/mo4.glb', gltf => {
         this.head = {}
@@ -511,7 +539,10 @@ class Bomb extends Component {
         this.module4.head = head
         this.module4.castShadow = true
         this.module4.receiveShadow = true
-        console.log('head >>>>', head)
+        this.module4.audio = document.createElement('audio')
+        var source = document.createElement('source')
+        source.src = '/models/sound/arrow.mp3'
+        this.module4.audio.appendChild(source)
       })
       this.module5Loader.load('models/mo5.glb', gltf => {
         this.module5 = gltf.scene
@@ -613,9 +644,13 @@ class Bomb extends Component {
               this.targetList.push(o)
             } else o.material = util.flatBlack
           }
-          this.module5.castShadow = true
-          this.module5.receiveShadow = true
         })
+        this.module5.castShadow = true
+        this.module5.receiveShadow = true
+        this.module5.audio = document.createElement('audio')
+        var source = document.createElement('source')
+        source.src = '/models/sound/press1.mov'
+        this.module5.audio.appendChild(source)
       })
     }
 
@@ -700,6 +735,7 @@ class Bomb extends Component {
             this.props.passModule('BigButton')
             this.handlePass('module2')
           } else {
+            this.box.audio.play()
             this.props.setStrike()
           }
         } else {
@@ -800,6 +836,7 @@ class Bomb extends Component {
         if (name.startsWith('Wire')) {
           this.handleWires(itemClicked)
         } else if (name.startsWith('Button')) {
+          this.module2.audio.play()
           this.module2.children
             .filter(child => child.name.startsWith('Button'))
             .forEach(child => {
@@ -819,6 +856,7 @@ class Bomb extends Component {
                   this.intersects[0].object.material.map.image.src.slice(-5, -4)
               )
             ) {
+              this.module3.audio.play()
               this.module3.children
                 .filter(a =>
                   a.name.includes('' + this.intersects[0].object.name.slice(-1))
@@ -834,6 +872,7 @@ class Bomb extends Component {
               this.module3.pickFour.shift()
               if (!this.module3.pickFour[0]) this.handleLetters()
             } else {
+              this.box.audio.play()
               this.props.setStrike()
             }
           } else if (
@@ -842,6 +881,7 @@ class Bomb extends Component {
               this.intersects[0].object.material.map.image.src.slice(-5, -4)
             )
           ) {
+            this.module3.audio.play()
             this.module3.children
               .filter(a =>
                 a.name.includes('' + this.intersects[0].object.name.slice(-1))
@@ -857,6 +897,7 @@ class Bomb extends Component {
             this.module3.pickFour.shift()
             if (!this.module3.pickFour[0]) this.handleLetters()
           } else {
+            this.box.audio.play()
             this.props.setStrike()
           }
         }
@@ -878,11 +919,13 @@ class Bomb extends Component {
                   this.intersects[0].object.name
                 )
               ) {
+                this.module4.audio.play()
                 head.material = util.flatBlack // unpaint
                 head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
                 head.material = util.white // paint
                 this.module4.head = head
               } else {
+                this.box.audio.play()
                 this.props.setStrike()
               }
             }
@@ -899,11 +942,13 @@ class Bomb extends Component {
                   this.intersects[0].object.name
                 )
               ) {
+                this.module4.audio.play()
                 head.material = util.flatBlack // unpaint
                 head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
                 head.material = util.white // paint
                 this.module4.head = head
               } else {
+                this.box.audio.play()
                 this.props.setStrike()
               }
             }
@@ -917,11 +962,13 @@ class Bomb extends Component {
                   this.intersects[0].object.name
                 )
               ) {
+                this.module4.audio.play()
                 head.material = util.flatBlack // unpaint
                 head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
                 head.material = util.white // paint
                 this.module4.head = head
               } else {
+                this.box.audio.play()
                 this.props.setStrike()
               }
             }
@@ -935,11 +982,13 @@ class Bomb extends Component {
                   this.intersects[0].object.name
                 )
               ) {
+                this.module4.audio.play()
                 head.material = util.flatBlack // unpaint
                 head = this.module4.children.filter(a => a.name === newHead)[0] // get the newHead position
                 head.material = util.white // paint
                 this.module4.head = head
               } else {
+                this.box.audio.play()
                 this.props.setStrike()
               }
             }
@@ -1021,7 +1070,7 @@ class Bomb extends Component {
           let readNumber = this.module5.children
             .filter(a => a.name === 'ReadNumber')[0]
             .material.map.image.src.slice(-5)[0]
-
+          this.module5.audio.play()
           if (this.module5.correct === '5') {
             if (Number(readNumber) < 3) {
               this.module5.quest[0] = [
@@ -1050,6 +1099,7 @@ class Bomb extends Component {
               this.module5.correct = '6'
               reRun()
             } else {
+              this.box.audio.play()
               this.props.setStrike()
               reRun()
             }
@@ -1088,6 +1138,7 @@ class Bomb extends Component {
               this.module5.correct = '7'
               reRun()
             } else {
+              this.box.audio.play()
               this.props.setStrike()
               runDown()
               reRun()
@@ -1140,6 +1191,7 @@ class Bomb extends Component {
               this.module5.correct = '8'
               reRun()
             } else {
+              this.box.audio.play()
               this.props.setStrike()
               runDown()
               reRun()
@@ -1185,6 +1237,7 @@ class Bomb extends Component {
               this.module5.correct = '9'
               reRun()
             } else {
+              this.box.audio.play()
               this.props.setStrike()
               runDown()
               reRun()
@@ -1249,6 +1302,7 @@ class Bomb extends Component {
                 .filter(a => a.name.includes('Kface'))
                 .map(b => this.removeTarget(b))
             } else {
+              this.box.audio.play()
               this.props.setStrike()
               runDown()
               reRun()
@@ -1260,6 +1314,7 @@ class Bomb extends Component {
   }
 
   handleDiffusal = () => {
+    this.box.audio3.play()
     const {count} = this.state
     if (this.props.gameStatus === 'pending') {
       clearTimeout(this.timer)
@@ -1269,6 +1324,7 @@ class Bomb extends Component {
   }
 
   handleFailure = () => {
+    this.box.audio2.play()
     const {count} = this.state
     if (this.props.gameStatus === 'pending') {
       if (count) clearTimeout(this.timer)
@@ -1356,10 +1412,12 @@ class Bomb extends Component {
   }
 
   handleWires = wire => {
+    this.module1.audio.play()
     if (wire.userData.correct === true) {
       this.props.passModule('Wires')
       this.handlePass('module1')
     } else {
+      this.box.audio.play()
       this.props.setStrike()
     }
     this.module1.remove(wire)
@@ -1377,6 +1435,7 @@ class Bomb extends Component {
   }
 
   handlePass = moduleName => {
+    this.box.audio1.play()
     const glow = this[moduleName].children.find(child => child.name === 'glow')
     const LED = this[moduleName].children.find(child => child.name === 'LED')
     glow.visible = true
