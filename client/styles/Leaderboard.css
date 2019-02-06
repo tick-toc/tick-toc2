@@ -10,17 +10,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: scroll;
+  justify-content: space-between;
+}
+
+.leaders > * {
+  width: 100%;
 }
 
 .leaders table {
-  width: 100%;
+  display: flex;
+  overflow: scroll;
 }
 
 .leaders--table {
   display: flex;
   flex-direction: column;
-  height: 75%;
+  flex: 1;
 }
 
 .leaders--table > * {
@@ -28,10 +33,6 @@
   width: 100%;
   padding: 20px;
   justify-content: space-around;
-}
-
-.leaders--tabe > * > * {
-  flex: 1;
 }
 
 .leader-row {

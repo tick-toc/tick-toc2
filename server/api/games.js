@@ -26,9 +26,9 @@ router.post('/', async (req, res, next) => {
       strikeTotal: strikesAllowed,
       startTime,
       finishTime,
-      moduleTotal,
-      solveTime
+      moduleTotal
     } = req.body
+    const solveTime = startTime - finishTime
     const status = strikeCount === strikesAllowed ? 'failed' : 'passed'
 
     const result = await Game.create({
