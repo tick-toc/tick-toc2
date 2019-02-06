@@ -1,18 +1,121 @@
 .new-game-container {
   display: flex;
   flex-direction: column;
+  border: 10px solid #a7a79f;
+  /* height: 690px; */
+  width: 530px;
+  border-radius: 20px;
+  padding: 7px;
+  background-color: #323338;
+}
+
+.new-game-container > div {
+  background-color: #595960;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.new-game--config {
+  background-color: #252429;
+  margin: 20px;
+  font-weight: 500;
+}
+
+.new-game--config > div {
+  background-color: #202125;
+  display: flex;
+  flex: 1;
+}
+
+.new-game--config-options,
+.new-game--config-selects {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.new-game--config-options {
+  color: #8cc2ee;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #45290d,
+    #45290d 20px,
+    #bf8127 20px,
+    #bf8127 40px
+  );
+}
+
+.new-game--config-options > *,
+.new-game--config-selects div > *,
+.new-game--config-selects span {
+  padding: 20px;
+  margin: 20px 0px;
+  font-size: 2rem;
+  z-index: 1;
+}
+
+.new-game--config-options span {
+  background-color: #201f1c;
+  width: 75%;
+}
+
+.new-game--config-selects {
+  background-color: #212225;
+}
+
+.new-game--config-selects div {
+  background-color: #080401;
+  padding: 10px;
+}
+
+.new-game--config-selects > :first-child {
+  margin-top: 0px;
+  margin-bottom: 30px;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.ng-action {
+.new-game--config-selects > :first-child svg {
+  cursor: pointer;
+  margin: 0px 10px;
+}
+
+.new-game--select {
+  flex: 1;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 20px 0px;
+}
+
+.new-game--select button {
+  transform: rotate(-3deg);
+}
+
+.new-game--start {
+  cursor: pointer;
+  background-color: #8e1a1a;
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #eee;
+  font-size: 2.5rem;
+}
+
+.strikes--active {
+  color: #f90404;
   cursor: pointer;
 }
 
-.ng-action.strike {
-  color: red;
+.strikes--inactive {
+  color: rgba(255, 255, 255, 0.87);
+  cursor: pointer;
 }
-
-/* .ng-icon {
-  font-size: 1.25rem;
-} */
