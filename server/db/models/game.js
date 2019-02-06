@@ -26,6 +26,9 @@ const Game = db.define('game', {
   finishTime: {
     type: Sequelize.INTEGER
   },
+  solveTime: {
+    type: Sequelize.INTEGER
+  },
   strikesAllowed: {
     type: Sequelize.INTEGER,
     allowNull: false,
