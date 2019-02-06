@@ -48,7 +48,9 @@ class PreviousGames extends Component {
     return (
       <div>
         <SingleGame game={game}>
-          <Link to="/">BACK</Link>
+          <button type="button">
+            <Link to="/">BACK</Link>
+          </button>
           <div>
             {this.state.pageNumber > 0 && (
               <button type="button" name="last" onClick={this.handlePageChange}>

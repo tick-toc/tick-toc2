@@ -1,11 +1,14 @@
 .single-game,
 .leaders {
   background-color: #eeffff;
-  height: 690px;
   width: 530px;
   display: flex;
   flex-direction: column;
   color: #111;
+}
+
+.leaders {
+  height: 690px;
 }
 
 .single-game .typed {
@@ -87,5 +90,21 @@
 }
 
 .single-game--links {
-  height: 100px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.single-game--links button {
+  background-color: #190f00;
+  padding: 10px 20px;
+  margin: 20px 5px;
+  border: none;
+  color: #eeeeee;
+  cursor: pointer;
+}
+
+.singe-game--links button a,
+.single-game--links button {
+  font-size: 1.5rem;
 }
