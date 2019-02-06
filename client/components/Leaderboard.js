@@ -29,32 +29,34 @@ class Leaderboard extends Component {
     return (
       <div className="leaderboard">
         <div className="leaders">
-          <div>LEADERBOARD</div>
-          <table>
-            <tbody className="leaders--table">
-              <tr>
-                <th>RANK</th>
-                <th>PLAYER</th>
-                <th>
-                  SOLVE<br /> TIME
-                </th>
-              </tr>
-              {games.map((game, index) => {
-                const {user: {userName}, finishTime, startTime} = game
-                return (
-                  <tr
-                    className="leader-row"
-                    key={game.id}
-                    onClick={() => this.handleClick(index)}
-                  >
-                    <td>{index + 1}</td>
-                    <td>{userName}</td>
-                    <td>{calcSingleGameTime(startTime - finishTime)}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+          <div>
+            <div>LEADERBOARD</div>
+            <table>
+              <tbody className="leaders--table">
+                <tr>
+                  <th>RANK</th>
+                  <th>PLAYER</th>
+                  <th>
+                    SOLVE<br /> TIME
+                  </th>
+                </tr>
+                {games.map((game, index) => {
+                  const {user: {userName}, finishTime, startTime} = game
+                  return (
+                    <tr
+                      className="leader-row"
+                      key={game.id}
+                      onClick={() => this.handleClick(index)}
+                    >
+                      <td>{index + 1}</td>
+                      <td>{userName}</td>
+                      <td>{calcSingleGameTime(startTime - finishTime)}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
           <Link to="/" className="return">
             BACK
           </Link>
