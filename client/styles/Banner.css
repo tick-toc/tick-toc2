@@ -10,6 +10,7 @@
   -webkit-mask-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8399/grunge.png');
   /* -webkit-mask-size: 944px 604px; */
   mix-blend-mode: multiply;
+  border-width: 1rem;
 }
 
 .stamp {
@@ -32,6 +33,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  border-width: 1rem;
 }
 
 .failed--stamp,
@@ -40,10 +42,11 @@
   border: 0.5rem solid #ff0000;
 }
 
-.failed--banner {
+.failed--banner,
+.diffused--banner {
   mask-position: 13rem 6rem;
   -webkit-mask-position: 13rem 6rem;
-  transform: rotate(-14deg);
+  transform: rotate(-3deg);
 }
 
 .failed--stamp,
@@ -70,4 +73,16 @@
 
 .activating--banner > * {
   margin: 50px;
+}
+
+.banner-container {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
