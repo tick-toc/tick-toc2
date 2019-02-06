@@ -1,8 +1,10 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import Bomb from './Bomb/Bomb'
 import ProtectedBomb from './ProtectedBomb'
 import ProtectedRecap from './ProtectedRecap'
 import './../styles/App.css'
+import './../styles/Loader.css'
+import {FaCog} from 'react-icons/fa'
 import {connect} from 'react-redux'
 import Login from './Login'
 import Main from './Main'
@@ -24,9 +26,9 @@ class App extends Component {
 
   render() {
     const {isLoggedIn, isFetching} = this.props
-    if (isFetching) return <div>Loading...</div>
+    if (isFetching) return <FaCog className="loader" />
     return (
-      <div className="App">
+      <Fragment>
         {isLoggedIn ? (
           <Switch>
             <Route exact path="/" component={Main} />
@@ -46,7 +48,7 @@ class App extends Component {
             <Route component={Login} />
           </Switch>
         )}
-      </div>
+      </Fragment>
     )
   }
 }

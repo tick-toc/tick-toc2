@@ -1,6 +1,9 @@
 /* eslint-disable complexity */
 /* eslint-disable max-statements */
 import '../../styles/Bomb.css'
+import '../../styles/Banner.css'
+import '../../styles/Loader.css'
+import {FaCog} from 'react-icons/fa'
 import React, {Component, Fragment} from 'react'
 import * as THREE from 'three'
 import GLTFLoader from 'three-gltf-loader'
@@ -12,7 +15,6 @@ import {CEDcreate} from './modules/CED'
 import {generateRandomIndex, sortByKey} from '../util'
 import {connect} from 'react-redux'
 import {setStrike, passModule, endGame} from '../../store'
-import {GiRollingBomb} from 'react-icons/gi'
 import ChatApp from '../Chat/ChatApp'
 import {CanMove, mazeCases, randomProperty} from './modules/mod4'
 import {ifError} from 'assert'
@@ -1402,12 +1404,12 @@ class Bomb extends Component {
     return (
       <Fragment>
         {gameStatus !== 'pending' && (
-          <div className={`banner ${gameStatus}--banner`}>{gameStatus}</div>
+          <div className={`stamp ${gameStatus}--banner`}>{gameStatus}</div>
         )}
         {!activated && (
-          <div className="banner activating--banner">
+          <div className="stamp activating--banner">
             <div>Bomb activating. Get ready.</div>
-            <GiRollingBomb className="banner--spinner" />
+            <FaCog className="loader" />
           </div>
         )}
         <div
