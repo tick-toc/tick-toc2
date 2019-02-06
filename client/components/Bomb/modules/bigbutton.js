@@ -16,5 +16,13 @@ export const SEDS = [
   {
     color: new PointLight(0xff00ff, 4, 13, 200),
     num: 1
+  },
+  {
+    color: new PointLight(0xff9900, 4, 13, 200),
+    num: 1
+  },
+  {
+    color: new PointLight(0xff0000, 4, 13, 200),
+    num: 1
   }
 ]

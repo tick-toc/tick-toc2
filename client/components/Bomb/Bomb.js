@@ -699,9 +699,12 @@ class Bomb extends Component {
           ) {
             this.props.passModule('BigButton')
             this.handlePass('module2')
+          } else {
+            this.props.setStrike()
           }
         } else {
-          this.props.setStrike()
+          this.props.passModule('BigButton')
+          this.handlePass('module2')
         }
       }
       this.module4.children.filter(a => a.name.includes('Go')).map(b => {
