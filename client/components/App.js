@@ -28,7 +28,6 @@ class App extends Component {
   render() {
     const {isLoggedIn, isFetching, location: {pathname}} = this.props
     if (isFetching) return <FaCog className="loader" />
-    console.log(this.props, '<<PROPS')
     return (
       <Fragment>
         {pathname !== '/diffusing' &&
