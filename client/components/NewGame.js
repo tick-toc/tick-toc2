@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import '../styles/NewGame.css'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
@@ -45,61 +45,67 @@ class NewGame extends Component {
     const minute = Math.floor(startTime / 60)
     const seconds = startTime % 60
     return (
-      <div className="new-game-container">
-        <div>
-          <div className="new-game--config">
-            <div>
-              <div className="new-game--config-options">
-                <span>TIME</span>
-                <span>STRIKES</span>
-              </div>
-              <div className="new-game--config-selects">
-                <span>
-                  <FaArrowL
-                    className="ng-action ng-icon"
-                    onClick={() => this.handleTime('l')}
-                  />
+      <Fragment>
+        <div className="new-game-container">
+          <div>
+            <div className="new-game--config">
+              <div>
+                <div className="new-game--config-options">
+                  <span>TIME</span>
+                  <span>STRIKES</span>
+                </div>
+                <div className="new-game--config-selects">
                   <span>
-                    {minute}:{seconds === 0 ? '00' : seconds}
+                    <FaArrowL
+                      className="ng-action ng-icon"
+                      onClick={() => this.handleTime('l')}
+                    />
+                    <span>
+                      {minute}:{seconds === 0 ? '00' : seconds}
+                    </span>
+                    <FaArrowR
+                      className="ng-action ng-icon"
+                      onClick={() => this.handleTime('m')}
+                    />
                   </span>
-                  <FaArrowR
-                    className="ng-action ng-icon"
-                    onClick={() => this.handleTime('m')}
-                  />
-                </span>
-                <div>
-                  <span
-                    className={`${
-                      strikesAllowed ? 'strikes--active' : 'strikes--inactive'
-                    }`}
-                    onClick={() => this.handleStrikes('on')}
-                  >
-                    ON
-                  </span>
-                  <span
-                    className={`${
-                      strikesAllowed ? 'strikes--inactive' : 'strikes--active'
-                    }`}
-                    onClick={() => this.handleStrikes('off')}
-                  >
-                    OFF
-                  </span>
+                  <div>
+                    <span
+                      className={`${
+                        strikesAllowed ? 'strikes--active' : 'strikes--inactive'
+                      }`}
+                      onClick={() => this.handleStrikes('on')}
+                    >
+                      ON
+                    </span>
+                    <span
+                      className={`${
+                        strikesAllowed ? 'strikes--inactive' : 'strikes--active'
+                      }`}
+                      onClick={() => this.handleStrikes('off')}
+                    >
+                      OFF
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="new-game--select">
-            <Link to="/">
-              <button className="button" type="button">
-                BACK
-              </button>
-            </Link>
-            <div className="new-game--start" onClick={this.handleStart}>
-              START
+            <div className="new-game--select">
+              <Link to="/">
+                <button className="button" type="button">
+                  BACK
+                </button>
+              </Link>
+              <div className="new-game--start" onClick={this.handleStart}>
+                START
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        <div className="new-game--footer">
+          If you are playing the role of Expert, click{' '}
+          <Link to="/manual">here</Link> to access the manual
+        </div>
+      </Fragment>
     )
   }
 }
@@ -118,49 +124,3 @@ const mapDispatch = dispatch => ({
 })
 
 export default connect(mapState, mapDispatch)(NewGame)
-
-//   < Link to = "/" className = "return" >
-//     Return to menu
-//         </Link >
-//   <div className="new-game-options">
-//     <div>
-//       <span>Time</span>
-//       <span>
-//         <FaArrowL
-//           className="ng-action ng-icon"
-//           onClick={() => this.handleTime('l')}
-//         />
-//         {minute}:{seconds === 0 ? '00' : seconds}
-//         <FaArrowR
-//           className="ng-action ng-icon"
-//           onClick={() => this.handleTime('m')}
-//         />
-//       </span>
-//     </div>
-//     <div>
-//       <span>Strikes</span>
-// <div>
-//   <span
-//     className={`${
-//       strikesAllowed ? 'strike ng-action' : 'ng-action'
-//       }`}
-//     onClick={() => this.handleStrikes('on')}
-//   >
-//     ON
-//         </span>
-//   <span
-//     className={`${
-//       strikesAllowed ? 'ng-action' : 'strike ng-action'
-//       }`}
-//     onClick={() => this.handleStrikes('off')}
-//   >
-//     OFF
-//         </span>
-// </div>
-//     </div>
-//     <div className="ng-action" onClick={this.handleStart}>
-//       Start Game
-//           </div>
-//   </div>
-// {/* <h4>Let's Party</h4> */ }
-// {/* <ChatApp /> */ }

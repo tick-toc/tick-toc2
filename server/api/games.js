@@ -7,6 +7,9 @@ router.get('/:offset', async (req, res, next) => {
     const {offset} = req.params
     const limit = 50
     const games = await Game.findAll({
+      where: {
+        status: 'passed'
+      },
       offset,
       limit,
       include: [User],

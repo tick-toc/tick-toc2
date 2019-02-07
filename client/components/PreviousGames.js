@@ -13,8 +13,10 @@ class PreviousGames extends Component {
   }
 
   componentDidMount() {
-    const {offset} = this.props.previousGames
-    this.props.fetchUserGames(offset)
+    const {offset, games} = this.props.previousGames
+    if (games.length === 0) {
+      this.props.fetchUserGames(offset)
+    }
   }
 
   componentDidUpdate() {

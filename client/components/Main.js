@@ -13,14 +13,28 @@ class Main extends Component {
   render() {
     return (
       <div className="main-container">
-        <Link to="new-game">Start New Game</Link>
-        <Link to="previous-games">Previous Games</Link>
-        <Link to="leaderboard">Leaderboard</Link>
-        <Link to="/">
-          <button onClick={this.handleClick} type="button">
-            Logout
-          </button>
-        </Link>
+        <div>
+          <div className="main-options">
+            <Link className="main-option" to="new-game">
+              Start Game
+            </Link>
+            <Link className="main-option" to="previous-games">
+              Previous Games
+            </Link>
+            <Link className="main-option" to="leaderboard">
+              Leaderboard
+            </Link>
+          </div>
+          <Link to="/">
+            <button
+              className="button2 logout-button"
+              onClick={this.handleClick}
+              type="button"
+            >
+              Logout
+            </button>
+          </Link>
+        </div>
       </div>
     )
   }

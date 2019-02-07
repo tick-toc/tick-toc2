@@ -39,7 +39,7 @@
 .failed--stamp,
 .failed--banner {
   color: #ff0000;
-  border: 0.5rem solid #ff0000;
+  border-color: #ff0000;
 }
 
 .failed--banner,
@@ -47,6 +47,7 @@
   mask-position: 13rem 6rem;
   -webkit-mask-position: 13rem 6rem;
   transform: rotate(-3deg);
+  border: 1rem solid;
 }
 
 .failed--stamp,
@@ -54,12 +55,13 @@
   mask-position: 5rem 5rem;
   -webkit-mask-position: 5rem 5rem;
   transform: rotate(-3deg);
+  border: 0.5rem solid;
 }
 
 .diffused--stamp,
 .diffused--banner {
   color: #0a9928;
-  border: 0.5rem solid #0a9928;
+  border-color: #0a9928;
 }
 
 .activating--banner {

@@ -15,6 +15,7 @@ import {Switch, Route, withRouter} from 'react-router-dom'
 import {me} from '../store'
 import ChatApp from './Chat/ChatApp'
 import VideoChat from './Chat/VideoChat'
+import Manual from './Manual'
 
 class App extends Component {
   componentDidMount() {
@@ -37,16 +38,16 @@ class App extends Component {
             <Route exact path="/leaderboard" component={Leaderboard} />
             <ProtectedRecap exact path="/recap" />
             <ProtectedBomb exact path="/diffusing" />
-            <Route exact path="/chat" component={ChatApp} />
-            <Route exact path="/manual" component={VideoChat} />
+            {/* <Route exact path="/chat" component={ChatApp} /> */}
+            <Route exact path="/manual" component={Manual} />
 
             <Route component={Main} />
           </Switch>
         ) : (
           <Switch>
-            <Route exact path="/chat" component={ChatApp} />
-            <Route exact path="/video" component={VideoChat} />
-            <Route exact path="/manual" component={VideoChat} />
+            {/* <Route exact path="/chat" component={ChatApp} /> */}
+            {/* <Route exact path="/video" component={VideoChat} />
+            <Route exact path="/manual" component={Manual} /> */}
             <Route component={Login} />
             {/* <Route path="/" component={Login} /> */}
           </Switch>
