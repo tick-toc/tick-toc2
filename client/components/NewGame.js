@@ -102,8 +102,8 @@ class NewGame extends Component {
           </div>
         </div>
         <div className="new-game--footer">
-          If you are playing the role of Expert, click{' '}
-          <Link to="/manual">here</Link> to access the manual
+          *If you are playing the role of Expert, click{' '}
+          <Link to="/manual">here</Link> to access the manual*
         </div>
       </Fragment>
     )

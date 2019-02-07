@@ -16,11 +16,9 @@ nav a {
   margin: 1em;
 }
 
-form div {
-  margin: 1em;
-  display: inline-block;
-}
-
+input:focus,
+select:focus,
+textarea:focus,
 button:focus {
-  outline: 0;
+  outline: none;
 }
