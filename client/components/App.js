@@ -26,10 +26,13 @@ class App extends Component {
   }
 
   render() {
-    const {isLoggedIn, isFetching} = this.props
+    const {isLoggedIn, isFetching, location: {pathname}} = this.props
     if (isFetching) return <FaCog className="loader" />
+    console.log(this.props, '<<PROPS')
     return (
       <Fragment>
+        {pathname !== '/diffusing' &&
+          pathname !== '/manual' && <div className="title">TICK-TOC</div>}
         {isLoggedIn ? (
           <Switch>
             <Route exact path="/" component={Main} />

@@ -18,7 +18,7 @@
 
 .new-game--config {
   background-color: #252429;
-  margin: 20px;
+  margin: 20px 20px 0px 20px;
   font-weight: 500;
 }
 
@@ -139,7 +139,7 @@
 }
 
 .new-game--footer {
-  margin-top: 100px;
+  margin-top: 20px;
   font-weight: 500;
   color: #8cc2ee;
   text-transform: uppercase;
