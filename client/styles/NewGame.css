@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   border: 10px solid #a7a79f;
-  /* height: 690px; */
   width: 530px;
   border-radius: 20px;
   padding: 7px;
@@ -50,11 +49,6 @@
   );
 }
 
-.new-game--config-options > * {
-  margin: 20px 0px;
-}
-
-.new-game--config-options > *,
 .new-game--config-selects div > *,
 .new-game--config-selects span {
   font-size: 2rem;
@@ -64,7 +58,12 @@
 
 .new-game--config-options span {
   background-color: #201f1c;
-  width: 75%;
+  border: 5px solid #131313;
+  width: 165px;
+  font-size: 2rem;
+  z-index: 1;
+  margin: 20px 0px;
+  padding: 15px;
 }
 
 .new-game--config-selects {
@@ -137,4 +136,19 @@
 .strikes--inactive {
   color: rgba(255, 255, 255, 0.47);
   cursor: pointer;
+}
+
+.new-game--footer {
+  margin-top: 100px;
+  font-weight: 500;
+  color: #8cc2ee;
+  text-transform: uppercase;
+}
+
+.new-game--footer a {
+  text-decoration: underline;
+}
+
+.new-game--footer a:hover {
+  color: #9dd3ff;
 }

@@ -4,9 +4,9 @@
 import axios from 'axios'
 
 const initialGame = {
-  startTime: 300,
+  startTime: 180,
   minTime: 30,
-  maxTime: 570,
+  maxTime: 360,
   finishTime: 0,
   moduleTotal: 5,
   modulesPassed: 0,

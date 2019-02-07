@@ -20,8 +20,10 @@ class Leaderboard extends Component {
   }
 
   componentDidMount() {
-    const {offset} = this.props.leaders
-    this.props.fetchLeaders(offset)
+    const {offset, games} = this.props.leaders
+    if (games.length === 0) {
+      this.props.fetchLeaders(offset)
+    }
   }
 
   render() {

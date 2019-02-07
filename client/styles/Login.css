@@ -5,3 +5,10 @@
   align-items: center;
   justify-content: center;
 }
+
+.login-form-container {
+  border: 10px solid #a7a79f;
+  border-radius: 20px;
+  padding: 7px;
+  background-color: #323338;
+}
