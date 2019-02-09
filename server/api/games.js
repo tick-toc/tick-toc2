@@ -8,7 +8,7 @@ router.get('/:offset', async (req, res, next) => {
     const limit = 50
     const games = await Game.findAll({
       where: {
-        status: 'passed'
+        status: 'diffused'
       },
       offset,
       limit,
@@ -25,14 +25,13 @@ router.post('/', async (req, res, next) => {
   try {
     const userId = req.session.passport.user
     const {
-      strikeCount,
       strikeTotal: strikesAllowed,
       startTime,
       finishTime,
-      moduleTotal
+      moduleTotal,
+      status
     } = req.body
     const solveTime = startTime - finishTime
-    const status = strikeCount === strikesAllowed ? 'failed' : 'passed'
 
     const result = await Game.create({
       userId,
