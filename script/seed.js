@@ -12,7 +12,7 @@ const gameData = [
     solveTime: 180,
     strikesAllowed: 3,
     strikeCount: 2,
-    status: 'passed'
+    status: 'diffused'
   },
   {
     moduleTotal: 5,
