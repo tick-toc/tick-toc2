@@ -702,7 +702,12 @@ class Bomb extends Component {
 
       if (this.isDragging) {
         let deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(
-          new THREE.Euler(this.toRadians(deltaMove.y * 1), 0, 0, 'XYZ')
+          new THREE.Euler(
+            this.toRadians(deltaMove.y * 1),
+            this.toRadians(deltaMove.x * 1),
+            0,
+            'XYZ'
+          )
         )
         this.box.quaternion.multiplyQuaternions(
           deltaRotationQuaternion,
