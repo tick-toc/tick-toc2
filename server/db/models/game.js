@@ -46,9 +46,8 @@ const Game = db.define('game', {
     }
   },
   status: {
-    type: Sequelize.ENUM('passed', 'failed'),
-    allowNull: false,
-    defaultValue: 'passed'
+    type: Sequelize.ENUM('diffused', 'failed'),
+    allowNull: false
   }
 })
 
