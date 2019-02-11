@@ -46,17 +46,21 @@ class Login extends Component {
                 <div className="login-fields">
                   <input
                     name="email"
+                    required
                     onChange={this.handleChange}
                     value={this.state.email}
                   />
                   {!this.state.login && (
                     <input
+                      required
                       name="username"
                       onChange={this.handleChange}
                       value={this.state.username}
                     />
                   )}
                   <input
+                    required
+                    type="password"
                     name="password"
                     onChange={this.handleChange}
                     value={this.state.password}
