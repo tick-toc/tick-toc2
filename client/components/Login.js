@@ -6,16 +6,15 @@ import '../styles/Login.css'
 class Login extends Component {
   state = {
     login: true,
-    email: '',
     username: '',
     password: ''
   }
 
   handleSubmit = event => {
-    const {email, username, password} = this.state
+    const {username, password} = this.state
     event.preventDefault()
-    if (this.state.login) this.props.authLogin(email, password)
-    else this.props.authSignup(email, password, username)
+    if (this.state.login) this.props.authLogin(username, password)
+    else this.props.authSignup(password, username)
   }
 
   handleChange = event => {
@@ -39,25 +38,16 @@ class Login extends Component {
             <form onSubmit={this.handleSubmit} className="login-form">
               <div className="login-fields-container">
                 <div className="login-field-labels">
-                  <div>email</div>
-                  {!this.state.login && <div>username</div>}
+                  <div>username</div>
                   <div>password</div>
                 </div>
                 <div className="login-fields">
                   <input
-                    name="email"
                     required
+                    name="username"
                     onChange={this.handleChange}
-                    value={this.state.email}
+                    value={this.state.username}
                   />
-                  {!this.state.login && (
-                    <input
-                      required
-                      name="username"
-                      onChange={this.handleChange}
-                      value={this.state.username}
-                    />
-                  )}
                   <input
                     required
                     type="password"
@@ -93,9 +83,8 @@ class Login extends Component {
 
 const mapDispatch = dispatch => {
   return {
-    authLogin: (email, password) => dispatch(authLogin(email, password)),
-    authSignup: (email, password, userName) =>
-      dispatch(authSignup(email, password, userName))
+    authLogin: (userName, password) => dispatch(authLogin(userName, password)),
+    authSignup: (userName, password) => dispatch(authSignup(userName, password))
   }
 }
 
