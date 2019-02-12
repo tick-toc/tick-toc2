@@ -42,8 +42,7 @@ const initialGame = {
     offset: 0
   },
   leaders: {
-    games: [],
-    offset: 0
+    games: []
   }
 }
 
@@ -83,9 +82,9 @@ export const saveGame = game => async () => {
   }
 }
 
-export const fetchLeaders = offset => async dispatch => {
+export const fetchLeaders = () => async dispatch => {
   try {
-    const {data} = await axios.get(`/api/games/${offset}`)
+    const {data} = await axios.get(`/api/games/`)
     dispatch(getLeaders(data))
   } catch (err) {
     console.error(err)
@@ -156,8 +155,7 @@ export default function(state = initialGame, action) {
       return {
         ...state,
         leaders: {
-          games: [...state.leaders.games, ...action.data.games],
-          offset: state.leaders.offset + action.data.offset
+          games: [...state.leaders.games, ...action.data.games]
         }
       }
     default:
