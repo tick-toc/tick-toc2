@@ -161,7 +161,7 @@ export default function(state = initialGame, action) {
       return {
         ...state,
         leaders: {
-          games: [...state.leaders.games, ...action.data.games]
+          games: [...action.data.games]
         }
       }
     case IS_DONE_FETCHING:

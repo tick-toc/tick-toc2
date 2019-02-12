@@ -16,6 +16,7 @@ import {me} from '../store'
 import ChatApp from './Chat/ChatApp'
 import VideoChat from './Chat/VideoChat'
 import Manual from './Manual'
+import Footer from './Footer'
 
 class App extends Component {
   componentDidMount() {
@@ -54,6 +55,9 @@ class App extends Component {
             {/* <Route path="/" component={Login} /> */}
           </Switch>
         )}
+        {pathname !== '/diffusing' &&
+          pathname !== '/manual' &&
+          pathname !== '/new-game' && <Footer />}
       </Fragment>
     )
   }
