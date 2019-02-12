@@ -55,7 +55,7 @@ export const authLogin = (userName, password) => async dispatch => {
   }
 }
 
-export const authSignup = (password, userName) => async dispatch => {
+export const authSignup = (userName, password) => async dispatch => {
   let res
   try {
     res = await axios.post(`/auth/signup`, {password, userName})

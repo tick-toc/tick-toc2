@@ -14,7 +14,7 @@ class Login extends Component {
     const {username, password} = this.state
     event.preventDefault()
     if (this.state.login) this.props.authLogin(username, password)
-    else this.props.authSignup(password, username)
+    else this.props.authSignup(username, password)
   }
 
   handleChange = event => {
