@@ -39,17 +39,14 @@ const gameData = [
 const userData = [
   {
     userName: 'dummyUser',
-    email: 'dummyUser@dummyemail.com',
     password: 'dummypassword'
   },
   {
     userName: 'smartUser',
-    email: 'smartUser@smartemail.com',
     password: 'smartpassword'
   },
   {
     userName: 'evanalto',
-    email: 'e@a.com',
     password: 'ea'
   }
 ]

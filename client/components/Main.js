@@ -1,12 +1,13 @@
 import React, {Component} from 'react'
 import '../styles/Main.css'
 import {Link} from 'react-router-dom'
-import {logout} from '../store'
+import {logout, resetGame} from '../store'
 import {connect} from 'react-redux'
 
 class Main extends Component {
   handleClick = () => {
     event.preventDefault()
+    this.props.resetGame()
     this.props.logout()
   }
 
@@ -42,7 +43,8 @@ class Main extends Component {
 
 const mapDispatch = dispatch => {
   return {
-    logout: () => dispatch(logout())
+    logout: () => dispatch(logout()),
+    resetGame: () => dispatch(resetGame())
   }
 }
 

@@ -20,9 +20,9 @@ class Leaderboard extends Component {
   }
 
   componentDidMount() {
-    const {offset, games} = this.props.leaders
+    const {games} = this.props.leaders
     if (games.length === 0) {
-      this.props.fetchLeaders(offset)
+      this.props.fetchLeaders()
     }
   }
 
@@ -74,7 +74,7 @@ class Leaderboard extends Component {
 const mapState = ({game: {leaders}}) => ({leaders})
 
 const mapDispatch = dispatch => ({
-  fetchLeaders: offset => dispatch(fetchLeaders(offset))
+  fetchLeaders: () => dispatch(fetchLeaders())
 })
 
 export default connect(mapState, mapDispatch)(Leaderboard)

@@ -2,20 +2,16 @@ const router = require('express').Router()
 const {Game, User} = require('../db/models')
 module.exports = router
 
-router.get('/:offset', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-    const {offset} = req.params
-    const limit = 50
     const games = await Game.findAll({
       where: {
         status: 'diffused'
       },
-      offset,
-      limit,
       include: [User],
       order: [['solveTime', 'ASC']]
     })
-    res.json({games, limit})
+    res.json({games})
   } catch (err) {
     next(err)
   }
