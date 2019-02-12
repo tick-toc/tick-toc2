@@ -20,16 +20,13 @@ class Leaderboard extends Component {
   }
 
   componentDidMount() {
-    const {games} = this.props.leaders
-    if (games.length === 0) {
-      this.props.fetchLeaders()
-    }
+    this.props.fetchLeaders()
   }
 
   render() {
-    const {games} = this.props.leaders
+    const {games, isDoneFetching} = this.props.leaders
     const selectedGame = games[this.state.selectedGame]
-    if (!games || !selectedGame) return <FaCog className="loader" />
+    if (!isDoneFetching) return <FaCog className="loader" />
     return (
       <div className="leaderboard">
         <div className="leaders">

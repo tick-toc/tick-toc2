@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {fetchUserGames} from '../store'
 import SingleGame from './SingleGame'
+import NoGames from './NoGames'
 
 class PreviousGames extends Component {
   state = {
@@ -44,9 +45,10 @@ class PreviousGames extends Component {
     }
   }
   render() {
-    const {games} = this.props.previousGames
+    const {games, isDoneFetching} = this.props.previousGames
     const game = games[this.state.pageNumber]
-    if (!game) return <FaCog className="loader" />
+    if (!isDoneFetching) return <FaCog className="loader" />
+    if (!game) return <NoGames />
     return (
       <div>
         <SingleGame game={game}>
@@ -81,7 +83,10 @@ class PreviousGames extends Component {
   }
 }
 
-const mapState = ({game: {previousGames}}) => ({previousGames})
+const mapState = ({game: {previousGames, isDoneFetching}}) => ({
+  previousGames,
+  isDoneFetching
+})
 
 const mapDispatch = dispatch => ({
   fetchUserGames: offset => dispatch(fetchUserGames(offset))

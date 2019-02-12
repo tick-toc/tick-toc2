@@ -39,10 +39,12 @@ const initialGame = {
   gameStatus: 'pending',
   previousGames: {
     games: [],
-    offset: 0
+    offset: 0,
+    isDoneFetching: false
   },
   leaders: {
-    games: []
+    games: [],
+    isDoneFetching: false
   }
 }
 
@@ -56,6 +58,7 @@ const RESET_GAME = 'RESET_GAME'
 const REPLAY_GAME = 'REPLAY_GAME'
 const GET_USER_GAMES = 'GET_USER_GAMES'
 const GET_LEADERS = 'GET_LEADERS'
+const IS_DONE_FETCHING = 'IS_DONE_FETCHING'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
@@ -71,6 +74,7 @@ export const resetGame = () => ({type: RESET_GAME})
 export const replayGame = () => ({type: REPLAY_GAME})
 const getUserGames = data => ({type: GET_USER_GAMES, data})
 const getLeaders = data => ({type: GET_LEADERS, data})
+const isDoneFetching = view => ({type: IS_DONE_FETCHING, view})
 
 // THUNK CREATORS
 
@@ -86,6 +90,7 @@ export const fetchLeaders = () => async dispatch => {
   try {
     const {data} = await axios.get(`/api/games/`)
     dispatch(getLeaders(data))
+    dispatch(isDoneFetching('leaders'))
   } catch (err) {
     console.error(err)
   }
@@ -95,6 +100,7 @@ export const fetchUserGames = offset => async dispatch => {
   try {
     const {data} = await axios.get(`/api/games/previous/${offset}`)
     dispatch(getUserGames(data))
+    dispatch(isDoneFetching('previousGames'))
   } catch (err) {
     console.error(err)
   }
@@ -157,6 +163,11 @@ export default function(state = initialGame, action) {
         leaders: {
           games: [...state.leaders.games, ...action.data.games]
         }
+      }
+    case IS_DONE_FETCHING:
+      return {
+        ...state,
+        [action.view]: {...state[action.view], isDoneFetching: true}
       }
     default:
       return state
