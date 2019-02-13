@@ -32,7 +32,7 @@ export const wireCountCases = {
   '4': [
     {
       colors: [white, white, blue, yellow],
-      correct: 3
+      correct: 0
     },
     {
       colors: [red, yellow, blue, red],
