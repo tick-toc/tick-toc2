@@ -4,7 +4,14 @@ import '../styles/Footer.css'
 const Footer = () => {
   return (
     <div className="footer">
-      Created by{' '}
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/tick-toc/tick-toc2"
+      >
+        Tick-Toc
+      </a>{' '}
+      by{' '}
       <a
         target="_blank"
         rel="noopener noreferrer"
