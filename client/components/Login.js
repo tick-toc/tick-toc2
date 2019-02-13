@@ -19,9 +19,11 @@ class Login extends Component {
 
   handleChange = event => {
     const {name, value} = event.target
-    this.setState({
-      [name]: value
-    })
+    if (name === 'password' || (name === 'username' && value.length < 20)) {
+      this.setState({
+        [name]: value
+      })
+    }
   }
 
   handleClick = () => {
