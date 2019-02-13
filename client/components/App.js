@@ -11,7 +11,7 @@ import Main from './Main'
 import NewGame from './NewGame'
 import Leaderboard from './Leaderboard'
 import PreviousGames from './PreviousGames'
-import {Switch, Route, withRouter} from 'react-router-dom'
+import {Switch, Route, withRouter, Redirect} from 'react-router-dom'
 import {me} from '../store'
 import ChatApp from './Chat/ChatApp'
 import VideoChat from './Chat/VideoChat'
@@ -43,16 +43,15 @@ class App extends Component {
             <ProtectedBomb exact path="/diffusing" />
             {/* <Route exact path="/chat" component={ChatApp} /> */}
             <Route exact path="/manual" component={Manual} />
-
-            <Route component={Main} />
+            <Route render={() => <Redirect to="/" />} />
           </Switch>
         ) : (
           <Switch>
             {/* <Route exact path="/chat" component={ChatApp} /> */}
             {/* <Route exact path="/video" component={VideoChat} />*/}
             <Route exact path="/manual" component={Manual} />
-            <Route component={Login} />
-            {/* <Route path="/" component={Login} /> */}
+            <Route exact path="/" component={Login} />
+            <Route render={() => <Redirect to="/" />} />
           </Switch>
         )}
         {pathname !== '/diffusing' &&
