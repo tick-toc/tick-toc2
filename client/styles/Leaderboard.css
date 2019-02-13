@@ -44,7 +44,7 @@
 .leaders-table--headers,
 .leader-row {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   padding: 5px;
 }
@@ -66,4 +66,8 @@
 
 .leader-row > * {
   height: 100%;
+}
+
+.leader-row > :nth-child(2) {
+  flex: 1;
 }
