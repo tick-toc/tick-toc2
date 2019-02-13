@@ -7,9 +7,7 @@ class Login extends Component {
   state = {
     login: true,
     username: '',
-    password: '',
-    maxUsernameLength: 20,
-    error: ''
+    password: ''
   }
 
   handleSubmit = event => {
