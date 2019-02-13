@@ -49,8 +49,8 @@ class App extends Component {
         ) : (
           <Switch>
             {/* <Route exact path="/chat" component={ChatApp} /> */}
-            {/* <Route exact path="/video" component={VideoChat} />
-            <Route exact path="/manual" component={Manual} /> */}
+            {/* <Route exact path="/video" component={VideoChat} />*/}
+            <Route exact path="/manual" component={Manual} />
             <Route component={Login} />
             {/* <Route path="/" component={Login} /> */}
           </Switch>
