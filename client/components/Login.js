@@ -31,6 +31,11 @@ class Login extends Component {
   }
 
   render() {
+    const {user} = this.props
+    let error = user.error ? user.error.response.data : ''
+    let errorMessage = user.error
+      ? user.error.response.data.split('-').join(' ')
+      : ''
     return (
       <Fragment>
         <div className="login-form-container">
@@ -45,11 +50,20 @@ class Login extends Component {
                   <input
                     required
                     name="username"
+                    className={
+                      error.includes('username') ? `${error}--error` : ''
+                    }
                     onChange={this.handleChange}
                     value={this.state.username}
                   />
+                  {error && (
+                    <div className={`${error}--message`}>{errorMessage}</div>
+                  )}
                   <input
                     required
+                    className={
+                      error.includes('password') ? `${error}--error` : ''
+                    }
                     type="password"
                     name="password"
                     onChange={this.handleChange}
@@ -81,6 +95,8 @@ class Login extends Component {
   }
 }
 
+const mapState = ({user}) => ({...user})
+
 const mapDispatch = dispatch => {
   return {
     authLogin: (userName, password) => dispatch(authLogin(userName, password)),
@@ -88,4 +104,4 @@ const mapDispatch = dispatch => {
   }
 }
 
-export default connect(null, mapDispatch)(Login)
+export default connect(mapState, mapDispatch)(Login)

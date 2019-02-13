@@ -39,15 +39,7 @@ const gameData = [
 const userData = [
   {
     userName: 'dummyUser',
-    password: 'dummypassword'
-  },
-  {
-    userName: 'smartUser',
-    password: 'smartpassword'
-  },
-  {
-    userName: 'evanalto',
-    password: 'ea'
+    password: 'dummyPassword'
   }
 ]
 
@@ -61,9 +53,9 @@ async function seed() {
   ])
 
   const [game1, game2, game3] = game
-  const [user1, user2] = user
+  const [user1] = user
 
-  await game1.setUser(user2)
+  await game1.setUser(user1)
   await game2.setUser(user1)
   await game3.setUser(user1)
 

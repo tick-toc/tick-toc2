@@ -88,6 +88,10 @@
   cursor: pointer;
 }
 
+.login-fields input:required {
+  background-color: #080401;
+}
+
 .login-signup--button {
   background-color: #699b42;
   margin: 20px 20px 0px 20px;
@@ -97,4 +101,18 @@
 .login-switch--button {
   margin: 5px;
   background-color: #005294;
+}
+
+.login-fields input.invalid-username-or-password--error,
+.login-fields input.username-already-taken--error {
+  border: 1px solid #f90404;
+}
+
+.login-fields div.invalid-username-or-password--message,
+.login-fields div.username-already-taken--message {
+  color: #f90404;
+  text-transform: uppercase;
+  font-weight: 600;
+  position: absolute;
+  font-size: 0.9rem;
 }

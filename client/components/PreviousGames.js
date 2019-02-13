@@ -57,26 +57,28 @@ class PreviousGames extends Component {
               BACK
             </button>
           </Link>
-          <div>
-            {this.state.pageNumber > 0 && (
+          {games.length > 1 && (
+            <div>
+              {this.state.pageNumber > 0 && (
+                <button
+                  type="button"
+                  className="button"
+                  name="last"
+                  onClick={this.handlePageChange}
+                >
+                  PREVIOUS
+                </button>
+              )}
               <button
                 type="button"
+                name="previous"
                 className="button"
-                name="last"
                 onClick={this.handlePageChange}
               >
-                PREVIOUS
+                NEXT
               </button>
-            )}
-            <button
-              type="button"
-              name="previous"
-              className="button"
-              onClick={this.handlePageChange}
-            >
-              NEXT
-            </button>
-          </div>
+            </div>
+          )}
         </SingleGame>
       </div>
     )
