@@ -60,6 +60,19 @@ const GET_USER_GAMES = 'GET_USER_GAMES'
 const GET_LEADERS = 'GET_LEADERS'
 const IS_DONE_FETCHING = 'IS_DONE_FETCHING'
 
+export const ACTION_TYPES = {
+  START_GAME,
+  SET_STRIKE,
+  PASS_MODULE,
+  DIFFUSED,
+  END_GAME,
+  RESET_GAME,
+  REPLAY_GAME,
+  GET_USER_GAMES,
+  GET_LEADERS,
+  IS_DONE_FETCHING
+}
+
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
 export const setStrike = () => ({type: SET_STRIKE})
