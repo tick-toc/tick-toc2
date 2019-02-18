@@ -6,8 +6,7 @@ const IsMobile = () => {
     <div className="is-mobile">
       <span className="is-mobile--title">TICK-TOC</span>
       <span>
-        Our apologies, this application is currently not playable on mobile or
-        tablet devices
+        Our apologies, this application is currently only playable on desktop.
       </span>
     </div>
   )
