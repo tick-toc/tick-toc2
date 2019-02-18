@@ -6,6 +6,6 @@ Tick Toc is a reverse-engineered web application of the popular game, [Keep Talk
 
 For more information regarding this student project, please watch the video below:
 
-[![TICK TOC PRESENTATION](https://www.youtube.com/watch?v=zgzjM1lHdI4&list=PLx0iOsdUOUmmL875tGLv6WKi_JSPzrrrQ&index=28&t=0s)](https://www.youtube.com/watch?v=zgzjM1lHdI4&list=PLx0iOsdUOUmmL875tGLv6WKi_JSPzrrrQ&index=28&t=0s)
+[![TICK TOC PRESENTATION](https://img.youtube.com/vi/zgzjM1lHdI4/0.jpg)](https://www.youtube.com/watch?v=zgzjM1lHdI4&list=PLx0iOsdUOUmmL875tGLv6WKi_JSPzrrrQ&index=28&t=0s)
 
 This project was made purely for fun and educational purposes. Thank you, Steel Crate Games for the inspiration.
