@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom'
 import {BrowserRouter} from 'react-router-dom'
 import './styles/index.css'
 import App from './components/App.js'
+import IsMobile from './components/IsMobile.js'
 import {Provider} from 'react-redux'
 import store from './store'
+import {isMobile} from 'react-device-detect'
 
 // establishes socket connection
 import './socket'
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <BrowserRouter>{isMobile ? <IsMobile /> : <App />}</BrowserRouter>
   </Provider>,
   document.getElementById('app')
 )
