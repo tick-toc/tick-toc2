@@ -2,7 +2,7 @@
 
 # Tick Toc
 
-Tick Toc is a reverse-engineered web application of the popular game, [Keep Talking and Nobody Explodes.](https://keeptalkinggame.com/). You may play for yourself at <https://tick-toc2.herokuapp.com>.
+Tick Toc is a reverse-engineered web application of the popular game, [Keep Talking and Nobody Explodes](https://keeptalkinggame.com/). You may play for yourself at <https://tick-toc2.herokuapp.com>.
 
 For more information regarding this student project, please click the video below to watch:
 
