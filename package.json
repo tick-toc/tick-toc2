@@ -59,6 +59,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
     "react-contenteditable": "^3.2.6",
+    "react-device-detect": "^1.6.2",
     "react-dom": "^16.4.2",
     "react-icons": "^3.3.0",
     "react-liowebrtc": "^1.2.4",

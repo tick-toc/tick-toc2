@@ -21,9 +21,6 @@ import Footer from './Footer'
 class App extends Component {
   componentDidMount() {
     this.props.loadInitialData()
-    // window.addEventListener('load', () => {
-    //   this.props.
-    // })
   }
 
   render() {
