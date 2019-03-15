@@ -22,7 +22,7 @@
     "start-dev": "NODE_ENV='development' npm run build-client-watch & NODE_ENV='development' npm run start-server",
     "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
     "test": "NODE_ENV='test' nyc mocha \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./client/components/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register && nyc report --reporter=text-lcov | coveralls",
-    "dev-test": "NODE_ENV='test' mocha -w \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
+    "dev-test": "NODE_ENV='test' nyc mocha -w \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
   },
   "lint-staged": {
     "*.{js,jsx}": [
