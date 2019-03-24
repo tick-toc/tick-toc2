@@ -148,4 +148,53 @@ describe('Game', () => {
       })
     })
   })
+
+  describe('reducer', () => {
+    it('should return initial state', () => {
+      expect(Reducer(undefined, {})).to.deep.equal({
+        startTime: 180,
+        minTime: 30,
+        maxTime: 360,
+        finishTime: 0,
+        moduleTotal: 5,
+        modulesPassed: 0,
+        strikesAllowed: true,
+        strikeTotal: 3,
+        strikeCount: 0,
+        modules: [
+          {
+            name: 'Wires',
+            passed: false
+          },
+          {
+            name: 'BigButton',
+            passed: false
+          },
+          {
+            name: 'Maze',
+            passed: false
+          },
+          {
+            name: 'Letters',
+            passed: false
+          },
+          {
+            name: 'Keys',
+            passed: false
+          }
+        ],
+        gameStarted: false,
+        gameStatus: 'pending',
+        previousGames: {
+          games: [],
+          offset: 0,
+          isDoneFetching: false
+        },
+        leaders: {
+          games: [],
+          isDoneFetching: false
+        }
+      })
+    })
+  })
 })
