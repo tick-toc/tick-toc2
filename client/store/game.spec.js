@@ -1,5 +1,12 @@
 import Reducer, * as Game from './game'
 import {expect} from 'chai'
+import axios from 'axios'
+import MockAdapter from 'axios-mock-adapter'
+import configureMockStore from 'redux-mock-store'
+import thunkMiddleware from 'redux-thunk'
+
+const middlewares = [thunkMiddleware]
+const mockStore = configureMockStore(middlewares)
 
 describe('Game', () => {
   describe('actions', () => {
@@ -95,10 +102,50 @@ describe('Game', () => {
   })
 
   describe('thunks', () => {
-    describe('saveGame', () => {})
+    let store
+    let mockAxios
 
-    describe('fetchLeaders', () => {})
+    const initialState = {}
 
-    describe('fetchUserGames', () => {})
+    beforeEach(() => {
+      store = mockStore(initialState)
+      mockAxios = new MockAdapter(axios)
+    })
+
+    afterEach(() => {
+      mockAxios.restore()
+      store.clearActions()
+    })
+
+    describe('saveGame', () => {
+      it('should post game to /api/games', async () => {
+        mockAxios.onPost('/api/games').replyOnce(200)
+        await store.dispatch(Game.saveGame())
+        expect(mockAxios.history.post.length).to.equal(1)
+      })
+    })
+
+    describe('fetchLeaders', () => {
+      it('should fetch leaders, dispatch actions getLeaders & isDoneFetching', async () => {
+        mockAxios.onGet('/api/games/').replyOnce(200)
+        await store.dispatch(Game.fetchLeaders())
+        const actions = store.getActions()
+        expect(mockAxios.history.get.length).to.equal(1)
+        expect(actions[0].type).to.equal('GET_LEADERS')
+        expect(actions[1].type).to.equal('IS_DONE_FETCHING')
+      })
+    })
+
+    describe('fetchUserGames', () => {
+      it('should fetch users games', async () => {
+        const offset = 20
+        mockAxios.onGet(`/api/games/previous/${offset}`).replyOnce(200)
+        await store.dispatch(Game.fetchUserGames(offset))
+        const actions = store.getActions()
+        expect(mockAxios.history.get.length).to.equal(1)
+        expect(actions[0].type).to.equal('GET_USER_GAMES')
+        expect(actions[1].type).to.equal('IS_DONE_FETCHING')
+      })
+    })
   })
 })
