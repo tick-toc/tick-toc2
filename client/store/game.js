@@ -49,16 +49,16 @@ const initialGame = {
 }
 
 //ACTION TYPES
-const START_GAME = 'START_GAME'
-const SET_STRIKE = 'SET_STRIKE'
-const PASS_MODULE = 'PASS_MODULE'
-const DIFFUSED = 'DIFFUSED'
-const END_GAME = 'END_GAME'
-const RESET_GAME = 'RESET_GAME'
-const REPLAY_GAME = 'REPLAY_GAME'
-const GET_USER_GAMES = 'GET_USER_GAMES'
-const GET_LEADERS = 'GET_LEADERS'
-const IS_DONE_FETCHING = 'IS_DONE_FETCHING'
+export const START_GAME = 'START_GAME'
+export const SET_STRIKE = 'SET_STRIKE'
+export const PASS_MODULE = 'PASS_MODULE'
+export const DIFFUSED = 'DIFFUSED'
+export const END_GAME = 'END_GAME'
+export const RESET_GAME = 'RESET_GAME'
+export const REPLAY_GAME = 'REPLAY_GAME'
+export const GET_USER_GAMES = 'GET_USER_GAMES'
+export const GET_LEADERS = 'GET_LEADERS'
+export const IS_DONE_FETCHING = 'IS_DONE_FETCHING'
 
 //ACTION CREATORS
 export const startGame = settings => ({type: START_GAME, settings})
@@ -72,9 +72,9 @@ export const endGame = (status, finishTime) => ({
 })
 export const resetGame = () => ({type: RESET_GAME})
 export const replayGame = () => ({type: REPLAY_GAME})
-const getUserGames = data => ({type: GET_USER_GAMES, data})
-const getLeaders = data => ({type: GET_LEADERS, data})
-const isDoneFetching = view => ({type: IS_DONE_FETCHING, view})
+export const getUserGames = data => ({type: GET_USER_GAMES, data})
+export const getLeaders = data => ({type: GET_LEADERS, data})
+export const isDoneFetching = view => ({type: IS_DONE_FETCHING, view})
 
 // THUNK CREATORS
 

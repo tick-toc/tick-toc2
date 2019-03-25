@@ -4,9 +4,9 @@ import history from '../history'
 /**
  * ACTION TYPES
  */
-const GET_USER = 'GET_USER'
-const REMOVE_USER = 'REMOVE_USER'
-const IS_FETCHING = 'IS_FETCHING'
+export const GET_USER = 'GET_USER'
+export const REMOVE_USER = 'REMOVE_USER'
+export const IS_FETCHING = 'IS_FETCHING'
 //add remove user for logging out
 
 /**
@@ -20,9 +20,9 @@ const defaultUser = {
 /**
  * ACTION CREATORS
  */
-const getUser = user => ({type: GET_USER, user})
-const removeUser = () => ({type: REMOVE_USER})
-const isFetching = () => ({type: IS_FETCHING})
+export const getUser = user => ({type: GET_USER, user})
+export const removeUser = () => ({type: REMOVE_USER})
+export const isFetching = () => ({type: IS_FETCHING})
 
 /**
  * THUNK CREATORS
